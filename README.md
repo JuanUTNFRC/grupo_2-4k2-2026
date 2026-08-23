@@ -1,10 +1,9 @@
-# grupo_2-4k2-2026
+# Grupo_2-4k2-2026
 **Institución:** Universidad Tecnológica Nacional - Facultad Regional Córdoba
 
 **Carrera:** Ingeniería en Sistemas de Información
 
 **Asignatura:** Ingeniería y Calidad de Software
-
 
 **Año:** 2026
 
@@ -13,10 +12,12 @@
 **Grupo:** 2
 
 # Integrantes del grupo
+
 | Apellidos |Nombres | Legajo |
 | --------- | --------- |--------| 
 | Maldonado | Gustavo Emiliano | 93370 |
 | Quispe Ricra | Junior Jesus | 97139 |
+| D'Andrea Escoda | Thiago Augusto | 87381 |
 
 # Estructura del repositorio
 
