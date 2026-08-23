@@ -18,6 +18,7 @@
 | Maldonado | Gustavo Emiliano | 93370 |
 | Quispe Ricra | Junior Jesus | 97139 |
 | D'Andrea Escoda | Thiago Augusto | 87381 |
+| Pons            | Katerinne      |91093  |
 
 # Estructura del repositorio
 
