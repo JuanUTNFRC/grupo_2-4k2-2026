@@ -16,6 +16,7 @@
 | Apellidos |Nombres | Legajo |
 | --------- | --------- |--------| 
 | Maldonado | Gustavo Emiliano | 93370 |
+| Quispe Ricra | Junior Jesus | 97139 |
 
 # Estructura del repositorio
 
