@@ -13,9 +13,9 @@
 **Grupo:** 2
 
 # Integrantes del grupo
-| Apellido |Nombre | Legajo |
+| Apellidos |Nombres | Legajo |
 | --------- | --------- |--------| 
-|  |  |  |
+| Maldonado | Gustavo Emiliano | 93370 |
 
 # Estructura del repositorio
 
