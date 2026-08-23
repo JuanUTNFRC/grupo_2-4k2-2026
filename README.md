@@ -20,6 +20,7 @@
 | D'Andrea Escoda | Thiago Augusto | 87381 |
 | Pons            | Katerinne      |91093  |
 | Rolando Corbalan  |Javier Efrain |401363 |
+| Giannantonio |Fabrizio Giael |401422 |
 # Estructura del repositorio
 
 ```
