@@ -19,7 +19,7 @@
 | Quispe Ricra | Junior Jesus | 97139 |
 | D'Andrea Escoda | Thiago Augusto | 87381 |
 | Pons            | Katerinne      |91093  |
-
+| Rolando Corbalan  |Javier Efrain |401363 |
 # Estructura del repositorio
 
 ```
