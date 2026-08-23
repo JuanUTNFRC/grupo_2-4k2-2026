@@ -19,6 +19,7 @@
 | Quispe Ricra | Junior Jesus | 97139 |
 | D'Andrea Escoda | Thiago Augusto | 87381 |
 | Pons            | Katerinne      |91093  |
+|Soria      |Carolina Mikaela      |84829  |
 
 # Estructura del repositorio
 
