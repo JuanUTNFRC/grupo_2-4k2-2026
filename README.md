@@ -146,7 +146,7 @@ Para mantener consistencia, las etiquetas en Git se escribirán en minúscula, s
 
 Regla de nombrado para tags:
 
-`base_[tipo_trabajo][N]_[nombre_corto]`
+`lb_[tipo_trabajo][N]_[nombre_corto]`
 
 Ejemplo:
 
