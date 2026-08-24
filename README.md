@@ -26,6 +26,7 @@
 | Cruz | María Victoria | 407549 |
 | Chaui | Camilo | 95148 |
 |Soria  |Mikaela Carolina|84829|
+| Gastiaburú | Lucas Nicolas | 74907
 # Estructura del repositorio
 
 ```
