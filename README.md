@@ -49,7 +49,7 @@ grupo_2-4k2_2026
 ├── 02_Gestion_grupo/ 
 │   ├── Comunicacion_docente/                    # Medio de comunicacion con los docentes y formato sugerido
 │   │   ├──Mails/
-│   │   └── Otros
+│   │   └── Otros/
 │   ├── Minutas/                                 # Minutas de reunión, cronogramas y el Plan de SCM.
 │   └── Cronograma/                              # Planificación y seguimiento
 ├── 03_Entregas/                                 # Trabajos entregables
@@ -66,8 +66,8 @@ grupo_2-4k2_2026
 │   └── Codigo_fuente/                   # Repositorio del código desarrollado en el TP 6.
 └── 05_Material_extra/
     ├── Clases/
-    │   └── Clase_[yyyy_mm_dd]_[Descripcion]/ 
-    └── Otros    
+    │   └── Clase_[yyyy_mm_dd]_[descripcion]/ 
+    └── Otros/    
  ``` 
 # Nomenclatura
 Los nombres de las carpetas deberán comenzar con mayúscula y utilizar guion bajo (`_`) como separador entre palabras. Los nombres de los archivos deberán escribirse estrictamente en minúsculas, sin tildes ni caracteres especiales, utilizando guion bajo (`_`) como separador entre palabras.
@@ -82,12 +82,12 @@ Los nombres de las carpetas deberán comenzar con mayúscula y utilizar guion ba
 | Modalidad                   | `/01_Catedra/Modalidad/` | `[nombre_del_documento].pdf`                |
 | Templates                   | `/01_Catedra/Templates_para_practicos_y_parciales/` | `[tipo_de_template].[extension]`                    |
 | Parciales                   | `/01_Catedra/Parciales/`        | `[nombre_o_descripcion].[extension]`                |
-| Mails                 | `/02_Gestion_grupo/Mails`                                      | `[asunto].pdf`                       |
-| Otras comunicaciones                 | `/02_Gestion_grupo/Otro`                                      | `[asunto]_[medio].[extension]` |
+| Mails                       | `/02_Gestion_grupo/Comunicacion_docente/Mails/`                | `[asunto].pdf`                       |
+| Otras comunicaciones        | `/02_Gestion_grupo/Comunicacion_docente/Otros/`           | `[asunto]_[medio].[extension]` |
 | Minuta de reunión           | `/02_Gestion_grupo/Minutas/`                              | `minuta_[yyyy_mm_dd].pdf`                 |
 | Cronograma                  | `/02_Gestion_grupo/Cronograma/`                           | `cronograma_g[N].xlsx`                    |
 | Trabajo Práctico            | `/03_Entregas/TPs/TP_[N]/Entrega/`                        | `tp[N]_[nombre_corto]_g[N].pdf`           |
-| Trabajo de Investigación    | `/03_Entregas/TIs/TI_[N]/Entrega/`                   | `ti[N]_[nombre_corto]_g[N].pdf`           |
+| Trabajo de Investigación    | `/03_Entregas/TIs/TI_[N]/Entrega/`                           | `ti[N]_[nombre_corto]_g[N].pdf`           |
 | User Stories                | `/03_Entregas/TPs/TP_[N]/Entrega/`                        | `tp[N]_req_[ejercicio]_user_stories.md`   |
 | MVP                         | `/03_Entregas/TPs/TP_[N]/Entrega/`                        | `tp[N]_req_[ejercicio]_mvp.pdf`           |
 | Estimaciones                | `/03_Entregas/TPs/TP_[N]/Entrega/`                        | `tp[N]_req_[ejercicio]_estimaciones.xlsx` |
@@ -97,7 +97,7 @@ Los nombres de las carpetas deberán comenzar con mayúscula y utilizar guion ba
 | Arquitectura                | `/04_Producto/Documentacion/`                             | `arquitectura_[nombre_producto].pdf`      |
 | Código fuente               | `/04_Producto/Codigo_fuente/`                             | `[nombre_modulo].[extension]`             |
 | Manual de usuario           | `/04_Producto/Documentacion/`                             | `manual_usuario_[nombre_producto].pdf`|
-|Notas de clases| `/05_Material_extra/Clases/Clase_[yyyy_mm_dd]_[Descripcion]/`               | `clase_[yyyy_mm_dd]_[descripcion].[extension]`         |
+|Notas de clases| `/05_Material_extra/Clases/Clase_[yyyy_mm_dd]_[descripcion]/`               | `clase_[yyyy_mm_dd]_[descripcion].[extension]`         |
 | Otros | `/05_Material_extra/Clases/Otros`| `[nombre]_[extension]` |
 
 
@@ -113,8 +113,8 @@ Los nombres de las carpetas deberán comenzar con mayúscula y utilizar guion ba
 | **SCI** | Ítem de Configuración de Software (*Software Configuration Item*) |
 | **N**   | Número de ítem o trabajo (1, 2, ..., n) |
 | **G**   | Número de grupo |
-| **REQ** | Requerimientos |
-| **TST** | Testing |
+| **req** | Requerimientos |
+| **tst** | Testing |
 | **SCR** | Scrum |
 | **MVP** | Producto Mínimo Viable (*Minimum Viable Product*) |
 | **LB**  | Línea Base |
@@ -137,7 +137,7 @@ Los nombres de las carpetas deberán comenzar con mayúscula y utilizar guion ba
 
 Se marcará una nueva línea base inmediatamente después de la entrega formal de cada tarea evaluable, como Trabajos Prácticos o Trabajos de Investigación.
 
-### 2 . Convención de Etiquetas (Tags)
+### 2. Convención de Etiquetas (Tags)
 Para mantener consistencia, las etiquetas en Git se escribirán en minúscula, sin espacios ni caracteres especiales.
 
 
@@ -147,5 +147,4 @@ Regla de nombrado para tags:
 
 Ejemplo:
 
-`base_tp4_SCM`
- 
+`base_tp4_scm`
