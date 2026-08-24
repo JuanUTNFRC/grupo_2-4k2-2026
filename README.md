@@ -28,6 +28,7 @@
 |Soria  |Mikaela Carolina|84829|
 | Gastiaburú | Lucas Nicolas | 74907 | 
 | Torti | Mauricio Ivan | 400619 | 
+| Bianchi | Mateo Leonardo | 79088 |
 # Estructura del repositorio
 
 ```
