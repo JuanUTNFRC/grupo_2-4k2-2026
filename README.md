@@ -25,6 +25,7 @@
 | Melkón | Emanuel Sebastián | 401423 |
 | Cruz | María Victoria | 407549 |
 | Chaui | Camilo | 95148 |
+|Soria  |Mikaela Carolina|84829|
 # Estructura del repositorio
 
 ```
