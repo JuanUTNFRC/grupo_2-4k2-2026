@@ -23,6 +23,7 @@
 | Giannantonio |Fabrizio Giael |401422 |
 | Piaggio   | Uriel Agustin     | 87599 |
 | Melkón | Emanuel Sebastián | 401423 |
+| Cruz | María Victoria | 407549 |
 # Estructura del repositorio
 
 ```
