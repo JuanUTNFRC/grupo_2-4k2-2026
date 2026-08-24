@@ -29,6 +29,7 @@
 | Gastiaburú | Lucas Nicolas | 74907 | 
 | Torti | Mauricio Ivan | 400619 | 
 | Bianchi | Mateo Leonardo | 79088 |
+| Morales | Juan Cruz | 87097 |
 # Estructura del repositorio
 
 ```
