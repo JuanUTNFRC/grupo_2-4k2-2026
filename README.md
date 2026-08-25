@@ -151,4 +151,4 @@ Regla de nombrado para tags:
 
 Ejemplo:
 
-`base_tp4_scm`
+`lb_tp4_scm`
