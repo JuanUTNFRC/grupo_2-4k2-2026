@@ -52,7 +52,7 @@ grupo_2-4k2_2026
 │   └── Parciales/
 ├── 02_Gestion_grupo/ 
 │   ├── Comunicacion_docente/                    # Medio de comunicacion con los docentes y formato sugerido
-│   │   ├──Mails/
+│   │   ├── Mails/
 │   │   └── Otros/
 │   ├── Minutas/                                 # Minutas de reunión, cronogramas y el Plan de SCM.
 │   └── Cronograma/                              # Planificación y seguimiento
@@ -75,6 +75,7 @@ grupo_2-4k2_2026
  ``` 
 # Nomenclatura
 Los nombres de las carpetas deberán comenzar con mayúscula y utilizar guion bajo (`_`) como separador entre palabras. Los nombres de los archivos deberán escribirse estrictamente en minúsculas, sin tildes ni caracteres especiales, utilizando guion bajo (`_`) como separador entre palabras.
+Se establece como única excepción a la regla de uso estricto de minúsculas en archivos al documento README.md ubicado en la raíz del repositorio (/). Esta excepción técnica es obligatoria para garantizar la compatibilidad con la plataforma de control de versiones GitHub, permitiendo la renderización de este archivo "md".
 
 | Ítem de Configuración (SCI) | Ubicación                                                 | Regla de nombrado                      
 | --------------------------- | --------------------------------------------------------- | ----------------------------------------- |
@@ -89,9 +90,9 @@ Los nombres de las carpetas deberán comenzar con mayúscula y utilizar guion ba
 | Mails                       | `/02_Gestion_grupo/Comunicacion_docente/Mails/`                | `[asunto].pdf`                       |
 | Otras comunicaciones        | `/02_Gestion_grupo/Comunicacion_docente/Otros/`           | `[asunto]_[medio].[extension]` |
 | Minuta de reunión           | `/02_Gestion_grupo/Minutas/`                              | `minuta_[yyyy_mm_dd].pdf`                 |
-| Cronograma                  | `/02_Gestion_grupo/Cronograma/`                           | `cronograma_g[N].xlsx`                    |
-| Trabajo Práctico            | `/03_Entregas/TPs/TP_[N]/Entrega/`                        | `tp[N]_[nombre_corto]_g[N].pdf`           |
-| Trabajo de Investigación    | `/03_Entregas/TIs/TI_[N]/Entrega/`                           | `ti[N]_[nombre_corto]_g[N].pdf`           |
+| Cronograma                  | `/02_Gestion_grupo/Cronograma/`                           | `cronograma_g[G].xlsx`                    |
+| Trabajo Práctico            | `/03_Entregas/TPs/TP_[N]/Entrega/`                        | `tp[N]_[nombre_corto]_g[G].pdf`           |
+| Trabajo de Investigación    | `/03_Entregas/TIs/TI_[N]/Entrega/`                           | `ti[N]_[nombre_corto]_g[G].pdf`           |
 | User Stories                | `/03_Entregas/TPs/TP_[N]/Entrega/`                        | `tp[N]_req_[ejercicio]_user_stories.md`   |
 | MVP                         | `/03_Entregas/TPs/TP_[N]/Entrega/`                        | `tp[N]_req_[ejercicio]_mvp.pdf`           |
 | Estimaciones                | `/03_Entregas/TPs/TP_[N]/Entrega/`                        | `tp[N]_req_[ejercicio]_estimaciones.xlsx` |
