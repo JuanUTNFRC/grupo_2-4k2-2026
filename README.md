@@ -102,7 +102,7 @@ Los nombres de las carpetas deberán comenzar con mayúscula y utilizar guion ba
 | Código fuente               | `/04_Producto/Codigo_fuente/`                             | `[nombre_modulo].[extension]`             |
 | Manual de usuario           | `/04_Producto/Documentacion/`                             | `manual_usuario_[nombre_producto].pdf`|
 |Notas de clases| `/05_Material_extra/Clases/Clase_[yyyy_mm_dd]_[descripcion]/`               | `clase_[yyyy_mm_dd]_[descripcion].[extension]`         |
-| Otros | `/05_Material_extra/Clases/Otros`| `[nombre].[extension]` |
+| Otros | `/05_Material_extra/Otros`| `[nombre].[extension]` |
 
 
 # Glosario
