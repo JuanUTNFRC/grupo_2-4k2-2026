@@ -134,7 +134,7 @@ Se establece como única excepción a la regla de uso estricto de minúsculas en
 
 | Línea Base | Fecha| Descripción |
 | --------- | --------- |--------|
-|  |  |  |
+| `lb_tp4_scm` | `25/08/2026` | Línea base correspondiente a la entrega del TP4 de SCM |
 
 ## Criterios de Línea Base
 
