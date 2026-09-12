@@ -48,6 +48,7 @@ grupo_2-4k2_2026
 │   │       ├── Presentaciones/
 │   │       └── Clases_grabadas/
 │   ├── Modalidad/
+│   ├── Casos_de_estudio_y_trabajos_prácticos/
 │   ├── Templates_para_practicos_y_parciales/
 │   └── Parciales/
 ├── 02_Gestion_grupo/ 
