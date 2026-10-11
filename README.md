@@ -72,7 +72,9 @@ grupo_2-4k2_2026
 └── 05_Material_extra/
     ├── Clases/
     │   └── Clase_[yyyy_mm_dd]_[descripcion]/ 
-    └── Otros/    
+    | Resumenes/
+    └── Otros/ 
+
  ``` 
 # Nomenclatura
 Los nombres de las carpetas deberán comenzar con mayúscula y utilizar guion bajo (`_`) como separador entre palabras. Los nombres de los archivos deberán escribirse estrictamente en minúsculas, sin tildes ni caracteres especiales, utilizando guion bajo (`_`) como separador entre palabras.
