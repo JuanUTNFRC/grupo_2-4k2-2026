@@ -72,10 +72,11 @@ grupo_2-4k2_2026
 └── 05_Material_extra/
     ├── Clases/
     │   └── Clase_[yyyy_mm_dd]_[descripcion]/ 
-    | Resumenes/
+    ├── Resumenes/                       # Resumenes hechos por los integrantes del grupo
     └── Otros/ 
 
- ``` 
+ ```
+ 
 # Nomenclatura
 Los nombres de las carpetas deberán comenzar con mayúscula y utilizar guion bajo (`_`) como separador entre palabras. Los nombres de los archivos deberán escribirse estrictamente en minúsculas, sin tildes ni caracteres especiales, utilizando guion bajo (`_`) como separador entre palabras.
 Se establece como única excepción a la regla de uso estricto de minúsculas en archivos al documento README.md ubicado en la raíz del repositorio (/). Esta excepción técnica es obligatoria para garantizar la compatibilidad con la plataforma de control de versiones GitHub, permitiendo la renderización de este archivo "md".
@@ -129,8 +130,6 @@ Se establece como única excepción a la regla de uso estricto de minúsculas en
 | **ERS** | Especificación de Requisitos de Software |
 
 
-
-
 # Línea Base
 
 ## Historial de Líneas Base
@@ -156,3 +155,15 @@ Regla de nombrado para tags:
 Ejemplo:
 
 `lb_tp4_scm`
+
+
+# Commits
+
+Los mensajes de commit deben seguir el siguiente formato: "<prefijo>: descripción breve".
+
+| Prefijo |  Contexto |
+| --------- | --------- |
+| **feat** | Nueva funcionalidad o característica. |
+| **fix** | Corrección de un error o bug. |
+| **docs** | Cambios o mejoras en la documentación. |
+| **refactor** | Mejora en el código sin cambiar su funcionalidad. |
