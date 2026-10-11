@@ -159,7 +159,7 @@ Ejemplo:
 
 # Commits
 
-Los mensajes de commit deben seguir el siguiente formato: "<prefijo>: descripción breve".
+Los mensajes de commit deben seguir el siguiente formato: "prefijo: descripción breve".
 
 | Prefijo |  Contexto |
 | --------- | --------- |
