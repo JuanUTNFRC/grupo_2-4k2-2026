@@ -37,3 +37,6 @@ class AdmiteActividadTests(SimpleTestCase):
 
     def test_admite_una_actividad_a_las_9_un_dia_abierto(self):
         self.assertTrue(self.calendario.admite_actividad(self.martes, time(9, 0)))
+
+    def test_no_admite_una_actividad_que_empieza_antes_de_la_apertura(self):
+        self.assertFalse(self.calendario.admite_actividad(self.martes, time(8, 0)))
