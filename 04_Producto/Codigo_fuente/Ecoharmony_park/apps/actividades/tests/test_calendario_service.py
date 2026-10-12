@@ -46,3 +46,8 @@ class AdmiteActividadTests(SimpleTestCase):
 
     def test_admite_una_actividad_que_termina_justo_al_cierre(self):
         self.assertTrue(self.calendario.admite_actividad(self.martes, time(18, 0)))
+
+    def test_no_admite_una_actividad_un_dia_cerrado(self):
+        lunes = date(2026, 10, 12)
+
+        self.assertFalse(self.calendario.admite_actividad(lunes, time(9, 0)))
