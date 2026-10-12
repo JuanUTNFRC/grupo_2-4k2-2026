@@ -1,5 +1,7 @@
 """Dobles de prueba en memoria para testear InscripcionService sin base de datos."""
 
+from contextlib import nullcontext
+
 from apps.inscripciones.models import Inscripcion
 
 
@@ -15,6 +17,10 @@ class FakeInscripcionRepository:
     def __init__(self):
         self.creadas = []
         self.ocupados = {}  # horario_id -> participantes ya inscriptos
+
+    def bloquear_horario(self, horario_id):
+        # En memoria no hay concurrencia: el bloqueo real se prueba en el repository.
+        return nullcontext()
 
     def participantes_inscriptos(self, horario_id):
         return self.ocupados.get(horario_id, 0)

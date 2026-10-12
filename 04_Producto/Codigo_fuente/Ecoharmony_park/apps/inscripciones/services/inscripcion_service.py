@@ -14,16 +14,23 @@ class InscripcionService:
 
     def inscribir(self, usuario, datos):
         horario = self.horarios.obtener(datos['horario_id'])
-        ocupados = self.inscripciones.participantes_inscriptos(horario.id)
-        disponibles = horario.actividad.cupo_por_horario - ocupados
-        if len(datos['participantes']) > disponibles:
-            raise CupoInsuficienteError()
 
-        inscripcion = self.inscripciones.crear(
-            usuario=usuario,
-            horario=horario,
-            acepta_terminos=datos['acepta_terminos'],
-            participantes=datos['participantes'],
-        )
+        # El cupo se valida y se ocupa con el horario bloqueado, para que dos
+        # inscripciones simultáneas no tomen el mismo lugar.
+        with self.inscripciones.bloquear_horario(horario.id):
+            self._validar_cupo(horario, datos['participantes'])
+            inscripcion = self.inscripciones.crear(
+                usuario=usuario,
+                horario=horario,
+                acepta_terminos=datos['acepta_terminos'],
+                participantes=datos['participantes'],
+            )
+
         self.notificador.notificar(inscripcion)
         return inscripcion
+
+    def _validar_cupo(self, horario, participantes):
+        ocupados = self.inscripciones.participantes_inscriptos(horario.id)
+        disponibles = horario.actividad.cupo_por_horario - ocupados
+        if len(participantes) > disponibles:
+            raise CupoInsuficienteError()
