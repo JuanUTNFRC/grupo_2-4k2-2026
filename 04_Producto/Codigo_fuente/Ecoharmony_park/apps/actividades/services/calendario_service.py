@@ -19,6 +19,7 @@ class CalendarioParqueService:
         inicio = datetime.combine(fecha, hora_inicio)
         fin = inicio + self.DURACION_ACTIVIDAD
         return (
-            hora_inicio >= self.APERTURA
+            self.esta_abierto(fecha)
+            and hora_inicio >= self.APERTURA
             and fin <= datetime.combine(fecha, self.CIERRE)
         )
