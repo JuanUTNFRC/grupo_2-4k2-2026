@@ -40,3 +40,24 @@ class InscripcionRepositoryTests(TestCase):
             list(inscripcion.participantes.order_by('dni').values('nombre', 'dni', 'edad', 'talle')),
             [participante(nombre='Juan', dni='1234567', talle='M'), participante()],
         )
+
+    def inscribir(self, horario, *dnis):
+        return self.repository.crear(
+            usuario=self.usuario,
+            horario=horario,
+            acepta_terminos=True,
+            participantes=[participante(dni=dni) for dni in dnis],
+        )
+
+    def test_participantes_inscriptos_suma_los_de_todas_las_inscripciones_del_horario(self):
+        otro_horario = Horario.objects.create(
+            actividad=self.safari, fecha=date(2026, 10, 13), hora_inicio=time(11, 0),
+        )
+        self.inscribir(self.horario, '30000001', '30000002')
+        self.inscribir(self.horario, '30000003')
+        self.inscribir(otro_horario, '30000004')
+
+        self.assertEqual(self.repository.participantes_inscriptos(self.horario.id), 3)
+
+    def test_participantes_inscriptos_de_un_horario_sin_inscripciones_es_0(self):
+        self.assertEqual(self.repository.participantes_inscriptos(self.horario.id), 0)
