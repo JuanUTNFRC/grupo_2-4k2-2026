@@ -59,3 +59,9 @@ class DisponibilidadServiceTests(SimpleTestCase):
         self.ahora = datetime(2026, 10, 13, 10, 0, tzinfo=CORDOBA)
 
         self.assertEqual(self.horarios_listados(), [siguiente])
+
+    def test_excluye_los_horarios_con_el_parque_cerrado(self):
+        lunes = date(2026, 10, 19)
+        self.agregar_horario(11, fecha=lunes)
+
+        self.assertEqual(self.horarios_listados(), [self.horario])
