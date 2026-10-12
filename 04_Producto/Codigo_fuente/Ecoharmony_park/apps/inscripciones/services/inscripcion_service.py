@@ -1,5 +1,6 @@
 from apps.inscripciones.exceptions.inscripcion_exceptions import (
     CupoInsuficienteError,
+    ParqueCerradoError,
     TalleRequeridoError,
     TerminosNoAceptadosError,
 )
@@ -11,13 +12,16 @@ class InscripcionService:
     Recibe datos ya validados en formato por InscripcionCreateSerializer.
     """
 
-    def __init__(self, inscripcion_repository, horario_service, notificador):
+    def __init__(self, inscripcion_repository, horario_service, notificador, calendario):
         self.inscripciones = inscripcion_repository
         self.horarios = horario_service
         self.notificador = notificador
+        self.calendario = calendario
 
     def inscribir(self, usuario, datos):
         horario = self.horarios.obtener(datos['horario_id'])
+        if not self.calendario.admite_actividad(horario.fecha, horario.hora_inicio):
+            raise ParqueCerradoError()
         if not datos['acepta_terminos']:
             raise TerminosNoAceptadosError()
         self._validar_talles(horario.actividad, datos['participantes'])

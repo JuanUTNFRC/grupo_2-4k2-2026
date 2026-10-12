@@ -30,3 +30,10 @@ class TerminosNoAceptadosError(InscripcionError):
 
     default_detail = 'Debe aceptar los términos y condiciones de la actividad.'
     default_code = 'terminos_no_aceptados'
+
+
+class ParqueCerradoError(InscripcionError):
+    """RN3: el parque está cerrado en el día u horario de la actividad."""
+
+    default_detail = 'El parque está cerrado en el horario seleccionado.'
+    default_code = 'parque_cerrado'
