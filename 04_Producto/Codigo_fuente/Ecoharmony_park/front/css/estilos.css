@@ -2,33 +2,38 @@
    Concepto: un mapa del parque (curvas de nivel) y un pase de actividad que se
    va completando mientras el visitante reserva. */
 
+/* Tema: cada color tiene su variante clara y oscura con light-dark(). Por
+   defecto sigue al sistema; el botón de tema fuerza uno con data-tema. */
+:root { color-scheme: light dark; }
+:root[data-tema='claro'] { color-scheme: light; }
+:root[data-tema='oscuro'] { color-scheme: dark; }
+
 :root {
   /* Paleta */
   --bosque: #1e3a2b;
   --musgo: #3f6e36;
-  --musgo-oscuro: #325a2b;
   --liquen: #dce6cf;
   --niebla: #f2f5ef;
-  --papel: #ffffff;
   --bromelia: #e8a922;
   --piedra: #56665b;
   --linea: #c9d3c2;
-  --error: #b42318;
-  --error-fondo: #fdecea;
 
-  /* Roles */
-  --fondo: var(--niebla);
-  --superficie: var(--papel);
-  --texto: var(--bosque);
-  --texto-suave: var(--piedra);
-  --borde: var(--linea);
-  --primario: var(--musgo);
-  --primario-hover: var(--musgo-oscuro);
-  --sobre-primario: #ffffff;
+  /* Roles (claro, oscuro) */
+  --fondo: light-dark(var(--niebla), #12201a);
+  --superficie: light-dark(#ffffff, #1a2d23);
+  --texto: light-dark(var(--bosque), #e6eee1);
+  --texto-suave: light-dark(var(--piedra), #a9b8ac);
+  --borde: light-dark(var(--linea), #2f4738);
+  --primario: light-dark(var(--musgo), #8cc47a);
+  --primario-hover: light-dark(#325a2b, #a3d492);
+  --sobre-primario: light-dark(#ffffff, #12201a);
   --acento: var(--bromelia);
   --sobre-acento: var(--bosque);
-  --tinte: var(--liquen);
-  --curvas: rgb(63 110 54 / 0.22);
+  --tinte: light-dark(var(--liquen), #23392c);
+  --curvas: light-dark(rgb(63 110 54 / 0.22), rgb(140 196 122 / 0.16));
+  --error: light-dark(#b42318, #f2877d);
+  --error-fondo: light-dark(#fdecea, #3a1d1a);
+  --sombra-color: light-dark(rgb(30 58 43 / 0.08), rgb(0 0 0 / 0.28));
 
   /* Tipografía */
   --fuente-titulos: 'Bricolage Grotesque', system-ui, sans-serif;
@@ -46,27 +51,9 @@
 
   --radio: 14px;
   --radio-chico: 10px;
-  --sombra: 0 1px 2px rgb(30 58 43 / 0.06), 0 8px 24px rgb(30 58 43 / 0.08);
+  --sombra: 0 1px 2px var(--sombra-color), 0 8px 24px var(--sombra-color);
   --transicion: 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
   --ancho: 72rem;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --fondo: #12201a;
-    --superficie: #1a2d23;
-    --texto: #e6eee1;
-    --texto-suave: #a9b8ac;
-    --borde: #2f4738;
-    --primario: #8cc47a;
-    --primario-hover: #a3d492;
-    --sobre-primario: #12201a;
-    --tinte: #23392c;
-    --curvas: rgb(140 196 122 / 0.16);
-    --error: #f2877d;
-    --error-fondo: #3a1d1a;
-    --sombra: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.25);
-  }
 }
 
 /* Base */
@@ -155,12 +142,41 @@ main:focus { outline: none; }
   stroke-linejoin: round;
 }
 
-.barra__usuario {
+.barra__acciones {
   display: flex;
   align-items: center;
   gap: var(--e-3);
 }
-.barra__usuario form { margin: 0; }
+.barra__acciones form { margin: 0; }
+
+.boton-tema {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--borde);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--texto);
+  cursor: pointer;
+  transition: border-color var(--transicion), background-color var(--transicion);
+}
+.boton-tema:hover { border-color: var(--texto-suave); background: var(--tinte); }
+
+.boton-tema svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Muestra el ícono del tema al que se pasa: luna en claro, sol en oscuro. */
+.boton-tema .icono-sol { display: none; }
+:root[data-tema-activo='oscuro'] .boton-tema .icono-sol { display: block; }
+:root[data-tema-activo='oscuro'] .boton-tema .icono-luna { display: none; }
 
 .barra__email {
   display: none;
