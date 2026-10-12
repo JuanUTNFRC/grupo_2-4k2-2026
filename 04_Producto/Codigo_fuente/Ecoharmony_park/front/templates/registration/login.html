@@ -1,19 +1,36 @@
 {% extends 'base.html' %}
 
 {% block titulo %}Ingresar | EcoHarmony Park{% endblock %}
+{% block clase_body %}pagina-login{% endblock %}
 
 {% block contenido %}
-<article>
-  <h1>Ingresar</h1>
-  {% if form.errors %}
-  <p role="alert">Usuario o contraseña incorrectos.</p>
-  {% endif %}
-  <form method="post">
-    {% csrf_token %}
-    <label>Usuario <input type="text" name="username" autocomplete="username" required></label>
-    <label>Contraseña <input type="password" name="password" autocomplete="current-password" required></label>
-    <input type="hidden" name="next" value="{{ next }}">
-    <button type="submit">Ingresar</button>
-  </form>
-</article>
+<section class="login">
+  <div class="login__portada">
+    {% include 'parciales/curvas_de_nivel.html' %}
+    <p class="login__lema">Tirolesa, safari, palestra y jardinería.<br>Reservá tu lugar antes de llegar.</p>
+  </div>
+
+  <div class="login__panel">
+    <h1>Ingresá a tu cuenta</h1>
+    <p class="texto-suave">Con tu cuenta reservás actividades y recibís el pase por mail.</p>
+
+    {% if form.errors %}
+    <p class="aviso aviso--error" role="alert">El usuario o la contraseña no coinciden. Revisalos e intentá de nuevo.</p>
+    {% endif %}
+
+    <form method="post" class="pila">
+      {% csrf_token %}
+      <div class="campo">
+        <label for="usuario">Usuario</label>
+        <input id="usuario" type="text" name="username" autocomplete="username" required autofocus>
+      </div>
+      <div class="campo">
+        <label for="contrasena">Contraseña</label>
+        <input id="contrasena" type="password" name="password" autocomplete="current-password" required>
+      </div>
+      <input type="hidden" name="next" value="{{ next }}">
+      <button type="submit" class="boton boton--primario boton--ancho">Ingresar</button>
+    </form>
+  </div>
+</section>
 {% endblock %}

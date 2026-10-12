@@ -1,74 +1,127 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block titulo %}Inscribirme a una actividad | EcoHarmony Park{% endblock %}
+{% block titulo %}Reservar una actividad | EcoHarmony Park{% endblock %}
 
 {% block contenido %}
-<h1>Inscribirme a una actividad</h1>
+<section class="encabezado">
+  {% include 'parciales/curvas_de_nivel.html' %}
+  <div class="encabezado__texto">
+    <p class="encabezado__antetitulo">Actividades del parque</p>
+    <h1>Reservá tu lugar</h1>
+    <p>Elegí la actividad, el horario y quiénes van. Te mandamos el pase con el código QR por mail.</p>
+  </div>
+</section>
 
-<form id="form-inscripcion" novalidate>
-  <p id="error-general" role="alert" hidden></p>
+<div class="reserva" id="reserva">
+  <form id="form-reserva" class="reserva__pasos" novalidate>
+    <p id="error-general" class="aviso aviso--error" role="alert" tabindex="-1" hidden></p>
 
-  <label>
-    Actividad
-    <select id="actividad" required>
-      <option value="">Elegí una actividad</option>
-    </select>
-  </label>
+    <fieldset class="paso" id="paso-actividad">
+      <legend><span class="paso__numero" aria-hidden="true">1</span> Elegí la actividad</legend>
+      <div id="actividades" class="actividades" aria-busy="true">
+        <div class="esqueleto esqueleto--tarjeta"></div>
+        <div class="esqueleto esqueleto--tarjeta"></div>
+        <div class="esqueleto esqueleto--tarjeta"></div>
+        <div class="esqueleto esqueleto--tarjeta"></div>
+      </div>
+    </fieldset>
 
-  <label>
-    Horario
-    <select id="horario" required disabled>
-      <option value="">Primero elegí una actividad</option>
-    </select>
-    <small id="sin-horarios" hidden>No hay horarios con cupo disponible para esta actividad.</small>
-  </label>
+    <fieldset class="paso" id="paso-horario" disabled>
+      <legend><span class="paso__numero" aria-hidden="true">2</span> Elegí día y horario</legend>
+      <p class="texto-suave" id="horario-ayuda">Primero elegí una actividad.</p>
+      <div id="dias" class="dias"></div>
+      <div id="turnos" class="turnos"></div>
+    </fieldset>
 
-  <label>
-    Cantidad de personas
-    <input id="cantidad" type="number" min="1" value="1" required disabled>
-    <small id="cupo-ayuda"></small>
-  </label>
+    <fieldset class="paso" id="paso-personas" disabled>
+      <legend><span class="paso__numero" aria-hidden="true">3</span> ¿Quiénes van?</legend>
+      <div class="cantidad">
+        <label for="cantidad">Cantidad de personas</label>
+        <div class="contador">
+          <button type="button" class="contador__boton" id="menos" aria-label="Quitar una persona">−</button>
+          <input id="cantidad" type="number" min="1" value="1" inputmode="numeric" aria-describedby="cupo-ayuda">
+          <button type="button" class="contador__boton" id="mas" aria-label="Sumar una persona">+</button>
+        </div>
+        <small id="cupo-ayuda" class="texto-suave"></small>
+      </div>
+      <div id="participantes" class="participantes"></div>
+    </fieldset>
 
-  <div id="participantes"></div>
+    <fieldset class="paso" id="paso-terminos" disabled>
+      <legend><span class="paso__numero" aria-hidden="true">4</span> Términos y condiciones</legend>
+      <blockquote id="terminos-texto" class="terminos"></blockquote>
+      <label class="casilla">
+        <input id="acepta-terminos" type="checkbox">
+        <span>Leí y acepto los términos y condiciones de la actividad</span>
+      </label>
+    </fieldset>
+  </form>
 
-  <article id="terminos" hidden>
-    <header><strong>Términos y condiciones</strong></header>
-    <p id="terminos-texto"></p>
-    <label>
-      <input id="acepta-terminos" type="checkbox">
-      Acepto los términos y condiciones de la actividad
-    </label>
-  </article>
+  <aside class="pase" aria-labelledby="pase-titulo">
+    <div class="pase__cuerpo">
+      <p class="pase__antetitulo" id="pase-titulo">Tu reserva</p>
+      <dl class="pase__datos">
+        <div><dt>Actividad</dt><dd id="resumen-actividad">—</dd></div>
+        <div><dt>Día</dt><dd id="resumen-dia">—</dd></div>
+        <div><dt>Horario</dt><dd id="resumen-hora">—</dd></div>
+        <div><dt>Personas</dt><dd id="resumen-personas">—</dd></div>
+      </dl>
+    </div>
+    <div class="pase__talon">
+      <button id="confirmar" type="submit" form="form-reserva" class="boton boton--primario boton--ancho" disabled>
+        Confirmar reserva
+      </button>
+      <p class="texto-suave texto-chico" id="confirmar-ayuda">Completá los cuatro pasos para confirmar.</p>
+    </div>
+  </aside>
+</div>
 
-  <button id="confirmar" type="submit" disabled>Confirmar inscripción</button>
-</form>
-
-<article id="confirmacion" hidden>
-  <header><strong>¡Inscripción confirmada!</strong></header>
-  <p>Código de inscripción: <code id="confirmacion-codigo"></code></p>
-  <p id="confirmacion-detalle"></p>
-  <ul id="confirmacion-participantes"></ul>
-  <p>Te enviamos un mail con la información y el código QR para presentar en la actividad.</p>
-  <a href="{% url 'inscripcion' %}" role="button">Nueva inscripción</a>
-</article>
+<section id="confirmacion" class="confirmacion" tabindex="-1" hidden>
+  <div class="pase pase--emitido">
+    <div class="pase__cuerpo">
+      <p class="pase__antetitulo">Reserva confirmada</p>
+      <h2 id="confirmacion-actividad"></h2>
+      <p id="confirmacion-fecha" class="pase__fecha"></p>
+      <ul id="confirmacion-participantes" class="pase__lista"></ul>
+    </div>
+    <div class="pase__talon">
+      <p class="pase__antetitulo">Código</p>
+      <p class="pase__codigo" id="confirmacion-codigo"></p>
+      <p class="texto-chico">Te mandamos este pase con el código QR a <strong>{{ user.email }}</strong>. Mostralo al llegar a la actividad.</p>
+    </div>
+  </div>
+  <a href="{% url 'inscripcion' %}" class="boton boton--secundario">Hacer otra reserva</a>
+</section>
 
 <template id="plantilla-participante">
   <fieldset class="participante">
     <legend></legend>
-    <div class="grid">
-      <label>Nombre <input name="nombre" type="text" maxlength="100" required><small></small></label>
-      <label>DNI <input name="dni" type="text" inputmode="numeric" maxlength="8" required><small></small></label>
-      <label>Edad <input name="edad" type="number" min="1" required><small></small></label>
-      <label class="campo-talle">
-        Talle
+    <div class="participante__campos">
+      <div class="campo campo--ancho">
+        <label>Nombre y apellido</label>
+        <input name="nombre" type="text" maxlength="100" autocomplete="off" required>
+        <small class="campo__error"></small>
+      </div>
+      <div class="campo">
+        <label>DNI</label>
+        <input name="dni" type="text" inputmode="numeric" maxlength="8" placeholder="Sin puntos" required>
+        <small class="campo__error"></small>
+      </div>
+      <div class="campo">
+        <label>Edad</label>
+        <input name="edad" type="number" inputmode="numeric" min="1" required>
+        <small class="campo__error"></small>
+      </div>
+      <div class="campo campo-talle">
+        <label>Talle</label>
         <select name="talle">
-          <option value="">Elegí un talle</option>
+          <option value="">Elegí</option>
           <option>XS</option><option>S</option><option>M</option>
           <option>L</option><option>XL</option><option>XXL</option>
         </select>
-        <small></small>
-      </label>
+        <small class="campo__error"></small>
+      </div>
     </div>
   </fieldset>
 </template>

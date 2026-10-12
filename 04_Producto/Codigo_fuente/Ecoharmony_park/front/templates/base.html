@@ -5,29 +5,37 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block titulo %}EcoHarmony Park{% endblock %}</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.0.6/css/pico.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500&display=swap">
   <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
 </head>
-<body>
-  <header class="container">
-    <nav>
-      <ul><li><strong>EcoHarmony Park</strong></li></ul>
-      {% if user.is_authenticated %}
-      <ul>
-        <li>{{ user.email }}</li>
-        <li>
-          <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit" class="secondary">Salir</button>
-          </form>
-        </li>
-      </ul>
-      {% endif %}
-    </nav>
+<body class="{% block clase_body %}{% endblock %}">
+  <a class="saltar" href="#contenido">Ir al contenido</a>
+
+  <header class="barra">
+    <a class="marca" href="{% url 'inscripcion' %}">
+      <svg class="marca__icono" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M16 3c6 5 9 10 9 15a9 9 0 0 1-18 0c0-5 3-10 9-15Z" />
+        <path d="M16 27V12M16 18l-4-3M16 22l4-3" />
+      </svg>
+      <span>EcoHarmony <strong>Park</strong></span>
+    </a>
+    {% if user.is_authenticated %}
+    <div class="barra__usuario">
+      <span class="barra__email">{{ user.email }}</span>
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="boton boton--fantasma">Salir</button>
+      </form>
+    </div>
+    {% endif %}
   </header>
-  <main class="container">
+
+  <main id="contenido" tabindex="-1">
     {% block contenido %}{% endblock %}
   </main>
+
   {% block scripts %}{% endblock %}
 </body>
 </html>
