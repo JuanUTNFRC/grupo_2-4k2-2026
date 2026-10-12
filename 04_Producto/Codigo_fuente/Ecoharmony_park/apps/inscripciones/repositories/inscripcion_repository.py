@@ -18,6 +18,14 @@ class InscripcionRepository:
             Horario.objects.select_for_update().get(id=horario_id)
             yield
 
+    def obtener(self, inscripcion_id):
+        """Inscripción con su usuario, horario y actividad cargados."""
+        return (
+            Inscripcion.objects
+            .select_related('usuario', 'horario__actividad')
+            .get(id=inscripcion_id)
+        )
+
     def participantes_inscriptos(self, horario_id):
         return self._participantes_del_horario(horario_id).count()
 

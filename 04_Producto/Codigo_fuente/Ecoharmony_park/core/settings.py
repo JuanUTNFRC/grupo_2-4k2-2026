@@ -178,3 +178,11 @@ LOGOUT_REDIRECT_URL = 'login'
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'core.exception_handler.exception_handler',
 }
+
+
+# Celery: el mail de confirmación se envía en segundo plano.
+
+CELERY_BROKER_URL = env('CELERY_BROKER_URL', default='redis://localhost:6379/0')
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TIMEZONE = TIME_ZONE
