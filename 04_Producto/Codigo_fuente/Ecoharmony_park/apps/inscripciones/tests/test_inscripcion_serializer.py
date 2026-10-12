@@ -90,3 +90,18 @@ class ParticipanteSerializerTests(SimpleTestCase):
 
         self.assertTrue(serializer.is_valid(), serializer.errors)
         self.assertEqual(serializer.validated_data['participantes'][0]['talle'], '')
+
+    def test_los_errores_de_cada_campo_explican_como_corregirlo(self):
+        casos = [
+            ('nombre', '', 'Ingresá el nombre y apellido.'),
+            ('dni', '30.123.456', 'El DNI tiene que tener 7 u 8 números, sin puntos.'),
+            ('edad', 0, 'La edad tiene que ser mayor a 0.'),
+            ('edad', 'treinta', 'Ingresá la edad en números.'),
+            ('talle', 'XXXL', 'Elegí un talle de la lista.'),
+        ]
+        for campo, valor, mensaje in casos:
+            with self.subTest(campo=campo, valor=valor):
+                serializer = InscripcionCreateSerializer(data=con_participante(**{campo: valor}))
+
+                self.assertFalse(serializer.is_valid())
+                self.assertEqual(serializer.errors['participantes'][0][campo], [mensaje])
