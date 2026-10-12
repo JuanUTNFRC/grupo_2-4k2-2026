@@ -14,4 +14,4 @@ class InscripcionCreateSerializer(serializers.Serializer):
     actividad_id = serializers.IntegerField()
     horario_id = serializers.IntegerField()
     acepta_terminos = serializers.BooleanField()
-    participantes = ParticipanteSerializer(many=True)
+    participantes = ParticipanteSerializer(many=True, allow_empty=False)
