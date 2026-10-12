@@ -4,14 +4,37 @@ from apps.inscripciones.models import Inscripcion, Participante
 
 
 class ParticipanteSerializer(serializers.Serializer):
-    nombre = serializers.CharField(max_length=100)
-    dni = serializers.RegexField(r'^\d{7,8}$')
-    edad = serializers.IntegerField(min_value=1)
+    # Los mensajes dicen cómo corregir el dato: el front los muestra debajo de cada campo.
+    nombre = serializers.CharField(
+        max_length=100,
+        error_messages={
+            'required': 'Ingresá el nombre y apellido.',
+            'blank': 'Ingresá el nombre y apellido.',
+            'max_length': 'El nombre puede tener hasta 100 caracteres.',
+        },
+    )
+    dni = serializers.RegexField(
+        r'^\d{7,8}$',
+        error_messages={
+            'required': 'Ingresá el DNI.',
+            'blank': 'Ingresá el DNI.',
+            'invalid': 'El DNI tiene que tener 7 u 8 números, sin puntos.',
+        },
+    )
+    edad = serializers.IntegerField(
+        min_value=1,
+        error_messages={
+            'required': 'Ingresá la edad.',
+            'invalid': 'Ingresá la edad en números.',
+            'min_value': 'La edad tiene que ser mayor a 0.',
+        },
+    )
     # Si el talle es obligatorio depende de la actividad: lo valida el service.
     talle = serializers.ChoiceField(
         choices=Participante.Talle.choices,
         allow_blank=True,
         default='',
+        error_messages={'invalid_choice': 'Elegí un talle de la lista.'},
     )
 
 
