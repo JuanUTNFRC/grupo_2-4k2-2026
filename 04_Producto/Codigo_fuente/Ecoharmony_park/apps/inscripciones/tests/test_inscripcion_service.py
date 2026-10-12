@@ -3,6 +3,7 @@ from datetime import date, time
 from django.test import SimpleTestCase
 
 from apps.actividades.models import Actividad, Horario
+from apps.inscripciones.exceptions.inscripcion_exceptions import CupoInsuficienteError
 from apps.inscripciones.services.inscripcion_service import InscripcionService
 from apps.inscripciones.tests.fakes import (
     FakeHorarioService,
@@ -42,6 +43,14 @@ class InscripcionServiceTests(SimpleTestCase):
             **cambios,
         }
 
+    def assertRechazada(self, excepcion, solicitud):
+        """Falla con `excepcion`, sin guardar ni notificar nada (RN7)."""
+        with self.assertRaises(excepcion):
+            self.service.inscribir(self.usuario, solicitud)
+
+        self.assertEqual(self.repository.creadas, [])
+        self.assertEqual(self.notificador.notificadas, [])
+
     def test_una_solicitud_valida_crea_la_inscripcion_con_sus_participantes(self):
         inscripcion = self.service.inscribir(self.usuario, self.solicitud())
 
@@ -57,3 +66,8 @@ class InscripcionServiceTests(SimpleTestCase):
         inscripcion = self.service.inscribir(self.usuario, self.solicitud())
 
         self.assertEqual(self.notificador.notificadas, [inscripcion])
+
+    def test_un_horario_sin_cupo_rechaza_la_inscripcion(self):
+        self.repository.ocupados[self.horario.id] = self.safari.cupo_por_horario
+
+        self.assertRechazada(CupoInsuficienteError, self.solicitud())

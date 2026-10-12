@@ -14,6 +14,10 @@ class FakeHorarioService:
 class FakeInscripcionRepository:
     def __init__(self):
         self.creadas = []
+        self.ocupados = {}  # horario_id -> participantes ya inscriptos
+
+    def participantes_inscriptos(self, horario_id):
+        return self.ocupados.get(horario_id, 0)
 
     def crear(self, usuario, horario, acepta_terminos, participantes):
         inscripcion = Inscripcion(
