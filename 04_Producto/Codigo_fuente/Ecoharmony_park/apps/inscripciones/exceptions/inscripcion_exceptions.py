@@ -16,3 +16,10 @@ class CupoInsuficienteError(InscripcionError):
     status_code = status.HTTP_409_CONFLICT
     default_detail = 'El horario no tiene cupo para todos los participantes.'
     default_code = 'cupo_insuficiente'
+
+
+class TalleRequeridoError(InscripcionError):
+    """RN1 y RN5: la actividad requiere talle y algún participante no lo indicó."""
+
+    default_detail = 'La actividad requiere indicar el talle de cada participante.'
+    default_code = 'talle_requerido'

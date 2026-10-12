@@ -1,4 +1,7 @@
-from apps.inscripciones.exceptions.inscripcion_exceptions import CupoInsuficienteError
+from apps.inscripciones.exceptions.inscripcion_exceptions import (
+    CupoInsuficienteError,
+    TalleRequeridoError,
+)
 
 
 class InscripcionService:
@@ -14,6 +17,7 @@ class InscripcionService:
 
     def inscribir(self, usuario, datos):
         horario = self.horarios.obtener(datos['horario_id'])
+        self._validar_talles(horario.actividad, datos['participantes'])
 
         # El cupo se valida y se ocupa con el horario bloqueado, para que dos
         # inscripciones simultáneas no tomen el mismo lugar.
@@ -28,6 +32,10 @@ class InscripcionService:
 
         self.notificador.notificar(inscripcion)
         return inscripcion
+
+    def _validar_talles(self, actividad, participantes):
+        if actividad.requiere_talle and any(not p['talle'] for p in participantes):
+            raise TalleRequeridoError()
 
     def _validar_cupo(self, horario, participantes):
         ocupados = self.inscripciones.participantes_inscriptos(horario.id)
