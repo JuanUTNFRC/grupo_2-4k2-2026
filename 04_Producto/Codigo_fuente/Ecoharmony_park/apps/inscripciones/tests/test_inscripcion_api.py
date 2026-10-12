@@ -76,3 +76,61 @@ class InscripcionApiTests(APITestCase):
             'codigo': 'cupo_insuficiente',
             'detalle': 'El horario no tiene cupo para todos los participantes.',
         })
+
+    def test_pu3_sin_talle_en_una_actividad_que_no_lo_requiere_responde_201(self):
+        safari = Actividad.objects.create(
+            nombre='Safari', cupo_por_horario=20, terminos_condiciones='T&C',
+        )
+        horario = Horario.objects.create(
+            actividad=safari, fecha=proximo_martes(), hora_inicio=time(10, 0),
+        )
+
+        respuesta = self.client.post(
+            URL, self.solicitud(safari, horario, participantes=[participante()]), format='json',
+        )
+
+        self.assertEqual(respuesta.status_code, status.HTTP_201_CREATED)
+
+    def test_pu4_horario_con_el_parque_cerrado_responde_400(self):
+        lunes = proximo_martes() + timedelta(days=6)
+        horario_lunes = Horario.objects.create(
+            actividad=self.tirolesa, fecha=lunes, hora_inicio=time(10, 0),
+        )
+
+        respuesta = self.client.post(
+            URL, self.solicitud(self.tirolesa, horario_lunes), format='json',
+        )
+
+        self.assertEqual(respuesta.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(respuesta.data['codigo'], 'parque_cerrado')
+
+    def test_pu5_sin_aceptar_los_terminos_responde_400(self):
+        respuesta = self.client.post(
+            URL,
+            self.solicitud(self.tirolesa, self.horario_tirolesa, acepta_terminos=False),
+            format='json',
+        )
+
+        self.assertEqual(respuesta.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(respuesta.data['codigo'], 'terminos_no_aceptados')
+
+    def test_pu6_sin_talle_en_una_actividad_que_lo_requiere_responde_400(self):
+        respuesta = self.client.post(
+            URL,
+            self.solicitud(self.tirolesa, self.horario_tirolesa, participantes=[participante()]),
+            format='json',
+        )
+
+        self.assertEqual(respuesta.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(respuesta.data['codigo'], 'talle_requerido')
+
+    def test_sin_autenticar_responde_403(self):
+        self.client.force_authenticate(None)
+
+        respuesta = self.client.post(
+            URL, self.solicitud(self.tirolesa, self.horario_tirolesa), format='json',
+        )
+
+        self.assertEqual(respuesta.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(respuesta.data['codigo'], 'not_authenticated')
+        self.assertEqual(len(mail.outbox), 0)
