@@ -43,6 +43,7 @@ class Participante(models.Model):
         M = 'M', 'M'
         L = 'L', 'L'
         XL = 'XL', 'XL'
+        XXL = 'XXL', 'XXL'
 
     inscripcion = models.ForeignKey(
         Inscripcion,
@@ -58,7 +59,7 @@ class Participante(models.Model):
     )
     edad = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
     # Vacío cuando la actividad no requiere talle.
-    talle = models.CharField(max_length=2, choices=Talle.choices, blank=True)
+    talle = models.CharField(max_length=3, choices=Talle.choices, blank=True)
 
     class Meta:
         verbose_name = 'participante'
