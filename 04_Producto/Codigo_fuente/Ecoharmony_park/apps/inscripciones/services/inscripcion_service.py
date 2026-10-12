@@ -1,3 +1,6 @@
+from apps.inscripciones.exceptions.inscripcion_exceptions import CupoInsuficienteError
+
+
 class InscripcionService:
     """Reglas de negocio de la inscripción a una actividad.
 
@@ -11,6 +14,10 @@ class InscripcionService:
 
     def inscribir(self, usuario, datos):
         horario = self.horarios.obtener(datos['horario_id'])
+        ocupados = self.inscripciones.participantes_inscriptos(horario.id)
+        if ocupados >= horario.actividad.cupo_por_horario:
+            raise CupoInsuficienteError('El horario no tiene cupo disponible.')
+
         inscripcion = self.inscripciones.crear(
             usuario=usuario,
             horario=horario,
