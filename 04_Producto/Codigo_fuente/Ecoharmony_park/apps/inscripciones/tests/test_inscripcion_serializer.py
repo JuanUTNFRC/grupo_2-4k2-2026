@@ -29,3 +29,32 @@ class InscripcionCreateSerializerTests(SimpleTestCase):
 
         self.assertFalse(serializer.is_valid())
         self.assertIn('participantes', serializer.errors)
+
+
+def con_participante(**cambios):
+    """Datos válidos con el único participante modificado. `None` quita el campo."""
+    datos = datos_validos()
+    participante = datos['participantes'][0]
+    for campo, valor in cambios.items():
+        if valor is None:
+            del participante[campo]
+        else:
+            participante[campo] = valor
+    return datos
+
+
+class ParticipanteSerializerTests(SimpleTestCase):
+    def assertParticipanteInvalido(self, datos, campo):
+        serializer = InscripcionCreateSerializer(data=datos)
+
+        self.assertFalse(serializer.is_valid())
+        self.assertIn(campo, serializer.errors['participantes'][0])
+
+    def test_sin_nombre_es_invalido(self):
+        self.assertParticipanteInvalido(con_participante(nombre=None), 'nombre')
+
+    def test_nombre_en_blanco_es_invalido(self):
+        self.assertParticipanteInvalido(con_participante(nombre='   '), 'nombre')
+
+    def test_nombre_de_mas_de_100_caracteres_es_invalido(self):
+        self.assertParticipanteInvalido(con_participante(nombre='a' * 101), 'nombre')
