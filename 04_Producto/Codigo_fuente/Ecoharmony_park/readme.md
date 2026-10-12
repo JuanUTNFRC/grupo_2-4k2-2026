@@ -96,6 +96,15 @@ uv run python manage.py test
 
 Los tests no necesitan Redis: el test runner (`core/test_runner.py`) ejecuta las tareas de Celery en el momento.
 
+Cobertura (configurada en `pyproject.toml`; excluye migraciones y los propios tests):
+
+```bash
+docker compose exec api sh -c "coverage run manage.py test && coverage report"
+# o fuera de Docker:
+uv run coverage run manage.py test && uv run coverage report
+uv run coverage html                # reporte navegable en htmlcov/index.html
+```
+
 | Nivel | Tipo de test | Qué prueba |
 |-------|--------------|------------|
 | Reglas de negocio | `SimpleTestCase` con dobles en memoria | `InscripcionService`, `DisponibilidadService`, calendario del parque, serializer |
