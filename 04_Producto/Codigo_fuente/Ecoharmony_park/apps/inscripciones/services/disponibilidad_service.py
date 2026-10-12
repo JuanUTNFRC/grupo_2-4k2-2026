@@ -21,18 +21,23 @@ class DisponibilidadService:
         self.reloj = reloj
 
     def horarios_disponibles(self, actividad_id):
-        hoy = timezone.localdate(self.reloj())
-        horarios = self.horarios.listar(actividad_id, desde=hoy)
+        ahora = self.reloj()
+        horarios = [
+            horario
+            for horario in self.horarios.listar(actividad_id, desde=timezone.localdate(ahora))
+            if self._admite_inscripciones(horario, ahora)
+        ]
         ocupados = self.inscripciones.participantes_por_horario([h.id for h in horarios])
         disponibles = [
             HorarioDisponible(horario, horario.actividad.cupo_por_horario - ocupados[horario.id])
             for horario in horarios
         ]
-        ahora = self.reloj()
-        return [
-            d for d in disponibles
-            if d.horario.actividad.activa
-            and d.cupo_disponible > 0
-            and d.horario.inicio > ahora
-            and self.calendario.admite_actividad(d.horario.fecha, d.horario.hora_inicio)
-        ]
+        return [d for d in disponibles if d.cupo_disponible > 0]
+
+    def _admite_inscripciones(self, horario, ahora):
+        """Actividad activa, horario sin comenzar y con el parque abierto."""
+        return (
+            horario.actividad.activa
+            and horario.inicio > ahora
+            and self.calendario.admite_actividad(horario.fecha, horario.hora_inicio)
+        )
