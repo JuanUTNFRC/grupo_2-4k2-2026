@@ -24,7 +24,8 @@ class DisponibilidadService:
         hoy = timezone.localdate(self.reloj())
         horarios = self.horarios.listar(actividad_id, desde=hoy)
         ocupados = self.inscripciones.participantes_por_horario([h.id for h in horarios])
-        return [
+        disponibles = [
             HorarioDisponible(horario, horario.actividad.cupo_por_horario - ocupados[horario.id])
             for horario in horarios
         ]
+        return [d for d in disponibles if d.cupo_disponible > 0]
