@@ -3,7 +3,10 @@ from datetime import date, time
 from django.test import SimpleTestCase
 
 from apps.actividades.models import Actividad, Horario
-from apps.inscripciones.exceptions.inscripcion_exceptions import CupoInsuficienteError
+from apps.inscripciones.exceptions.inscripcion_exceptions import (
+    CupoInsuficienteError,
+    TalleRequeridoError,
+)
 from apps.inscripciones.services.inscripcion_service import InscripcionService
 from apps.inscripciones.tests.fakes import (
     FakeHorarioService,
@@ -26,11 +29,17 @@ class InscripcionServiceTests(SimpleTestCase):
         self.horario = Horario(
             id=10, actividad=self.safari, fecha=date(2026, 10, 13), hora_inicio=time(10, 0),
         )
+        self.tirolesa = Actividad(
+            id=2, nombre='Tirolesa', cupo_por_horario=10, requiere_talle=True, activa=True,
+        )
+        self.horario_tirolesa = Horario(
+            id=20, actividad=self.tirolesa, fecha=date(2026, 10, 13), hora_inicio=time(10, 0),
+        )
         self.repository = FakeInscripcionRepository()
         self.notificador = NotificadorEspia()
         self.service = InscripcionService(
             inscripcion_repository=self.repository,
-            horario_service=FakeHorarioService([self.horario]),
+            horario_service=FakeHorarioService([self.horario, self.horario_tirolesa]),
             notificador=self.notificador,
         )
 
@@ -85,3 +94,17 @@ class InscripcionServiceTests(SimpleTestCase):
         self.service.inscribir(self.usuario, self.solicitud(participantes=grupo))
 
         self.assertEqual(len(self.repository.creadas), 1)
+
+    def test_sin_talle_en_una_actividad_que_no_lo_requiere_es_valido(self):
+        self.service.inscribir(self.usuario, self.solicitud(participantes=[participante(talle='')]))
+
+        self.assertEqual(len(self.repository.creadas), 1)
+
+    def test_sin_talle_en_una_actividad_que_lo_requiere_rechaza_la_inscripcion(self):
+        solicitud = self.solicitud(
+            actividad_id=self.tirolesa.id,
+            horario_id=self.horario_tirolesa.id,
+            participantes=[participante(talle='M'), participante(dni='30000002', talle='')],
+        )
+
+        self.assertRechazada(TalleRequeridoError, solicitud)
