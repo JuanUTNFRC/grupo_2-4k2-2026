@@ -6,6 +6,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.actividades.models import Actividad, Horario
+from apps.inscripciones.repositories.inscripcion_repository import InscripcionRepository
 from apps.usuarios.models import Usuario
 
 URL = '/api/inscripciones/'
@@ -54,3 +55,24 @@ class InscripcionApiTests(APITestCase):
         self.assertEqual(respuesta.data['actividad'], 'Tirolesa')
         self.assertEqual(respuesta.data['participantes'], [participante(talle='M')])
         self.assertEqual(len(mail.outbox), 1)
+
+    def test_pu2_horario_sin_cupo_responde_409(self):
+        InscripcionRepository().crear(
+            usuario=self.usuario,
+            horario=self.horario_tirolesa,
+            acepta_terminos=True,
+            participantes=[
+                participante(dni=f'3000000{n}', talle='M')
+                for n in range(self.tirolesa.cupo_por_horario)
+            ],
+        )
+
+        respuesta = self.client.post(
+            URL, self.solicitud(self.tirolesa, self.horario_tirolesa), format='json',
+        )
+
+        self.assertEqual(respuesta.status_code, status.HTTP_409_CONFLICT)
+        self.assertEqual(respuesta.data, {
+            'codigo': 'cupo_insuficiente',
+            'detalle': 'El horario no tiene cupo para todos los participantes.',
+        })
