@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from django.utils import timezone
 
 from apps.actividades.services.calendario_service import CalendarioParqueService
@@ -73,9 +71,7 @@ class InscripcionService:
         return horario
 
     def _ya_comenzo(self, horario):
-        # Fecha y hora del horario son hora local del parque (TIME_ZONE).
-        inicio = timezone.make_aware(datetime.combine(horario.fecha, horario.hora_inicio))
-        return inicio <= self.reloj()
+        return horario.inicio <= self.reloj()
 
     def _validar_talles(self, actividad, participantes):
         if actividad.requiere_talle and any(not p['talle'] for p in participantes):

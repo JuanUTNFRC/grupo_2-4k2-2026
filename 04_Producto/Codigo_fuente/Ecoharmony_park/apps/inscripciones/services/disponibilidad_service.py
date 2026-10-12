@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from datetime import datetime
 
 from django.utils import timezone
 
@@ -33,5 +32,5 @@ class DisponibilidadService:
         return [
             d for d in disponibles
             if d.cupo_disponible > 0
-            and timezone.make_aware(datetime.combine(d.horario.fecha, d.horario.hora_inicio)) > ahora
+            and d.horario.inicio > ahora
         ]

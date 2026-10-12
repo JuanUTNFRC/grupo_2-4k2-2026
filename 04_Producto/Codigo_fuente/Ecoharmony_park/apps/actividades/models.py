@@ -1,5 +1,8 @@
+from datetime import datetime
+
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.utils import timezone
 
 
 class Actividad(models.Model):
@@ -46,3 +49,8 @@ class Horario(models.Model):
 
     def __str__(self):
         return f'{self.actividad} - {self.fecha} {self.hora_inicio:%H:%M}'
+
+    @property
+    def inicio(self):
+        """Fecha y hora de inicio en la zona horaria del parque (TIME_ZONE)."""
+        return timezone.make_aware(datetime.combine(self.fecha, self.hora_inicio))
