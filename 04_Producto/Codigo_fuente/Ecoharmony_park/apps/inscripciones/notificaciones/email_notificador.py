@@ -1,3 +1,6 @@
+from io import BytesIO
+
+import segno
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 
@@ -24,4 +27,12 @@ class EmailNotificador:
         mensaje.attach_alternative(
             render_to_string('inscripciones/emails/confirmacion.html', contexto), 'text/html',
         )
+        mensaje.attach(
+            f'inscripcion_{inscripcion.codigo}.png', self._qr_png(inscripcion.codigo), 'image/png',
+        )
         mensaje.send()
+
+    def _qr_png(self, codigo):
+        buffer = BytesIO()
+        segno.make(str(codigo), error='m').save(buffer, kind='png', scale=8)
+        return buffer.getvalue()

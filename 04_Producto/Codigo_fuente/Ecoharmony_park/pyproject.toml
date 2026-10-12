@@ -8,4 +8,5 @@ dependencies = [
     "django-environ>=0.14.0",
     "djangorestframework>=3.18.3",
     "psycopg[binary]>=3.3.6",
+    "segno>=1.6.6",
 ]
