@@ -6,6 +6,7 @@ from apps.actividades.models import Actividad, Horario
 from apps.inscripciones.exceptions.inscripcion_exceptions import (
     CupoInsuficienteError,
     TalleRequeridoError,
+    TerminosNoAceptadosError,
 )
 from apps.inscripciones.services.inscripcion_service import InscripcionService
 from apps.inscripciones.tests.fakes import (
@@ -108,3 +109,6 @@ class InscripcionServiceTests(SimpleTestCase):
         )
 
         self.assertRechazada(TalleRequeridoError, solicitud)
+
+    def test_sin_aceptar_los_terminos_y_condiciones_rechaza_la_inscripcion(self):
+        self.assertRechazada(TerminosNoAceptadosError, self.solicitud(acepta_terminos=False))
