@@ -1,7 +1,22 @@
+from contextlib import contextmanager
+
+from django.db import transaction
+
+from apps.actividades.models import Horario
 from apps.inscripciones.models import Inscripcion, Participante
 
 
 class InscripcionRepository:
+    @contextmanager
+    def bloquear_horario(self, horario_id):
+        """Transacción con la fila del horario bloqueada hasta el commit o rollback.
+
+        En motores sin select_for_update (SQLite) Django omite el bloqueo.
+        """
+        with transaction.atomic():
+            Horario.objects.select_for_update().get(id=horario_id)
+            yield
+
     def participantes_inscriptos(self, horario_id):
         return self._participantes_del_horario(horario_id).count()
 
