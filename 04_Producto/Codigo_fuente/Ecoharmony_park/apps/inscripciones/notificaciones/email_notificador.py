@@ -9,7 +9,14 @@ logger = logging.getLogger(__name__)
 
 
 class EmailNotificador:
-    """Envía el mail de confirmación de la inscripción (RN7)."""
+    """Envía el mail de confirmación de la inscripción (RN7).
+
+    Con silenciar_errores=False deja pasar los errores de envío, para que el
+    worker de Celery los vea y reintente.
+    """
+
+    def __init__(self, silenciar_errores=True):
+        self.silenciar_errores = silenciar_errores
 
     def notificar(self, inscripcion):
         horario = inscripcion.horario
@@ -36,6 +43,8 @@ class EmailNotificador:
         try:
             mensaje.send()
         except Exception:
+            if not self.silenciar_errores:
+                raise
             # La inscripción ya está confirmada: un mail caído no la invalida.
             # Queda registrado para reenviarlo.
             logger.exception('No se pudo enviar el mail de la inscripción %s', inscripcion.codigo)
