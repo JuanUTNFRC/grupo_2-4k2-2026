@@ -134,3 +134,14 @@ class InscripcionApiTests(APITestCase):
         self.assertEqual(respuesta.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(respuesta.data['codigo'], 'not_authenticated')
         self.assertEqual(len(mail.outbox), 0)
+
+    def test_datos_con_formato_invalido_responden_400_con_los_errores_por_campo(self):
+        respuesta = self.client.post(
+            URL,
+            self.solicitud(self.tirolesa, self.horario_tirolesa, participantes=[participante(dni='abc')]),
+            format='json',
+        )
+
+        self.assertEqual(respuesta.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(respuesta.data['codigo'], 'datos_invalidos')
+        self.assertIn('dni', respuesta.data['errores']['participantes'][0])
