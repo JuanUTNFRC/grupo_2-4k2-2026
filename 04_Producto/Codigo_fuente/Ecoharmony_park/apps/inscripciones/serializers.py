@@ -4,7 +4,7 @@ from rest_framework import serializers
 class ParticipanteSerializer(serializers.Serializer):
     nombre = serializers.CharField(max_length=100)
     dni = serializers.RegexField(r'^\d{7,8}$')
-    edad = serializers.IntegerField()
+    edad = serializers.IntegerField(min_value=1)
     talle = serializers.CharField()
 
 
