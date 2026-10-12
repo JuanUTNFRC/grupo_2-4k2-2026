@@ -18,4 +18,9 @@ RUN uv sync --frozen --no-install-project
 
 COPY . .
 
+# Sin privilegios de root: la app y el worker no los necesitan. El uid 1000
+# coincide con el usuario habitual del host, dueño del código montado.
+RUN useradd --uid 1000 --create-home app
+USER app
+
 EXPOSE 8000

@@ -1,3 +1,22 @@
+# Configuración común de la API y el worker: misma imagen, mismo código y
+# mismas variables de entorno.
+x-app: &app
+  build: .
+  env_file: .env
+  environment:
+    # Dentro de la red de Docker cada servicio se encuentra por su nombre,
+    # sin importar a qué puerto del host esté publicado.
+    POSTGRES_HOST: db
+    POSTGRES_PORT: 5432
+    CELERY_BROKER_URL: redis://redis:6379/0
+  volumes:
+    - .:/app
+  depends_on:
+    db:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
 services:
   db:
     image: postgres:17-alpine
@@ -15,23 +34,27 @@ services:
       timeout: 5s
       retries: 5
 
+  # Cola de mensajes: la API encola el mail y el worker lo envía. Solo se usa
+  # dentro de la red de Docker, así que no se publica en el host.
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   api:
-    build: .
-    env_file: .env
-    environment:
-      # Dentro de la red de Docker la base se llama "db" y escucha en 5432,
-      # sin importar a qué puerto del host esté publicada.
-      POSTGRES_HOST: db
-      POSTGRES_PORT: 5432
+    <<: *app
     # Servidor de desarrollo: autoreload y estáticos con DJANGO_DEBUG=True.
     command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     ports:
       - "${API_PORT:-8000}:8000"
-    volumes:
-      - .:/app
-    depends_on:
-      db:
-        condition: service_healthy
+
+  # Worker de Celery: envía los mails de confirmación en segundo plano.
+  worker:
+    <<: *app
+    command: celery -A core worker --loglevel=info
 
 volumes:
   postgres_data:
