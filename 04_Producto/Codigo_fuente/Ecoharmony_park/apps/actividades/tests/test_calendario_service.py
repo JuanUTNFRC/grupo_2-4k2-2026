@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, time
 
 from django.test import SimpleTestCase
 
@@ -28,3 +28,12 @@ class EstaAbiertoTests(SimpleTestCase):
         navidad_viernes = date(2026, 12, 25)
 
         self.assertFalse(self.calendario.esta_abierto(navidad_viernes))
+
+
+class AdmiteActividadTests(SimpleTestCase):
+    def setUp(self):
+        self.calendario = CalendarioParqueService()
+        self.martes = date(2026, 10, 13)
+
+    def test_admite_una_actividad_a_las_9_un_dia_abierto(self):
+        self.assertTrue(self.calendario.admite_actividad(self.martes, time(9, 0)))
