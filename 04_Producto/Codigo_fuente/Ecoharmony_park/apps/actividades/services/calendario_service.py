@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, time
 
 
 class CalendarioParqueService:
@@ -11,3 +11,6 @@ class CalendarioParqueService:
         if (fecha.month, fecha.day) in self.FERIADOS_CERRADO:
             return False
         return fecha.weekday() != self.LUNES
+
+    def admite_actividad(self, fecha: date, hora_inicio: time) -> bool:
+        return True
