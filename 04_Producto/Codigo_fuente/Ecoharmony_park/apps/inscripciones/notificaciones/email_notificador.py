@@ -1,8 +1,11 @@
+import logging
 from io import BytesIO
 
 import segno
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+
+logger = logging.getLogger(__name__)
 
 
 class EmailNotificador:
@@ -30,7 +33,12 @@ class EmailNotificador:
         mensaje.attach(
             f'inscripcion_{inscripcion.codigo}.png', self._qr_png(inscripcion.codigo), 'image/png',
         )
-        mensaje.send()
+        try:
+            mensaje.send()
+        except Exception:
+            # La inscripción ya está confirmada: un mail caído no la invalida.
+            # Queda registrado para reenviarlo.
+            logger.exception('No se pudo enviar el mail de la inscripción %s', inscripcion.codigo)
 
     def _qr_png(self, codigo):
         buffer = BytesIO()
