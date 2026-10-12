@@ -1,5 +1,6 @@
 from apps.inscripciones.exceptions.inscripcion_exceptions import (
     CupoInsuficienteError,
+    HorarioNoDisponibleError,
     ParqueCerradoError,
     TalleRequeridoError,
     TerminosNoAceptadosError,
@@ -19,7 +20,7 @@ class InscripcionService:
         self.calendario = calendario
 
     def inscribir(self, usuario, datos):
-        horario = self.horarios.obtener(datos['horario_id'])
+        horario = self._obtener_horario_disponible(datos['actividad_id'], datos['horario_id'])
         if not self.calendario.admite_actividad(horario.fecha, horario.hora_inicio):
             raise ParqueCerradoError()
         if not datos['acepta_terminos']:
@@ -39,6 +40,16 @@ class InscripcionService:
 
         self.notificador.notificar(inscripcion)
         return inscripcion
+
+    def _obtener_horario_disponible(self, actividad_id, horario_id):
+        horario = self.horarios.obtener(horario_id)
+        if (
+            horario is None
+            or horario.actividad_id != actividad_id
+            or not horario.actividad.activa
+        ):
+            raise HorarioNoDisponibleError()
+        return horario
 
     def _validar_talles(self, actividad, participantes):
         if actividad.requiere_talle and any(not p['talle'] for p in participantes):

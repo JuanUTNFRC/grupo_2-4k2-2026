@@ -37,3 +37,10 @@ class ParqueCerradoError(InscripcionError):
 
     default_detail = 'El parque está cerrado en el horario seleccionado.'
     default_code = 'parque_cerrado'
+
+
+class HorarioNoDisponibleError(InscripcionError):
+    """RN1 y RN2: el horario no existe, es de otra actividad o la actividad está inactiva."""
+
+    default_detail = 'El horario seleccionado no está disponible.'
+    default_code = 'horario_no_disponible'
