@@ -58,3 +58,13 @@ class ParticipanteSerializerTests(SimpleTestCase):
 
     def test_nombre_de_mas_de_100_caracteres_es_invalido(self):
         self.assertParticipanteInvalido(con_participante(nombre='a' * 101), 'nombre')
+
+    def test_dni_que_no_tiene_7_u_8_digitos_es_invalido(self):
+        for dni in ['123456', '123456789', '3012345a', '30.123.456']:
+            with self.subTest(dni=dni):
+                self.assertParticipanteInvalido(con_participante(dni=dni), 'dni')
+
+    def test_dni_de_7_digitos_es_valido(self):
+        serializer = InscripcionCreateSerializer(data=con_participante(dni='1234567'))
+
+        self.assertTrue(serializer.is_valid(), serializer.errors)
