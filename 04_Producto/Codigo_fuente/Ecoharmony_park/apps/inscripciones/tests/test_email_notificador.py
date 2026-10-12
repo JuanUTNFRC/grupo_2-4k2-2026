@@ -1,4 +1,6 @@
 from datetime import date, time
+from smtplib import SMTPException
+from unittest.mock import patch
 
 from django.core import mail
 from django.test import TestCase
@@ -64,3 +66,12 @@ class EmailNotificadorTests(TestCase):
         self.assertEqual(nombre, f'inscripcion_{self.inscripcion.codigo}.png')
         self.assertEqual(tipo, 'image/png')
         self.assertTrue(contenido.startswith(b'\x89PNG\r\n\x1a\n'))
+
+    def test_si_falla_el_envio_registra_el_error_sin_propagarlo(self):
+        with (
+            patch('django.core.mail.EmailMultiAlternatives.send', side_effect=SMTPException('caído')),
+            self.assertLogs('apps.inscripciones.notificaciones', level='ERROR') as logs,
+        ):
+            EmailNotificador().notificar(self.inscripcion)
+
+        self.assertIn(str(self.inscripcion.codigo), logs.output[0])
