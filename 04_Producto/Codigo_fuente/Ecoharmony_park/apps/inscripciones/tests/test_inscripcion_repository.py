@@ -61,3 +61,16 @@ class InscripcionRepositoryTests(TestCase):
 
     def test_participantes_inscriptos_de_un_horario_sin_inscripciones_es_0(self):
         self.assertEqual(self.repository.participantes_inscriptos(self.horario.id), 0)
+
+    def test_dnis_inscriptos_devuelve_los_dnis_del_horario(self):
+        otro_horario = Horario.objects.create(
+            actividad=self.safari, fecha=date(2026, 10, 13), hora_inicio=time(11, 0),
+        )
+        self.inscribir(self.horario, '30000001', '30000002')
+        self.inscribir(self.horario, '30000003')
+        self.inscribir(otro_horario, '30000004')
+
+        self.assertEqual(
+            self.repository.dnis_inscriptos(self.horario.id),
+            {'30000001', '30000002', '30000003'},
+        )
