@@ -4,6 +4,7 @@ from django.utils import timezone
 
 from apps.inscripciones.exceptions.inscripcion_exceptions import (
     CupoInsuficienteError,
+    DniDuplicadoError,
     HorarioNoDisponibleError,
     ParqueCerradoError,
     TalleRequeridoError,
@@ -37,6 +38,7 @@ class InscripcionService:
         # El cupo se valida y se ocupa con el horario bloqueado, para que dos
         # inscripciones simultáneas no tomen el mismo lugar.
         with self.inscripciones.bloquear_horario(horario.id):
+            self._validar_dnis(horario, datos['participantes'])
             self._validar_cupo(horario, datos['participantes'])
             inscripcion = self.inscripciones.crear(
                 usuario=usuario,
@@ -67,6 +69,13 @@ class InscripcionService:
     def _validar_talles(self, actividad, participantes):
         if actividad.requiere_talle and any(not p['talle'] for p in participantes):
             raise TalleRequeridoError()
+
+    def _validar_dnis(self, horario, participantes):
+        dnis = [p['dni'] for p in participantes]
+        repetidos_en_solicitud = len(dnis) != len(set(dnis))
+        ya_inscriptos = self.inscripciones.dnis_inscriptos(horario.id) & set(dnis)
+        if repetidos_en_solicitud or ya_inscriptos:
+            raise DniDuplicadoError()
 
     def _validar_cupo(self, horario, participantes):
         ocupados = self.inscripciones.participantes_inscriptos(horario.id)

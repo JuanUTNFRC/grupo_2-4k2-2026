@@ -44,3 +44,11 @@ class HorarioNoDisponibleError(InscripcionError):
 
     default_detail = 'El horario seleccionado no está disponible.'
     default_code = 'horario_no_disponible'
+
+
+class DniDuplicadoError(InscripcionError):
+    """RN5: un mismo DNI no puede inscribirse dos veces en el mismo horario."""
+
+    status_code = status.HTTP_409_CONFLICT
+    default_detail = 'Un mismo DNI no puede inscribirse dos veces en el mismo horario.'
+    default_code = 'dni_duplicado'
