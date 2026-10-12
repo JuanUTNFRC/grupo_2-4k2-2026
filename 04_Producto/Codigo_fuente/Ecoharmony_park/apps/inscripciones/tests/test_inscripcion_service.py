@@ -7,6 +7,7 @@ from apps.actividades.models import Actividad, Horario
 from apps.actividades.services.calendario_service import CalendarioParqueService
 from apps.inscripciones.exceptions.inscripcion_exceptions import (
     CupoInsuficienteError,
+    DniDuplicadoError,
     HorarioNoDisponibleError,
     ParqueCerradoError,
     TalleRequeridoError,
@@ -149,3 +150,22 @@ class InscripcionServiceTests(SimpleTestCase):
         self.ahora = datetime(2026, 10, 13, 10, 0, tzinfo=CORDOBA)
 
         self.assertRechazada(HorarioNoDisponibleError, self.solicitud())
+
+    def test_un_dni_repetido_en_la_solicitud_rechaza_la_inscripcion(self):
+        grupo = [participante(dni='30123456'), participante(nombre='Otra', dni='30123456')]
+
+        self.assertRechazada(DniDuplicadoError, self.solicitud(participantes=grupo))
+
+    def test_un_dni_ya_inscripto_en_el_horario_rechaza_la_inscripcion(self):
+        self.repository.dnis[self.horario.id] = {'30123456'}
+
+        self.assertRechazada(
+            DniDuplicadoError, self.solicitud(participantes=[participante(dni='30123456')]),
+        )
+
+    def test_un_dni_inscripto_en_otro_horario_es_valido(self):
+        self.repository.dnis[self.horario_tirolesa.id] = {'30123456'}
+
+        self.service.inscribir(self.usuario, self.solicitud(participantes=[participante(dni='30123456')]))
+
+        self.assertEqual(len(self.repository.creadas), 1)

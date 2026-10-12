@@ -17,6 +17,7 @@ class FakeInscripcionRepository:
     def __init__(self):
         self.creadas = []
         self.ocupados = {}  # horario_id -> participantes ya inscriptos
+        self.dnis = {}  # horario_id -> DNIs ya inscriptos
 
     def bloquear_horario(self, horario_id):
         # En memoria no hay concurrencia: el bloqueo real se prueba en el repository.
@@ -24,6 +25,9 @@ class FakeInscripcionRepository:
 
     def participantes_inscriptos(self, horario_id):
         return self.ocupados.get(horario_id, 0)
+
+    def dnis_inscriptos(self, horario_id):
+        return self.dnis.get(horario_id, set())
 
     def crear(self, usuario, horario, acepta_terminos, participantes):
         inscripcion = Inscripcion(
