@@ -1,4 +1,5 @@
 import logging
+from email.message import MIMEPart
 from io import BytesIO
 
 import segno
@@ -37,9 +38,7 @@ class EmailNotificador:
         mensaje.attach_alternative(
             render_to_string('inscripciones/emails/confirmacion.html', contexto), 'text/html',
         )
-        mensaje.attach(
-            f'inscripcion_{inscripcion.codigo}.png', self._qr_png(inscripcion.codigo), 'image/png',
-        )
+        mensaje.attach(self._qr_embebido(inscripcion.codigo))
         try:
             mensaje.send()
         except Exception:
@@ -48,6 +47,19 @@ class EmailNotificador:
             # La inscripción ya está confirmada: un mail caído no la invalida.
             # Queda registrado para reenviarlo.
             logger.exception('No se pudo enviar el mail de la inscripción %s', inscripcion.codigo)
+
+    def _qr_embebido(self, codigo):
+        """QR como imagen inline: el HTML lo muestra con <img src="cid:qr-inscripcion">."""
+        qr = MIMEPart()
+        qr.set_content(
+            self._qr_png(codigo),
+            maintype='image',
+            subtype='png',
+            disposition='inline',
+            filename=f'inscripcion_{codigo}.png',
+            cid='<qr-inscripcion>',
+        )
+        return qr
 
     def _qr_png(self, codigo):
         buffer = BytesIO()
