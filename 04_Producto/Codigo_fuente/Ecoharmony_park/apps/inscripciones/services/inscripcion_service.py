@@ -15,8 +15,9 @@ class InscripcionService:
     def inscribir(self, usuario, datos):
         horario = self.horarios.obtener(datos['horario_id'])
         ocupados = self.inscripciones.participantes_inscriptos(horario.id)
-        if ocupados >= horario.actividad.cupo_por_horario:
-            raise CupoInsuficienteError('El horario no tiene cupo disponible.')
+        disponibles = horario.actividad.cupo_por_horario - ocupados
+        if len(datos['participantes']) > disponibles:
+            raise CupoInsuficienteError('El horario no tiene cupo para todos los participantes.')
 
         inscripcion = self.inscripciones.crear(
             usuario=usuario,
