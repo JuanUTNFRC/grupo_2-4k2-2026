@@ -12,6 +12,12 @@ class FakeHorarioService:
     def obtener(self, horario_id):
         return self.horarios.get(horario_id)
 
+    def listar(self, actividad_id, desde):
+        return [
+            horario for horario in self.horarios.values()
+            if horario.actividad_id == actividad_id and horario.fecha >= desde
+        ]
+
 
 class FakeInscripcionRepository:
     def __init__(self):
@@ -25,6 +31,9 @@ class FakeInscripcionRepository:
 
     def participantes_inscriptos(self, horario_id):
         return self.ocupados.get(horario_id, 0)
+
+    def participantes_por_horario(self, horario_ids):
+        return {horario_id: self.participantes_inscriptos(horario_id) for horario_id in horario_ids}
 
     def dnis_inscriptos(self, horario_id):
         return self.dnis.get(horario_id, set())
