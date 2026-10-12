@@ -29,6 +29,16 @@ class DisponibilidadServiceTests(SimpleTestCase):
             reloj=lambda: self.ahora,
         )
 
+    def agregar_horario(self, id, fecha=date(2026, 10, 13), hora_inicio=time(11, 0), actividad=None):
+        horario = Horario(
+            id=id, actividad=actividad or self.safari, fecha=fecha, hora_inicio=hora_inicio,
+        )
+        self.horario_service.horarios[id] = horario
+        return horario
+
+    def horarios_listados(self):
+        return [d.horario for d in self.service.horarios_disponibles(self.safari.id)]
+
     def test_lista_los_horarios_de_la_actividad_con_su_cupo_disponible(self):
         self.repository.ocupados[self.horario.id] = 5
 
@@ -37,3 +47,9 @@ class DisponibilidadServiceTests(SimpleTestCase):
         self.assertEqual(len(disponibles), 1)
         self.assertEqual(disponibles[0].horario, self.horario)
         self.assertEqual(disponibles[0].cupo_disponible, 15)
+
+    def test_excluye_los_horarios_sin_cupo(self):
+        lleno = self.agregar_horario(11)
+        self.repository.ocupados[lleno.id] = self.safari.cupo_por_horario
+
+        self.assertEqual(self.horarios_listados(), [self.horario])
