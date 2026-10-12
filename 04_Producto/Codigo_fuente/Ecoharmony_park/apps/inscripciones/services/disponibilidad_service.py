@@ -33,4 +33,5 @@ class DisponibilidadService:
             d for d in disponibles
             if d.cupo_disponible > 0
             and d.horario.inicio > ahora
+            and self.calendario.admite_actividad(d.horario.fecha, d.horario.hora_inicio)
         ]
