@@ -104,7 +104,7 @@ async function cargarActividades() {
       tarjeta.innerHTML = `<svg class="actividad__icono" viewBox="0 0 24 24" aria-hidden="true">${icono}</svg>`;
       tarjeta.append(
         crear('span', 'actividad__nombre', actividad.nombre),
-        crear('span', 'etiqueta', actividad.requiere_talle ? 'Pide talle de arnés' : 'Sin talle'),
+        crear('span', 'etiqueta', actividad.requiere_talle ? 'Pide talle' : 'Sin talle'),
       );
       return opcion('actividad', actividad.id, tarjeta);
     }),
