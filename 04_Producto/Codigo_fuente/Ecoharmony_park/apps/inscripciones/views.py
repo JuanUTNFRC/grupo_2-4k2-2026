@@ -1,3 +1,5 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -11,6 +13,10 @@ from apps.inscripciones.serializers import (
 )
 from apps.inscripciones.services.disponibilidad_service import DisponibilidadService
 from apps.inscripciones.services.inscripcion_service import InscripcionService
+
+
+class InscripcionView(LoginRequiredMixin, TemplateView):
+    template_name = 'inscripciones/inscripcion.html'
 
 
 class InscripcionViewSet(ViewSet):

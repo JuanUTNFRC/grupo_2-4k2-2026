@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Ingresar | EcoHarmony Park{% endblock %}
+
+{% block contenido %}
+<article>
+  <h1>Ingresar</h1>
+  {% if form.errors %}
+  <p role="alert">Usuario o contraseña incorrectos.</p>
+  {% endif %}
+  <form method="post">
+    {% csrf_token %}
+    <label>Usuario <input type="text" name="username" autocomplete="username" required></label>
+    <label>Contraseña <input type="password" name="password" autocomplete="current-password" required></label>
+    <input type="hidden" name="next" value="{{ next }}">
+    <button type="submit">Ingresar</button>
+  </form>
+</article>
+{% endblock %}

@@ -53,7 +53,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -158,6 +158,12 @@ DEFAULT_FROM_EMAIL = env(
     'DJANGO_DEFAULT_FROM_EMAIL',
     default='EcoHarmony Park <no-reply@ecoharmonypark.com>',
 )
+
+
+# Autenticación por sesión: la usan las páginas, la API y el admin.
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'inscripcion'
+LOGOUT_REDIRECT_URL = 'login'
 
 
 # Django REST Framework
