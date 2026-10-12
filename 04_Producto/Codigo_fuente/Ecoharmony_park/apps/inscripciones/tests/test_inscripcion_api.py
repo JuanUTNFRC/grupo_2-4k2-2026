@@ -1,24 +1,15 @@
 from datetime import time, timedelta
 
 from django.core import mail
-from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.actividades.models import Actividad, Horario
 from apps.inscripciones.repositories.inscripcion_repository import InscripcionRepository
+from apps.inscripciones.tests.helpers import participante, proximo_martes
 from apps.usuarios.models import Usuario
 
 URL = '/api/inscripciones/'
-
-
-def proximo_martes():
-    hoy = timezone.localdate()
-    return hoy + timedelta(days=(1 - hoy.weekday()) % 7 or 7)
-
-
-def participante(**cambios):
-    return {'nombre': 'Ana Pérez', 'dni': '30123456', 'edad': 30, 'talle': '', **cambios}
 
 
 class InscripcionApiTests(APITestCase):

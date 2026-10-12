@@ -4,11 +4,8 @@ from django.test import TestCase
 
 from apps.actividades.models import Actividad, Horario
 from apps.inscripciones.repositories.inscripcion_repository import InscripcionRepository
+from apps.inscripciones.tests.helpers import participante
 from apps.usuarios.models import Usuario
-
-
-def participante(**cambios):
-    return {'nombre': 'Ana Pérez', 'dni': '30123456', 'edad': 30, 'talle': '', **cambios}
 
 
 class InscripcionRepositoryTests(TestCase):

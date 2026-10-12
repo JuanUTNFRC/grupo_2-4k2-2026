@@ -1,18 +1,13 @@
-from datetime import time, timedelta
+from datetime import time
 
 from django.core import mail
 from django.test import TestCase
-from django.utils import timezone
 
 from apps.actividades.models import Actividad, Horario
 from apps.inscripciones.models import Inscripcion
 from apps.inscripciones.services.inscripcion_service import InscripcionService
+from apps.inscripciones.tests.helpers import proximo_martes
 from apps.usuarios.models import Usuario
-
-
-def proximo_martes():
-    hoy = timezone.localdate()
-    return hoy + timedelta(days=(1 - hoy.weekday()) % 7 or 7)
 
 
 class InscripcionIntegracionTests(TestCase):

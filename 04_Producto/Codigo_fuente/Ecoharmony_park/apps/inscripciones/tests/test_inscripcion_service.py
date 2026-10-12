@@ -19,14 +19,11 @@ from apps.inscripciones.tests.fakes import (
     FakeInscripcionRepository,
     NotificadorEspia,
 )
+from apps.inscripciones.tests.helpers import participante
 from apps.usuarios.models import Usuario
 
 
 CORDOBA = ZoneInfo('America/Argentina/Cordoba')
-
-
-def participante(**cambios):
-    return {'nombre': 'Ana Pérez', 'dni': '30123456', 'edad': 30, 'talle': '', **cambios}
 
 
 class InscripcionServiceTests(SimpleTestCase):
