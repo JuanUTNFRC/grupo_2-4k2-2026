@@ -16,10 +16,10 @@ class CalendarioParqueService:
         return fecha.weekday() != self.LUNES
 
     def admite_actividad(self, fecha: date, hora_inicio: time) -> bool:
+        if not self.esta_abierto(fecha):
+            return False
         inicio = datetime.combine(fecha, hora_inicio)
         fin = inicio + self.DURACION_ACTIVIDAD
-        return (
-            self.esta_abierto(fecha)
-            and hora_inicio >= self.APERTURA
-            and fin <= datetime.combine(fecha, self.CIERRE)
-        )
+        apertura = datetime.combine(fecha, self.APERTURA)
+        cierre = datetime.combine(fecha, self.CIERRE)
+        return apertura <= inicio and fin <= cierre
