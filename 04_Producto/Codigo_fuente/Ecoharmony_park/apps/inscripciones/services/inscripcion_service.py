@@ -28,23 +28,24 @@ class InscripcionService:
         self.reloj = reloj
 
     def inscribir(self, usuario, datos):
+        participantes = datos['participantes']
         horario = self._obtener_horario_disponible(datos['actividad_id'], datos['horario_id'])
         if not self.calendario.admite_actividad(horario.fecha, horario.hora_inicio):
             raise ParqueCerradoError()
         if not datos['acepta_terminos']:
             raise TerminosNoAceptadosError()
-        self._validar_talles(horario.actividad, datos['participantes'])
+        self._validar_talles(horario.actividad, participantes)
 
-        # El cupo se valida y se ocupa con el horario bloqueado, para que dos
-        # inscripciones simultáneas no tomen el mismo lugar.
+        # DNI y cupo se validan y se ocupan con el horario bloqueado, para que
+        # dos inscripciones simultáneas no tomen el mismo lugar.
         with self.inscripciones.bloquear_horario(horario.id):
-            self._validar_dnis(horario, datos['participantes'])
-            self._validar_cupo(horario, datos['participantes'])
+            self._validar_dnis(horario, participantes)
+            self._validar_cupo(horario, participantes)
             inscripcion = self.inscripciones.crear(
                 usuario=usuario,
                 horario=horario,
                 acepta_terminos=datos['acepta_terminos'],
-                participantes=datos['participantes'],
+                participantes=participantes,
             )
 
         self.notificador.notificar(inscripcion)
