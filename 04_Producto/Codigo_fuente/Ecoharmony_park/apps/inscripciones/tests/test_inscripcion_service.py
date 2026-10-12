@@ -126,7 +126,7 @@ class InscripcionServiceTests(SimpleTestCase):
         self.assertRechazada(TerminosNoAceptadosError, self.solicitud(acepta_terminos=False))
 
     def test_un_horario_con_el_parque_cerrado_rechaza_la_inscripcion(self):
-        lunes = date(2026, 10, 12)
+        lunes = date(2026, 10, 19)
         horario_lunes = Horario(id=30, actividad=self.safari, fecha=lunes, hora_inicio=time(10, 0))
         self.horario_service.horarios[horario_lunes.id] = horario_lunes
 
