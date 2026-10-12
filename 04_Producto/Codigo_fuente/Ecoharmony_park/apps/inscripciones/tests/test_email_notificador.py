@@ -54,3 +54,13 @@ class EmailNotificadorTests(TestCase):
             for dato in esperado:
                 with self.subTest(formato=formato, dato=dato):
                     self.assertIn(dato, cuerpo)
+
+    def test_adjunta_el_codigo_qr_de_la_inscripcion_como_png(self):
+        EmailNotificador().notificar(self.inscripcion)
+
+        adjuntos = mail.outbox[0].attachments
+        self.assertEqual(len(adjuntos), 1)
+        nombre, contenido, tipo = adjuntos[0]
+        self.assertEqual(nombre, f'inscripcion_{self.inscripcion.codigo}.png')
+        self.assertEqual(tipo, 'image/png')
+        self.assertTrue(contenido.startswith(b'\x89PNG\r\n\x1a\n'))
