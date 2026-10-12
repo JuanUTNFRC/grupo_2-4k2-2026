@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 
 from django.db import transaction
+from django.db.models import Count
 
 from apps.actividades.models import Horario
 from apps.inscripciones.models import Inscripcion, Participante
@@ -19,6 +20,18 @@ class InscripcionRepository:
 
     def participantes_inscriptos(self, horario_id):
         return self._participantes_del_horario(horario_id).count()
+
+    def participantes_por_horario(self, horario_ids):
+        """Participantes inscriptos por horario, con 0 para los horarios sin inscriptos."""
+        conteos = (
+            Participante.objects
+            .filter(inscripcion__horario_id__in=horario_ids)
+            .values('inscripcion__horario_id')
+            .annotate(total=Count('id'))
+        )
+        ocupados = {horario_id: 0 for horario_id in horario_ids}
+        ocupados.update({c['inscripcion__horario_id']: c['total'] for c in conteos})
+        return ocupados
 
     def dnis_inscriptos(self, horario_id):
         return set(self._participantes_del_horario(horario_id).values_list('dni', flat=True))
