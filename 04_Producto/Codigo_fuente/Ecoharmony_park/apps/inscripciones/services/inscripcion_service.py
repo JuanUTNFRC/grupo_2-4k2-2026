@@ -10,7 +10,7 @@ from apps.inscripciones.exceptions.inscripcion_exceptions import (
     TalleRequeridoError,
     TerminosNoAceptadosError,
 )
-from apps.inscripciones.notificaciones.email_notificador import EmailNotificador
+from apps.inscripciones.notificaciones.cola_notificador import ColaNotificador
 from apps.inscripciones.repositories.inscripcion_repository import InscripcionRepository
 
 
@@ -31,7 +31,7 @@ class InscripcionService:
         # Sin argumentos usa las dependencias reales; los tests inyectan dobles.
         self.inscripciones = inscripcion_repository or InscripcionRepository()
         self.horarios = horario_service or HorarioService()
-        self.notificador = notificador or EmailNotificador()
+        self.notificador = notificador or ColaNotificador()
         self.calendario = calendario or CalendarioParqueService()
         self.reloj = reloj
 

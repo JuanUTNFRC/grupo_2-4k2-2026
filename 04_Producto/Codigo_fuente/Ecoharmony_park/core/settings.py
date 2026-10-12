@@ -186,3 +186,6 @@ CELERY_BROKER_URL = env('CELERY_BROKER_URL', default='redis://localhost:6379/0')
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TIMEZONE = TIME_ZONE
+
+# Tests: Celery en modo eager (ver core/test_runner.py).
+TEST_RUNNER = 'core.test_runner.TestRunner'

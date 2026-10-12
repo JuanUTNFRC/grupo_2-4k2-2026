@@ -1,5 +1,7 @@
 import logging
 
+from apps.inscripciones.tasks import enviar_mail_confirmacion
+
 logger = logging.getLogger(__name__)
 
 
@@ -9,8 +11,8 @@ class ColaNotificador:
     La inscripción responde sin esperar al servidor de mail.
     """
 
-    def __init__(self, tarea):
-        self.tarea = tarea
+    def __init__(self, tarea=None):
+        self.tarea = tarea or enviar_mail_confirmacion
 
     def notificar(self, inscripcion):
         try:
