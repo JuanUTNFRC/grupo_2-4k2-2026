@@ -1,0 +1,14 @@
+/* Ajustes propios sobre Pico CSS. */
+
+/* Cada participante en su propio bloque, para distinguirlos al cargar varios. */
+fieldset.participante {
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: var(--pico-border-radius);
+  padding: var(--pico-spacing);
+  margin-bottom: var(--pico-spacing);
+}
+
+fieldset.participante legend {
+  padding: 0 calc(var(--pico-spacing) / 2);
+  font-weight: bold;
+}

@@ -53,7 +53,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [BASE_DIR / 'front' / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -125,6 +125,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# El front (templates, css y js) vive en front/, fuera de las apps, que solo
+# tienen la API. Los prefijos dejan las URLs /static/css/ y /static/js/.
+STATICFILES_DIRS = [
+    ('css', BASE_DIR / 'front' / 'css'),
+    ('js', BASE_DIR / 'front' / 'js'),
+]
 
 
 # Email
