@@ -263,7 +263,8 @@ input:focus-visible, select:focus-visible {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--primario) 30%, transparent);
 }
 
-[aria-invalid='true'] { border-color: var(--error); }
+input[aria-invalid='true'], select[aria-invalid='true'] { border-color: var(--error); }
+.casilla input[aria-invalid='true'] { outline: 2px solid var(--error); outline-offset: 2px; }
 
 .campo__error {
   color: var(--error);

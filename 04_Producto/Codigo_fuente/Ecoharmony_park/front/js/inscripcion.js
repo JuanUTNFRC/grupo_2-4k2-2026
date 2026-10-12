@@ -275,19 +275,75 @@ function actualizar() {
 
 // ---------- Errores ----------
 
+function mensajeDe(campo) {
+  return campo.closest('.campo').querySelector('.campo__error');
+}
+
 function marcarCampo(campo, mensaje) {
   campo.setAttribute('aria-invalid', 'true');
-  const error = campo.parentElement.querySelector('.campo__error');
-  if (error) error.textContent = mensaje;
+  mensajeDe(campo).textContent = mensaje;
+}
+
+function desmarcarCampo(campo) {
+  campo.removeAttribute('aria-invalid');
+  mensajeDe(campo).textContent = '';
 }
 
 function limpiarErrores() {
   $('error-general').hidden = true;
-  for (const campo of document.querySelectorAll('[aria-invalid]')) {
-    campo.removeAttribute('aria-invalid');
-    const error = campo.parentElement.querySelector('.campo__error');
-    if (error) error.textContent = '';
+  for (const campo of document.querySelectorAll('#form-reserva [aria-invalid]')) desmarcarCampo(campo);
+}
+
+// ---------- Validación en el navegador ----------
+// Los mismos mensajes que devuelve la API: el usuario los ve antes de enviar,
+// y la API los vuelve a validar igual.
+
+const REGLAS = {
+  nombre: (valor) => {
+    if (!valor) return 'Ingresá el nombre y apellido.';
+    if (valor.length > 100) return 'El nombre puede tener hasta 100 caracteres.';
+    return '';
+  },
+  dni: (valor) => {
+    if (!valor) return 'Ingresá el DNI.';
+    if (!/^\d{7,8}$/.test(valor)) return 'El DNI tiene que tener 7 u 8 números, sin puntos.';
+    return '';
+  },
+  edad: (valor) => {
+    if (!valor) return 'Ingresá la edad.';
+    if (!/^\d+$/.test(valor)) return 'Ingresá la edad en números.';
+    if (Number(valor) < 1) return 'La edad tiene que ser mayor a 0.';
+    return '';
+  },
+  talle: (valor) => (estado.actividad && estado.actividad.requiere_talle && !valor ? 'Elegí un talle.' : ''),
+};
+
+function validarCampo(campo) {
+  const mensaje = REGLAS[campo.name](campo.value.trim());
+  if (mensaje) marcarCampo(campo, mensaje);
+  else desmarcarCampo(campo);
+  return !mensaje;
+}
+
+function validarTerminos() {
+  if ($('acepta-terminos').checked) {
+    desmarcarCampo($('acepta-terminos'));
+    return true;
   }
+  marcarCampo($('acepta-terminos'), 'Tenés que aceptar los términos y condiciones para reservar.');
+  return false;
+}
+
+function validarFormulario() {
+  const campos = [...$('participantes').querySelectorAll('[name]')];
+  // Sin cortocircuito: se marcan todos los errores de una vez.
+  const camposValidos = campos.map(validarCampo).every(Boolean);
+  const terminosValidos = validarTerminos();
+  return camposValidos && terminosValidos;
+}
+
+function esCampoDeParticipante(elemento) {
+  return Boolean(elemento.name && REGLAS[elemento.name] && elemento.closest('.participante'));
 }
 
 function mostrarErrores({ codigo, detalle, errores }) {
@@ -312,7 +368,7 @@ function mostrarErrores({ codigo, detalle, errores }) {
     }
   }
   if (codigo === 'terminos_no_aceptados') {
-    $('acepta-terminos').setAttribute('aria-invalid', 'true');
+    marcarCampo($('acepta-terminos'), 'Tenés que aceptar los términos y condiciones para reservar.');
   }
 
   const primerCampo = document.querySelector('#form-reserva [aria-invalid="true"]');
@@ -346,6 +402,12 @@ async function confirmar(evento) {
   evento.preventDefault();
   if (!estado.horario) return;
   limpiarErrores();
+  if (!validarFormulario()) {
+    $('error-general').textContent = 'Revisá los datos marcados en rojo antes de confirmar.';
+    $('error-general').hidden = false;
+    document.querySelector('#form-reserva [aria-invalid="true"]').focus();
+    return;
+  }
   $('confirmar').disabled = true;
   $('confirmar').setAttribute('aria-busy', 'true');
 
@@ -377,7 +439,20 @@ $('form-reserva').addEventListener('change', (evento) => {
   else if (name === 'horario') elegirHorario(Number(value));
   else actualizar();
 });
-$('form-reserva').addEventListener('input', actualizar);
+$('form-reserva').addEventListener('input', (evento) => {
+  // Un campo marcado se revalida mientras se corrige, así el error se va apenas está bien.
+  if (esCampoDeParticipante(evento.target) && evento.target.hasAttribute('aria-invalid')) {
+    validarCampo(evento.target);
+  }
+  actualizar();
+});
+// Validación al salir del campo, no mientras se escribe por primera vez.
+$('form-reserva').addEventListener('focusout', (evento) => {
+  if (esCampoDeParticipante(evento.target) && evento.target.value.trim()) validarCampo(evento.target);
+});
+$('acepta-terminos').addEventListener('change', () => {
+  if ($('acepta-terminos').hasAttribute('aria-invalid')) validarTerminos();
+});
 $('cantidad').addEventListener('change', () => cambiarCantidad(0));
 $('menos').addEventListener('click', () => cambiarCantidad(-1));
 $('mas').addEventListener('click', () => cambiarCantidad(1));
