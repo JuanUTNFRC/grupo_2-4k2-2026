@@ -31,7 +31,8 @@ class DisponibilidadService:
         ahora = self.reloj()
         return [
             d for d in disponibles
-            if d.cupo_disponible > 0
+            if d.horario.actividad.activa
+            and d.cupo_disponible > 0
             and d.horario.inicio > ahora
             and self.calendario.admite_actividad(d.horario.fecha, d.horario.hora_inicio)
         ]
