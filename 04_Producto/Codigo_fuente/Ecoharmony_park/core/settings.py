@@ -158,3 +158,10 @@ DEFAULT_FROM_EMAIL = env(
     'DJANGO_DEFAULT_FROM_EMAIL',
     default='EcoHarmony Park <no-reply@ecoharmonypark.com>',
 )
+
+
+# Django REST Framework
+
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'core.exception_handler.exception_handler',
+}
