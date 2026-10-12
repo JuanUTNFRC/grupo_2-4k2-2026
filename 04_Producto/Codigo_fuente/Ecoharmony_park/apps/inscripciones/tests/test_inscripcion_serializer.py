@@ -44,6 +44,11 @@ def con_participante(**cambios):
 
 
 class ParticipanteSerializerTests(SimpleTestCase):
+    def assertParticipanteValido(self, datos):
+        serializer = InscripcionCreateSerializer(data=datos)
+
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+
     def assertParticipanteInvalido(self, datos, campo):
         serializer = InscripcionCreateSerializer(data=datos)
 
@@ -65,9 +70,7 @@ class ParticipanteSerializerTests(SimpleTestCase):
                 self.assertParticipanteInvalido(con_participante(dni=dni), 'dni')
 
     def test_dni_de_7_digitos_es_valido(self):
-        serializer = InscripcionCreateSerializer(data=con_participante(dni='1234567'))
-
-        self.assertTrue(serializer.is_valid(), serializer.errors)
+        self.assertParticipanteValido(con_participante(dni='1234567'))
 
     def test_edad_menor_a_1_es_invalida(self):
         for edad in [0, -5]:
@@ -80,9 +83,7 @@ class ParticipanteSerializerTests(SimpleTestCase):
                 self.assertParticipanteInvalido(con_participante(talle=talle), 'talle')
 
     def test_talle_xxl_es_valido(self):
-        serializer = InscripcionCreateSerializer(data=con_participante(talle='XXL'))
-
-        self.assertTrue(serializer.is_valid(), serializer.errors)
+        self.assertParticipanteValido(con_participante(talle='XXL'))
 
     def test_sin_talle_es_valido_y_queda_vacio(self):
         serializer = InscripcionCreateSerializer(data=con_participante(talle=None))
