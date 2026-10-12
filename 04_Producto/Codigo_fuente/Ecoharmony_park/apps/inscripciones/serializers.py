@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 
 class ParticipanteSerializer(serializers.Serializer):
-    nombre = serializers.CharField()
+    nombre = serializers.CharField(max_length=100)
     dni = serializers.CharField()
     edad = serializers.IntegerField()
     talle = serializers.CharField()
