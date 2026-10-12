@@ -1,7 +1,79 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block titulo %}Inscribirme a una actividad | EcoHarmony Park{% endblock %}
 
 {% block contenido %}
 <h1>Inscribirme a una actividad</h1>
+
+<form id="form-inscripcion" novalidate>
+  <p id="error-general" role="alert" hidden></p>
+
+  <label>
+    Actividad
+    <select id="actividad" required>
+      <option value="">Elegí una actividad</option>
+    </select>
+  </label>
+
+  <label>
+    Horario
+    <select id="horario" required disabled>
+      <option value="">Primero elegí una actividad</option>
+    </select>
+    <small id="sin-horarios" hidden>No hay horarios con cupo disponible para esta actividad.</small>
+  </label>
+
+  <label>
+    Cantidad de personas
+    <input id="cantidad" type="number" min="1" value="1" required disabled>
+    <small id="cupo-ayuda"></small>
+  </label>
+
+  <div id="participantes"></div>
+
+  <article id="terminos" hidden>
+    <header><strong>Términos y condiciones</strong></header>
+    <p id="terminos-texto"></p>
+    <label>
+      <input id="acepta-terminos" type="checkbox">
+      Acepto los términos y condiciones de la actividad
+    </label>
+  </article>
+
+  <button id="confirmar" type="submit" disabled>Confirmar inscripción</button>
+</form>
+
+<article id="confirmacion" hidden>
+  <header><strong>¡Inscripción confirmada!</strong></header>
+  <p>Código de inscripción: <code id="confirmacion-codigo"></code></p>
+  <p id="confirmacion-detalle"></p>
+  <ul id="confirmacion-participantes"></ul>
+  <p>Te enviamos un mail con la información y el código QR para presentar en la actividad.</p>
+  <a href="{% url 'inscripcion' %}" role="button">Nueva inscripción</a>
+</article>
+
+<template id="plantilla-participante">
+  <fieldset class="participante">
+    <legend></legend>
+    <div class="grid">
+      <label>Nombre <input name="nombre" type="text" maxlength="100" required><small></small></label>
+      <label>DNI <input name="dni" type="text" inputmode="numeric" maxlength="8" required><small></small></label>
+      <label>Edad <input name="edad" type="number" min="1" required><small></small></label>
+      <label class="campo-talle">
+        Talle
+        <select name="talle">
+          <option value="">Elegí un talle</option>
+          <option>XS</option><option>S</option><option>M</option>
+          <option>L</option><option>XL</option><option>XXL</option>
+        </select>
+        <small></small>
+      </label>
+    </div>
+  </fieldset>
+</template>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'inscripciones/inscripcion.js' %}"></script>
 {% endblock %}
