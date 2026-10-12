@@ -85,3 +85,19 @@ class InscripcionRepositoryTests(TestCase):
             self.inscribir(self.horario, '30000001')
 
         self.assertEqual(self.repository.participantes_inscriptos(self.horario.id), 1)
+
+    def test_participantes_por_horario_cuenta_cada_horario_en_una_sola_query(self):
+        con_dos = self.horario
+        con_uno = Horario.objects.create(
+            actividad=self.safari, fecha=date(2026, 10, 13), hora_inicio=time(11, 0),
+        )
+        vacio = Horario.objects.create(
+            actividad=self.safari, fecha=date(2026, 10, 13), hora_inicio=time(12, 0),
+        )
+        self.inscribir(con_dos, '30000001', '30000002')
+        self.inscribir(con_uno, '30000003')
+
+        with self.assertNumQueries(1):
+            ocupados = self.repository.participantes_por_horario([con_dos.id, con_uno.id, vacio.id])
+
+        self.assertEqual(ocupados, {con_dos.id: 2, con_uno.id: 1, vacio.id: 0})
