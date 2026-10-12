@@ -74,3 +74,17 @@ class InscripcionRepositoryTests(TestCase):
             self.repository.dnis_inscriptos(self.horario.id),
             {'30000001', '30000002', '30000003'},
         )
+
+    def test_bloquear_horario_revierte_lo_creado_si_falla_adentro(self):
+        with self.assertRaises(RuntimeError):
+            with self.repository.bloquear_horario(self.horario.id):
+                self.inscribir(self.horario, '30000001')
+                raise RuntimeError('falla después de crear')
+
+        self.assertEqual(self.repository.participantes_inscriptos(self.horario.id), 0)
+
+    def test_bloquear_horario_confirma_lo_creado_si_no_falla(self):
+        with self.repository.bloquear_horario(self.horario.id):
+            self.inscribir(self.horario, '30000001')
+
+        self.assertEqual(self.repository.participantes_inscriptos(self.horario.id), 1)
