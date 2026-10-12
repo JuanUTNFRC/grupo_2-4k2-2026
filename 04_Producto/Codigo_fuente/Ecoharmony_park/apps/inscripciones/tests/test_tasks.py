@@ -1,4 +1,6 @@
 from datetime import date, time
+from smtplib import SMTPException
+from unittest.mock import patch
 
 from django.core import mail
 from django.test import TestCase
@@ -32,3 +34,12 @@ class EnviarMailConfirmacionTests(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, ['visitante@example.com'])
         self.assertIn(str(self.inscripcion.codigo), mail.outbox[0].body)
+
+    def test_si_falla_el_smtp_reintenta_el_envio(self):
+        with patch(
+            'django.core.mail.EmailMultiAlternatives.send', side_effect=SMTPException('caído'),
+        ) as send:
+            resultado = enviar_mail_confirmacion.apply(args=[self.inscripcion.id])
+
+        self.assertTrue(resultado.failed())
+        self.assertEqual(send.call_count, 1 + enviar_mail_confirmacion.max_retries)
