@@ -68,3 +68,8 @@ class ParticipanteSerializerTests(SimpleTestCase):
         serializer = InscripcionCreateSerializer(data=con_participante(dni='1234567'))
 
         self.assertTrue(serializer.is_valid(), serializer.errors)
+
+    def test_edad_menor_a_1_es_invalida(self):
+        for edad in [0, -5]:
+            with self.subTest(edad=edad):
+                self.assertParticipanteInvalido(con_participante(edad=edad), 'edad')
