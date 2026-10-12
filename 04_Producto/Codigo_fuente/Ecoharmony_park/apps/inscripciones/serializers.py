@@ -41,3 +41,14 @@ class InscripcionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Inscripcion
         fields = ['codigo', 'actividad', 'fecha', 'hora_inicio', 'participantes', 'creada_en']
+
+
+class HorariosDisponiblesQuerySerializer(serializers.Serializer):
+    actividad_id = serializers.IntegerField()
+
+
+class HorarioDisponibleSerializer(serializers.Serializer):
+    id = serializers.IntegerField(source='horario.id')
+    fecha = serializers.DateField(source='horario.fecha')
+    hora_inicio = serializers.TimeField(source='horario.hora_inicio', format='%H:%M')
+    cupo_disponible = serializers.IntegerField()

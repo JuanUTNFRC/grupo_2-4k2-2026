@@ -3,6 +3,9 @@ from dataclasses import dataclass
 from django.utils import timezone
 
 from apps.actividades.models import Horario
+from apps.actividades.services.calendario_service import CalendarioParqueService
+from apps.actividades.services.horario_service import HorarioService
+from apps.inscripciones.repositories.inscripcion_repository import InscripcionRepository
 
 
 @dataclass(frozen=True)
@@ -14,10 +17,17 @@ class HorarioDisponible:
 class DisponibilidadService:
     """Horarios de una actividad en los que todavía es posible inscribirse."""
 
-    def __init__(self, horario_service, inscripcion_repository, calendario, reloj):
-        self.horarios = horario_service
-        self.inscripciones = inscripcion_repository
-        self.calendario = calendario
+    def __init__(
+        self,
+        horario_service=None,
+        inscripcion_repository=None,
+        calendario=None,
+        reloj=timezone.now,
+    ):
+        # Sin argumentos usa las dependencias reales; los tests inyectan dobles.
+        self.horarios = horario_service or HorarioService()
+        self.inscripciones = inscripcion_repository or InscripcionRepository()
+        self.calendario = calendario or CalendarioParqueService()
         self.reloj = reloj
 
     def horarios_disponibles(self, actividad_id):
