@@ -5,6 +5,7 @@ from django.test import TestCase
 
 from apps.actividades.models import Actividad, Horario
 from apps.inscripciones.models import Inscripcion
+from apps.inscripciones.notificaciones.cola_notificador import ColaNotificador
 from apps.inscripciones.services.inscripcion_service import InscripcionService
 from apps.inscripciones.tests.helpers import proximo_martes
 from apps.usuarios.models import Usuario
@@ -33,3 +34,6 @@ class InscripcionIntegracionTests(TestCase):
 
         self.assertEqual(Inscripcion.objects.filter(usuario=usuario, horario=horario).count(), 1)
         self.assertEqual(len(mail.outbox), 1)
+
+    def test_por_defecto_el_mail_se_envia_en_segundo_plano(self):
+        self.assertIsInstance(InscripcionService().notificador, ColaNotificador)
