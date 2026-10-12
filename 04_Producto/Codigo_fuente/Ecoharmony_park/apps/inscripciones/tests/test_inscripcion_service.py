@@ -1,4 +1,5 @@
-from datetime import date, time
+from datetime import date, datetime, time
+from zoneinfo import ZoneInfo
 
 from django.test import SimpleTestCase
 
@@ -18,6 +19,9 @@ from apps.inscripciones.tests.fakes import (
     NotificadorEspia,
 )
 from apps.usuarios.models import Usuario
+
+
+CORDOBA = ZoneInfo('America/Argentina/Cordoba')
 
 
 def participante(**cambios):
@@ -47,7 +51,10 @@ class InscripcionServiceTests(SimpleTestCase):
             horario_service=self.horario_service,
             notificador=self.notificador,
             calendario=CalendarioParqueService(),
+            reloj=lambda: self.ahora,
         )
+        # Antes de todos los horarios del setUp, salvo que el test lo cambie.
+        self.ahora = datetime(2026, 10, 13, 8, 0, tzinfo=CORDOBA)
 
     def solicitud(self, **cambios):
         return {
@@ -135,5 +142,10 @@ class InscripcionServiceTests(SimpleTestCase):
 
     def test_una_actividad_inactiva_rechaza_la_inscripcion(self):
         self.safari.activa = False
+
+        self.assertRechazada(HorarioNoDisponibleError, self.solicitud())
+
+    def test_un_horario_que_ya_comenzo_rechaza_la_inscripcion(self):
+        self.ahora = datetime(2026, 10, 13, 10, 0, tzinfo=CORDOBA)
 
         self.assertRechazada(HorarioNoDisponibleError, self.solicitud())
