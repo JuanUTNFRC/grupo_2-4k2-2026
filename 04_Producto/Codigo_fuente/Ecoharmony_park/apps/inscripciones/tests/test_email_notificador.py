@@ -39,3 +39,18 @@ class EmailNotificadorTests(TestCase):
         self.assertEqual(
             mail.outbox[0].subject, 'Inscripción confirmada: Tirolesa - 13/10/2026 10:00',
         )
+
+    def test_el_cuerpo_texto_y_html_tienen_los_datos_de_la_inscripcion(self):
+        EmailNotificador().notificar(self.inscripcion)
+
+        mensaje = mail.outbox[0]
+        html = [contenido for contenido, tipo in mensaje.alternatives if tipo == 'text/html']
+        self.assertEqual(len(html), 1)
+        esperado = [
+            str(self.inscripcion.codigo), 'Tirolesa', '13/10/2026', '10:00',
+            'Ana Pérez', '30123456', 'Talle M', 'Juan Gómez', '1234567', 'Talle XS',
+        ]
+        for formato, cuerpo in [('texto', mensaje.body), ('html', html[0])]:
+            for dato in esperado:
+                with self.subTest(formato=formato, dato=dato):
+                    self.assertIn(dato, cuerpo)
