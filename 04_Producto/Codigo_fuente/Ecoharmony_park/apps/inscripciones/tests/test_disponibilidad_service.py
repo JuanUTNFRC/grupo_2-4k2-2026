@@ -53,3 +53,9 @@ class DisponibilidadServiceTests(SimpleTestCase):
         self.repository.ocupados[lleno.id] = self.safari.cupo_por_horario
 
         self.assertEqual(self.horarios_listados(), [self.horario])
+
+    def test_excluye_los_horarios_que_ya_comenzaron(self):
+        siguiente = self.agregar_horario(11, hora_inicio=time(11, 0))
+        self.ahora = datetime(2026, 10, 13, 10, 0, tzinfo=CORDOBA)
+
+        self.assertEqual(self.horarios_listados(), [siguiente])
