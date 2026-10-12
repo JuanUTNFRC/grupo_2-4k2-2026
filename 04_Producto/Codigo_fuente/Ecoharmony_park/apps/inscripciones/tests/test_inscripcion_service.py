@@ -6,6 +6,7 @@ from apps.actividades.models import Actividad, Horario
 from apps.actividades.services.calendario_service import CalendarioParqueService
 from apps.inscripciones.exceptions.inscripcion_exceptions import (
     CupoInsuficienteError,
+    HorarioNoDisponibleError,
     ParqueCerradoError,
     TalleRequeridoError,
     TerminosNoAceptadosError,
@@ -123,3 +124,16 @@ class InscripcionServiceTests(SimpleTestCase):
         self.horario_service.horarios[horario_lunes.id] = horario_lunes
 
         self.assertRechazada(ParqueCerradoError, self.solicitud(horario_id=horario_lunes.id))
+
+    def test_un_horario_inexistente_rechaza_la_inscripcion(self):
+        self.assertRechazada(HorarioNoDisponibleError, self.solicitud(horario_id=999))
+
+    def test_un_horario_de_otra_actividad_rechaza_la_inscripcion(self):
+        solicitud = self.solicitud(actividad_id=self.safari.id, horario_id=self.horario_tirolesa.id)
+
+        self.assertRechazada(HorarioNoDisponibleError, solicitud)
+
+    def test_una_actividad_inactiva_rechaza_la_inscripcion(self):
+        self.safari.activa = False
+
+        self.assertRechazada(HorarioNoDisponibleError, self.solicitud())
