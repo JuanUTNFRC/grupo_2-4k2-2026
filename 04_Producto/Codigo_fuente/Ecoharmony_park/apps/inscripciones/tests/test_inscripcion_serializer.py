@@ -73,3 +73,19 @@ class ParticipanteSerializerTests(SimpleTestCase):
         for edad in [0, -5]:
             with self.subTest(edad=edad):
                 self.assertParticipanteInvalido(con_participante(edad=edad), 'edad')
+
+    def test_talle_fuera_de_xs_a_xxl_es_invalido(self):
+        for talle in ['XXXL', 'm', 'Grande']:
+            with self.subTest(talle=talle):
+                self.assertParticipanteInvalido(con_participante(talle=talle), 'talle')
+
+    def test_talle_xxl_es_valido(self):
+        serializer = InscripcionCreateSerializer(data=con_participante(talle='XXL'))
+
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+
+    def test_sin_talle_es_valido_y_queda_vacio(self):
+        serializer = InscripcionCreateSerializer(data=con_participante(talle=None))
+
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        self.assertEqual(serializer.validated_data['participantes'][0]['talle'], '')
