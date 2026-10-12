@@ -57,15 +57,22 @@ class EmailNotificadorTests(TestCase):
                 with self.subTest(formato=formato, dato=dato):
                     self.assertIn(dato, cuerpo)
 
-    def test_adjunta_el_codigo_qr_de_la_inscripcion_como_png(self):
+    def test_el_codigo_qr_va_embebido_en_el_html_del_mail(self):
         EmailNotificador().notificar(self.inscripcion)
 
-        adjuntos = mail.outbox[0].attachments
-        self.assertEqual(len(adjuntos), 1)
-        nombre, contenido, tipo = adjuntos[0]
-        self.assertEqual(nombre, f'inscripcion_{self.inscripcion.codigo}.png')
-        self.assertEqual(tipo, 'image/png')
-        self.assertTrue(contenido.startswith(b'\x89PNG\r\n\x1a\n'))
+        mensaje = mail.outbox[0]
+        imagenes = [
+            parte for parte in mensaje.message().walk()
+            if parte.get_content_type() == 'image/png'
+        ]
+        self.assertEqual(len(imagenes), 1)
+        qr = imagenes[0]
+        self.assertEqual(qr['Content-ID'], '<qr-inscripcion>')
+        self.assertEqual(qr.get_content_disposition(), 'inline')
+        self.assertEqual(qr.get_filename(), f'inscripcion_{self.inscripcion.codigo}.png')
+        self.assertTrue(qr.get_content().startswith(b'\x89PNG\r\n\x1a\n'))
+        html = next(contenido for contenido, tipo in mensaje.alternatives if tipo == 'text/html')
+        self.assertIn('src="cid:qr-inscripcion"', html)
 
     def test_si_falla_el_envio_registra_el_error_sin_propagarlo(self):
         with (
