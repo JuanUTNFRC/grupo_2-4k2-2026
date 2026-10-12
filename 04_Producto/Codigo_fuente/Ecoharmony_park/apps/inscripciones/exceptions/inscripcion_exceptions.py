@@ -23,3 +23,10 @@ class TalleRequeridoError(InscripcionError):
 
     default_detail = 'La actividad requiere indicar el talle de cada participante.'
     default_code = 'talle_requerido'
+
+
+class TerminosNoAceptadosError(InscripcionError):
+    """RN6: no se aceptaron los términos y condiciones de la actividad."""
+
+    default_detail = 'Debe aceptar los términos y condiciones de la actividad.'
+    default_code = 'terminos_no_aceptados'

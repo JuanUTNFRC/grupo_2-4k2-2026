@@ -1,6 +1,7 @@
 from apps.inscripciones.exceptions.inscripcion_exceptions import (
     CupoInsuficienteError,
     TalleRequeridoError,
+    TerminosNoAceptadosError,
 )
 
 
@@ -17,6 +18,8 @@ class InscripcionService:
 
     def inscribir(self, usuario, datos):
         horario = self.horarios.obtener(datos['horario_id'])
+        if not datos['acepta_terminos']:
+            raise TerminosNoAceptadosError()
         self._validar_talles(horario.actividad, datos['participantes'])
 
         # El cupo se valida y se ocupa con el horario bloqueado, para que dos
