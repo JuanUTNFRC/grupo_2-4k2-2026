@@ -20,3 +20,12 @@ class InscripcionCreateSerializerTests(SimpleTestCase):
 
         self.assertTrue(serializer.is_valid(), serializer.errors)
         self.assertEqual(serializer.validated_data, datos_validos())
+
+    def test_sin_participantes_es_invalida(self):
+        datos = datos_validos()
+        datos['participantes'] = []
+
+        serializer = InscripcionCreateSerializer(data=datos)
+
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('participantes', serializer.errors)
