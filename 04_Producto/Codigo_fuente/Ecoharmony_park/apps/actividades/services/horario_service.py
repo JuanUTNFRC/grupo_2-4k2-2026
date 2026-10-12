@@ -9,3 +9,6 @@ class HorarioService:
 
     def obtener(self, horario_id):
         return self.repository.obtener(horario_id)
+
+    def listar(self, actividad_id, desde):
+        return self.repository.listar(actividad_id, desde)
