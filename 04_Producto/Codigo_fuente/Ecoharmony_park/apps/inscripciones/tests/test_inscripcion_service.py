@@ -71,3 +71,17 @@ class InscripcionServiceTests(SimpleTestCase):
         self.repository.ocupados[self.horario.id] = self.safari.cupo_por_horario
 
         self.assertRechazada(CupoInsuficienteError, self.solicitud())
+
+    def test_mas_participantes_que_el_cupo_restante_rechaza_la_inscripcion(self):
+        self.repository.ocupados[self.horario.id] = self.safari.cupo_por_horario - 2
+        grupo = [participante(dni=dni) for dni in ['30000001', '30000002', '30000003']]
+
+        self.assertRechazada(CupoInsuficienteError, self.solicitud(participantes=grupo))
+
+    def test_completar_exactamente_el_cupo_restante_es_valido(self):
+        self.repository.ocupados[self.horario.id] = self.safari.cupo_por_horario - 2
+        grupo = [participante(dni=dni) for dni in ['30000001', '30000002']]
+
+        self.service.inscribir(self.usuario, self.solicitud(participantes=grupo))
+
+        self.assertEqual(len(self.repository.creadas), 1)
