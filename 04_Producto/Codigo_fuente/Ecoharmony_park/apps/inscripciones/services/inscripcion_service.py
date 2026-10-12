@@ -4,15 +4,18 @@ class InscripcionService:
     Recibe datos ya validados en formato por InscripcionCreateSerializer.
     """
 
-    def __init__(self, inscripcion_repository, horario_service):
+    def __init__(self, inscripcion_repository, horario_service, notificador):
         self.inscripciones = inscripcion_repository
         self.horarios = horario_service
+        self.notificador = notificador
 
     def inscribir(self, usuario, datos):
         horario = self.horarios.obtener(datos['horario_id'])
-        return self.inscripciones.crear(
+        inscripcion = self.inscripciones.crear(
             usuario=usuario,
             horario=horario,
             acepta_terminos=datos['acepta_terminos'],
             participantes=datos['participantes'],
         )
+        self.notificador.notificar(inscripcion)
+        return inscripcion
