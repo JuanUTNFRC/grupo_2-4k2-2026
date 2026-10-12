@@ -2,6 +2,9 @@ from apps.inscripciones.models import Inscripcion, Participante
 
 
 class InscripcionRepository:
+    def participantes_inscriptos(self, horario_id):
+        return Participante.objects.filter(inscripcion__horario_id=horario_id).count()
+
     def crear(self, usuario, horario, acepta_terminos, participantes):
         inscripcion = Inscripcion.objects.create(
             usuario=usuario,
