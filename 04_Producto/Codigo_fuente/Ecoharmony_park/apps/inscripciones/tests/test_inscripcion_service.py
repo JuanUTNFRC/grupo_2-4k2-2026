@@ -4,7 +4,11 @@ from django.test import SimpleTestCase
 
 from apps.actividades.models import Actividad, Horario
 from apps.inscripciones.services.inscripcion_service import InscripcionService
-from apps.inscripciones.tests.fakes import FakeHorarioService, FakeInscripcionRepository
+from apps.inscripciones.tests.fakes import (
+    FakeHorarioService,
+    FakeInscripcionRepository,
+    NotificadorEspia,
+)
 from apps.usuarios.models import Usuario
 
 
@@ -22,9 +26,11 @@ class InscripcionServiceTests(SimpleTestCase):
             id=10, actividad=self.safari, fecha=date(2026, 10, 13), hora_inicio=time(10, 0),
         )
         self.repository = FakeInscripcionRepository()
+        self.notificador = NotificadorEspia()
         self.service = InscripcionService(
             inscripcion_repository=self.repository,
             horario_service=FakeHorarioService([self.horario]),
+            notificador=self.notificador,
         )
 
     def solicitud(self, **cambios):
@@ -46,3 +52,8 @@ class InscripcionServiceTests(SimpleTestCase):
         self.assertEqual(inscripcion.horario, self.horario)
         self.assertTrue(inscripcion.acepta_terminos)
         self.assertEqual(creada['participantes'], [participante()])
+
+    def test_una_inscripcion_valida_notifica_al_usuario(self):
+        inscripcion = self.service.inscribir(self.usuario, self.solicitud())
+
+        self.assertEqual(self.notificador.notificadas, [inscripcion])

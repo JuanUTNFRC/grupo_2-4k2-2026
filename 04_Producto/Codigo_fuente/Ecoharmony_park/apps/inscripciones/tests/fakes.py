@@ -23,3 +23,13 @@ class FakeInscripcionRepository:
         )
         self.creadas.append({'inscripcion': inscripcion, 'participantes': participantes})
         return inscripcion
+
+
+class NotificadorEspia:
+    """Registra las inscripciones notificadas en lugar de enviar el mail."""
+
+    def __init__(self):
+        self.notificadas = []
+
+    def notificar(self, inscripcion):
+        self.notificadas.append(inscripcion)
