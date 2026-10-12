@@ -13,3 +13,8 @@ class EstaAbiertoTests(SimpleTestCase):
         martes = date(2026, 10, 13)
 
         self.assertTrue(self.calendario.esta_abierto(martes))
+
+    def test_un_lunes_el_parque_esta_cerrado(self):
+        lunes = date(2026, 10, 12)
+
+        self.assertFalse(self.calendario.esta_abierto(lunes))
