@@ -2,6 +2,8 @@ from datetime import datetime
 
 from django.utils import timezone
 
+from apps.actividades.services.calendario_service import CalendarioParqueService
+from apps.actividades.services.horario_service import HorarioService
 from apps.inscripciones.exceptions.inscripcion_exceptions import (
     CupoInsuficienteError,
     DniDuplicadoError,
@@ -10,6 +12,8 @@ from apps.inscripciones.exceptions.inscripcion_exceptions import (
     TalleRequeridoError,
     TerminosNoAceptadosError,
 )
+from apps.inscripciones.notificaciones.email_notificador import EmailNotificador
+from apps.inscripciones.repositories.inscripcion_repository import InscripcionRepository
 
 
 class InscripcionService:
@@ -19,12 +23,18 @@ class InscripcionService:
     """
 
     def __init__(
-        self, inscripcion_repository, horario_service, notificador, calendario, reloj,
+        self,
+        inscripcion_repository=None,
+        horario_service=None,
+        notificador=None,
+        calendario=None,
+        reloj=timezone.now,
     ):
-        self.inscripciones = inscripcion_repository
-        self.horarios = horario_service
-        self.notificador = notificador
-        self.calendario = calendario
+        # Sin argumentos usa las dependencias reales; los tests inyectan dobles.
+        self.inscripciones = inscripcion_repository or InscripcionRepository()
+        self.horarios = horario_service or HorarioService()
+        self.notificador = notificador or EmailNotificador()
+        self.calendario = calendario or CalendarioParqueService()
         self.reloj = reloj
 
     def inscribir(self, usuario, datos):
