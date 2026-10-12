@@ -3,8 +3,10 @@ from datetime import date, time
 from django.test import SimpleTestCase
 
 from apps.actividades.models import Actividad, Horario
+from apps.actividades.services.calendario_service import CalendarioParqueService
 from apps.inscripciones.exceptions.inscripcion_exceptions import (
     CupoInsuficienteError,
+    ParqueCerradoError,
     TalleRequeridoError,
     TerminosNoAceptadosError,
 )
@@ -36,12 +38,14 @@ class InscripcionServiceTests(SimpleTestCase):
         self.horario_tirolesa = Horario(
             id=20, actividad=self.tirolesa, fecha=date(2026, 10, 13), hora_inicio=time(10, 0),
         )
+        self.horario_service = FakeHorarioService([self.horario, self.horario_tirolesa])
         self.repository = FakeInscripcionRepository()
         self.notificador = NotificadorEspia()
         self.service = InscripcionService(
             inscripcion_repository=self.repository,
-            horario_service=FakeHorarioService([self.horario, self.horario_tirolesa]),
+            horario_service=self.horario_service,
             notificador=self.notificador,
+            calendario=CalendarioParqueService(),
         )
 
     def solicitud(self, **cambios):
@@ -112,3 +116,10 @@ class InscripcionServiceTests(SimpleTestCase):
 
     def test_sin_aceptar_los_terminos_y_condiciones_rechaza_la_inscripcion(self):
         self.assertRechazada(TerminosNoAceptadosError, self.solicitud(acepta_terminos=False))
+
+    def test_un_horario_con_el_parque_cerrado_rechaza_la_inscripcion(self):
+        lunes = date(2026, 10, 12)
+        horario_lunes = Horario(id=30, actividad=self.safari, fecha=lunes, hora_inicio=time(10, 0))
+        self.horario_service.horarios[horario_lunes.id] = horario_lunes
+
+        self.assertRechazada(ParqueCerradoError, self.solicitud(horario_id=horario_lunes.id))
