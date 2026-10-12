@@ -65,3 +65,8 @@ class DisponibilidadServiceTests(SimpleTestCase):
         self.agregar_horario(11, fecha=lunes)
 
         self.assertEqual(self.horarios_listados(), [self.horario])
+
+    def test_una_actividad_inactiva_no_tiene_horarios_disponibles(self):
+        self.safari.activa = False
+
+        self.assertEqual(self.horarios_listados(), [])
