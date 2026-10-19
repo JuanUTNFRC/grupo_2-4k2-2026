@@ -76,6 +76,13 @@ class ParticipanteSerializerTests(SimpleTestCase):
         for edad in [0, -5]:
             with self.subTest(edad=edad):
                 self.assertParticipanteInvalido(con_participante(edad=edad), 'edad')
+                
+    
+    def test_edad_mayor_a_130_es_invalida(self):
+        self.assertParticipanteInvalido(con_participante(edad=131), 'edad')
+
+    def test_edad_de_130_es_valida(self):
+        self.assertParticipanteValido(con_participante(edad=130))
 
     def test_talle_fuera_de_xs_a_xxl_es_invalido(self):
         for talle in ['XXXL', 'm', 'Grande']:
@@ -96,6 +103,7 @@ class ParticipanteSerializerTests(SimpleTestCase):
             ('nombre', '', 'Ingresá el nombre y apellido.'),
             ('dni', '30.123.456', 'El DNI tiene que tener 7 u 8 números, sin puntos.'),
             ('edad', 0, 'La edad tiene que ser mayor a 0.'),
+            ('edad', 131, 'La edad tiene que ser 130 o menos.'),
             ('edad', 'treinta', 'Ingresá la edad en números.'),
             ('talle', 'XXXL', 'Elegí un talle de la lista.'),
         ]
