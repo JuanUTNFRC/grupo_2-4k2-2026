@@ -313,6 +313,7 @@ const REGLAS = {
     if (!valor) return 'Ingresá la edad.';
     if (!/^\d+$/.test(valor)) return 'Ingresá la edad en números.';
     if (Number(valor) < 1) return 'La edad tiene que ser mayor a 0.';
+    if (Number(valor) > 130) return 'La edad tiene que ser 130 o menos.';
     return '';
   },
   talle: (valor) => (estado.actividad && estado.actividad.requiere_talle && !valor ? 'Elegí un talle.' : ''),
