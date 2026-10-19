@@ -82,7 +82,7 @@ El enunciado del caso de estudio y la User Story no definen varias reglas de neg
 - Validaciones de los datos **(definidas por el grupo)**:
   - **Nombre:** obligatorio.
   - **DNI:** obligatorio, de 7 u 8 dígitos numéricos.
-  - **Edad:** obligatoria, número entero mayor a 0.
+  - **Edad:** obligatoria, número entero entre 1 y 130.
   - **Talle:** obligatorio solo si la actividad lo requiere. Valores posibles: XS, S, M, L, XL, XXL.
 - Un mismo DNI **no puede inscribirse dos veces en el mismo horario**, ni dentro de la misma inscripción ni en inscripciones distintas. **(Definida por el grupo)**
 
