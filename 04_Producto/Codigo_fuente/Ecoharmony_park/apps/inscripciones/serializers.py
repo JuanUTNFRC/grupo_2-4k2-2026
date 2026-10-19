@@ -23,12 +23,10 @@ class ParticipanteSerializer(serializers.Serializer):
     )
     edad = serializers.IntegerField(
         min_value=1,
-        max_value=130,
         error_messages={
             'required': 'Ingresá la edad.',
             'invalid': 'Ingresá la edad en números.',
             'min_value': 'La edad tiene que ser mayor a 0.',
-            'max_value': 'La edad tiene que ser menor a 131.',
         },
     )
     # Si el talle es obligatorio depende de la actividad: lo valida el service.

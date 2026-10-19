@@ -1,7 +1,7 @@
 import uuid
 
 from django.conf import settings
-from django.core.validators import MinValueValidator, RegexValidator, MaxValueValidator
+from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 
 
@@ -57,7 +57,7 @@ class Participante(models.Model):
             RegexValidator(r'^\d{7,8}$', 'El DNI debe tener 7 u 8 dígitos.'),
         ],
     )
-    edad = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(130)])
+    edad = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
     # Vacío cuando la actividad no requiere talle.
     talle = models.CharField(max_length=3, choices=Talle.choices, blank=True)
 
