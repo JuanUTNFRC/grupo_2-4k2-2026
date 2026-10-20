@@ -143,7 +143,7 @@ async function elegirActividad(id) {
 function dibujarDias() {
   const porDia = Map.groupBy(estado.horarios, (horario) => horario.fecha);
   if (porDia.size === 0) {
-    $('horario-ayuda').textContent = 'Esta actividad no tiene horarios con lugar en los próximos días. Probá con otra.';
+    $('horario-ayuda').textContent = 'Esta actividad no tiene horarios con lugar en las próximas 24 horas. La inscripción a cada turno abre 24 horas antes y cierra 15 minutos antes de que empiece.';
     return;
   }
   $('horario-ayuda').textContent = 'Los horarios muestran los lugares que quedan.';
