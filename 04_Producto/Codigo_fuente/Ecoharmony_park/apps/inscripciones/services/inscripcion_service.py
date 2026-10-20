@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 from django.utils import timezone
 
 from apps.actividades.services.calendario_service import CalendarioParqueService
@@ -16,6 +14,7 @@ from apps.inscripciones.exceptions.inscripcion_exceptions import (
 )
 from apps.inscripciones.notificaciones.cola_notificador import ColaNotificador
 from apps.inscripciones.repositories.inscripcion_repository import InscripcionRepository
+from apps.inscripciones.services import ventana_inscripcion
 
 
 class InscripcionService:
@@ -23,8 +22,6 @@ class InscripcionService:
 
     Recibe datos ya validados en formato por InscripcionCreateSerializer.
     """
-
-    APERTURA_INSCRIPCION = timedelta(hours=24)
 
     def __init__(
         self,
@@ -47,7 +44,7 @@ class InscripcionService:
         horario = self._obtener_horario_disponible(datos['actividad_id'], datos['horario_id'])
         if not self.calendario.admite_actividad(horario.fecha, horario.hora_inicio):
             raise ParqueCerradoError()
-        if self.reloj() < horario.inicio - self.APERTURA_INSCRIPCION:
+        if not ventana_inscripcion.abrio(horario, self.reloj()):
             raise InscripcionNoHabilitadaError()
         if not datos['acepta_terminos']:
             raise TerminosNoAceptadosError()
@@ -75,13 +72,10 @@ class InscripcionService:
             horario is None
             or horario.actividad_id != actividad_id
             or not horario.actividad.activa
-            or self._ya_comenzo(horario)
+            or ventana_inscripcion.cerro(horario, self.reloj())
         ):
             raise HorarioNoDisponibleError()
         return horario
-
-    def _ya_comenzo(self, horario):
-        return horario.inicio <= self.reloj()
 
     def _validar_talles(self, actividad, participantes):
         if actividad.requiere_talle and any(not p['talle'] for p in participantes):
