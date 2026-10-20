@@ -21,7 +21,7 @@ ACTIVIDADES = [
     },
     {
         'nombre': 'Safari',
-        'cupo_por_horario': 20,
+        'cupo_por_horario': 8,
         'requiere_talle': False,
         'terminos_condiciones': (
             'Está prohibido descender del vehículo y alimentar a los animales.'
@@ -38,7 +38,7 @@ ACTIVIDADES = [
     },
     {
         'nombre': 'Jardinería',
-        'cupo_por_horario': 15,
+        'cupo_por_horario': 12,
         'requiere_talle': False,
         'terminos_condiciones': (
             'Las herramientas se usan solo bajo la supervisión del guía y se '
