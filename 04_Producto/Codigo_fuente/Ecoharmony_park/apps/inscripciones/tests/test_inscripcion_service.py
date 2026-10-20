@@ -8,6 +8,7 @@ from apps.actividades.services.calendario_service import CalendarioParqueService
 from apps.inscripciones.exceptions.inscripcion_exceptions import (
     CupoInsuficienteError,
     DniDuplicadoError,
+    EdadMinimaError,
     HorarioNoDisponibleError,
     ParqueCerradoError,
     TalleRequeridoError,
@@ -36,7 +37,8 @@ class InscripcionServiceTests(SimpleTestCase):
             id=10, actividad=self.safari, fecha=date(2026, 10, 13), hora_inicio=time(10, 0),
         )
         self.tirolesa = Actividad(
-            id=2, nombre='Tirolesa', cupo_por_horario=10, requiere_talle=True, activa=True,
+            id=2, nombre='Tirolesa', cupo_por_horario=10, requiere_talle=True, edad_minima=8,
+            activa=True,
         )
         self.horario_tirolesa = Horario(
             id=20, actividad=self.tirolesa, fecha=date(2026, 10, 13), hora_inicio=time(10, 0),
@@ -119,6 +121,30 @@ class InscripcionServiceTests(SimpleTestCase):
         )
 
         self.assertRechazada(TalleRequeridoError, solicitud)
+
+    def solicitud_tirolesa(self, *participantes):
+        return self.solicitud(
+            actividad_id=self.tirolesa.id,
+            horario_id=self.horario_tirolesa.id,
+            participantes=list(participantes),
+        )
+
+    def test_un_participante_menor_a_la_edad_minima_rechaza_la_inscripcion(self):
+        solicitud = self.solicitud_tirolesa(
+            participante(talle='M'), participante(dni='30000002', edad=7, talle='S'),
+        )
+
+        self.assertRechazada(EdadMinimaError, solicitud)
+
+    def test_un_participante_con_la_edad_minima_justa_es_valido(self):
+        self.service.inscribir(self.usuario, self.solicitud_tirolesa(participante(edad=8, talle='S')))
+
+        self.assertEqual(len(self.repository.creadas), 1)
+
+    def test_una_actividad_sin_edad_minima_admite_cualquier_edad(self):
+        self.service.inscribir(self.usuario, self.solicitud(participantes=[participante(edad=1)]))
+
+        self.assertEqual(len(self.repository.creadas), 1)
 
     def test_sin_aceptar_los_terminos_y_condiciones_rechaza_la_inscripcion(self):
         self.assertRechazada(TerminosNoAceptadosError, self.solicitud(acepta_terminos=False))
