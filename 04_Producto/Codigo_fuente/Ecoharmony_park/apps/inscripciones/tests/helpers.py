@@ -1,8 +1,12 @@
 """Datos de prueba compartidos por los tests de inscripciones."""
 
-from datetime import timedelta
+from datetime import date, datetime
+from unittest.mock import patch
+from zoneinfo import ZoneInfo
 
-from django.utils import timezone
+# Un martes: el parque abre. AHORA es antes de todos sus turnos.
+MARTES = date(2026, 10, 13)
+AHORA = datetime(2026, 10, 13, 8, 0, tzinfo=ZoneInfo('America/Argentina/Cordoba'))
 
 
 def participante(**cambios):
@@ -10,7 +14,8 @@ def participante(**cambios):
     return {'nombre': 'Ana Pérez', 'dni': '30123456', 'edad': 30, 'talle': '', **cambios}
 
 
-def proximo_martes():
-    """Un martes futuro: el parque abre y ningún horario del día comenzó."""
-    hoy = timezone.localdate()
-    return hoy + timedelta(days=(1 - hoy.weekday()) % 7 or 7)
+def fijar_reloj(test, ahora=AHORA):
+    """Fija timezone.now() durante el test, para no depender del día en que se corre."""
+    reloj = patch('django.utils.timezone.now', return_value=ahora)
+    reloj.start()
+    test.addCleanup(reloj.stop)

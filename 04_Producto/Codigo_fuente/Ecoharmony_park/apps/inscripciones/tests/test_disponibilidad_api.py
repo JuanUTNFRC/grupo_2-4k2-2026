@@ -5,7 +5,7 @@ from rest_framework.test import APITestCase
 
 from apps.actividades.models import Actividad, Horario
 from apps.inscripciones.repositories.inscripcion_repository import InscripcionRepository
-from apps.inscripciones.tests.helpers import participante, proximo_martes
+from apps.inscripciones.tests.helpers import MARTES, fijar_reloj, participante
 from apps.usuarios.models import Usuario
 
 URL = '/api/horarios-disponibles/'
@@ -13,6 +13,7 @@ URL = '/api/horarios-disponibles/'
 
 class HorariosDisponiblesApiTests(APITestCase):
     def setUp(self):
+        fijar_reloj(self)
         self.usuario = Usuario.objects.create_user(
             username='visitante', email='visitante@example.com', password='x',
         )
@@ -22,8 +23,7 @@ class HorariosDisponiblesApiTests(APITestCase):
         )
 
     def test_lista_los_horarios_disponibles_con_su_cupo(self):
-        martes = proximo_martes()
-        horario = Horario.objects.create(actividad=self.safari, fecha=martes, hora_inicio=time(10, 0))
+        horario = Horario.objects.create(actividad=self.safari, fecha=MARTES, hora_inicio=time(10, 0))
         InscripcionRepository().crear(
             usuario=self.usuario, horario=horario, acepta_terminos=True,
             participantes=[participante(dni='30000001'), participante(dni='30000002')],
@@ -34,7 +34,7 @@ class HorariosDisponiblesApiTests(APITestCase):
         self.assertEqual(respuesta.status_code, status.HTTP_200_OK)
         self.assertEqual(respuesta.data, [{
             'id': horario.id,
-            'fecha': martes.isoformat(),
+            'fecha': MARTES.isoformat(),
             'hora_inicio': '10:00',
             'cupo_disponible': 18,
         }])

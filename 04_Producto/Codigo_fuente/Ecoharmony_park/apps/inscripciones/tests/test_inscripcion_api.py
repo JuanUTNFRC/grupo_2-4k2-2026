@@ -6,7 +6,7 @@ from rest_framework.test import APITestCase
 
 from apps.actividades.models import Actividad, Horario
 from apps.inscripciones.repositories.inscripcion_repository import InscripcionRepository
-from apps.inscripciones.tests.helpers import participante, proximo_martes
+from apps.inscripciones.tests.helpers import MARTES, fijar_reloj, participante
 from apps.usuarios.models import Usuario
 
 URL = '/api/inscripciones/'
@@ -16,6 +16,7 @@ class InscripcionApiTests(APITestCase):
     """Pruebas de usuario PU1 a PU6 de punta a punta por HTTP."""
 
     def setUp(self):
+        fijar_reloj(self)
         self.usuario = Usuario.objects.create_user(
             username='visitante', email='visitante@example.com', password='x',
         )
@@ -25,7 +26,7 @@ class InscripcionApiTests(APITestCase):
             terminos_condiciones='T&C',
         )
         self.horario_tirolesa = Horario.objects.create(
-            actividad=self.tirolesa, fecha=proximo_martes(), hora_inicio=time(10, 0),
+            actividad=self.tirolesa, fecha=MARTES, hora_inicio=time(10, 0),
         )
 
     def solicitud(self, actividad, horario, **cambios):
@@ -73,7 +74,7 @@ class InscripcionApiTests(APITestCase):
             nombre='Safari', cupo_por_horario=20, terminos_condiciones='T&C',
         )
         horario = Horario.objects.create(
-            actividad=safari, fecha=proximo_martes(), hora_inicio=time(10, 0),
+            actividad=safari, fecha=MARTES, hora_inicio=time(10, 0),
         )
 
         respuesta = self.client.post(
@@ -83,7 +84,7 @@ class InscripcionApiTests(APITestCase):
         self.assertEqual(respuesta.status_code, status.HTTP_201_CREATED)
 
     def test_pu4_horario_con_el_parque_cerrado_responde_400(self):
-        lunes = proximo_martes() + timedelta(days=6)
+        lunes = MARTES + timedelta(days=6)
         horario_lunes = Horario.objects.create(
             actividad=self.tirolesa, fecha=lunes, hora_inicio=time(10, 0),
         )

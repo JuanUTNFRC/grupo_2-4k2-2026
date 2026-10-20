@@ -7,12 +7,15 @@ from apps.actividades.models import Actividad, Horario
 from apps.inscripciones.models import Inscripcion
 from apps.inscripciones.notificaciones.cola_notificador import ColaNotificador
 from apps.inscripciones.services.inscripcion_service import InscripcionService
-from apps.inscripciones.tests.helpers import proximo_martes
+from apps.inscripciones.tests.helpers import MARTES, fijar_reloj
 from apps.usuarios.models import Usuario
 
 
 class InscripcionIntegracionTests(TestCase):
     """PU1 de punta a punta con las dependencias reales del service."""
+
+    def setUp(self):
+        fijar_reloj(self)
 
     def test_una_inscripcion_valida_se_guarda_y_envia_el_mail(self):
         usuario = Usuario.objects.create_user(
@@ -22,7 +25,7 @@ class InscripcionIntegracionTests(TestCase):
             nombre='Safari', cupo_por_horario=20, terminos_condiciones='T&C',
         )
         horario = Horario.objects.create(
-            actividad=safari, fecha=proximo_martes(), hora_inicio=time(10, 0),
+            actividad=safari, fecha=MARTES, hora_inicio=time(10, 0),
         )
 
         InscripcionService().inscribir(usuario, {
