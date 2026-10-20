@@ -23,7 +23,7 @@ class FakeInscripcionRepository:
     def __init__(self):
         self.creadas = []
         self.ocupados = {}  # horario_id -> participantes ya inscriptos
-        self.dnis = {}  # horario_id -> DNIs ya inscriptos
+        self.dnis = {}  # (fecha, hora_inicio) -> DNIs ya inscriptos a esa hora, en cualquier actividad
 
     def bloquear_horario(self, horario_id):
         # En memoria no hay concurrencia: el bloqueo real se prueba en el repository.
@@ -35,8 +35,11 @@ class FakeInscripcionRepository:
     def participantes_por_horario(self, horario_ids):
         return {horario_id: self.participantes_inscriptos(horario_id) for horario_id in horario_ids}
 
-    def dnis_inscriptos(self, horario_id):
-        return self.dnis.get(horario_id, set())
+    def agregar_dnis(self, horario, *dnis):
+        self.dnis.setdefault((horario.fecha, horario.hora_inicio), set()).update(dnis)
+
+    def dnis_inscriptos_a_la_misma_hora(self, horario):
+        return self.dnis.get((horario.fecha, horario.hora_inicio), set())
 
     def crear(self, usuario, horario, acepta_terminos, participantes):
         inscripcion = Inscripcion(

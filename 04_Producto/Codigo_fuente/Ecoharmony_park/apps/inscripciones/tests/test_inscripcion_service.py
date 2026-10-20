@@ -206,14 +206,22 @@ class InscripcionServiceTests(SimpleTestCase):
         self.assertRechazada(DniDuplicadoError, self.solicitud(participantes=grupo))
 
     def test_un_dni_ya_inscripto_en_el_horario_rechaza_la_inscripcion(self):
-        self.repository.dnis[self.horario.id] = {'30123456'}
+        self.repository.agregar_dnis(self.horario, '30123456')
 
         self.assertRechazada(
             DniDuplicadoError, self.solicitud(participantes=[participante(dni='30123456')]),
         )
 
-    def test_un_dni_inscripto_en_otro_horario_es_valido(self):
-        self.repository.dnis[self.horario_tirolesa.id] = {'30123456'}
+    def test_un_dni_inscripto_en_otra_actividad_a_la_misma_hora_rechaza_la_inscripcion(self):
+        self.repository.agregar_dnis(self.horario_tirolesa, '30123456')
+
+        self.assertRechazada(
+            DniDuplicadoError, self.solicitud(participantes=[participante(dni='30123456')]),
+        )
+
+    def test_un_dni_inscripto_a_otra_hora_es_valido(self):
+        otra_hora = Horario(id=40, actividad=self.tirolesa, fecha=self.horario.fecha, hora_inicio=time(11, 0))
+        self.repository.agregar_dnis(otra_hora, '30123456')
 
         self.service.inscribir(self.usuario, self.solicitud(participantes=[participante(dni='30123456')]))
 
