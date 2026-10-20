@@ -20,7 +20,7 @@ class SeedTests(TestCase):
 
         self.assertEqual(
             list(Actividad.objects.order_by('nombre').values_list('nombre', 'cupo_por_horario', 'requiere_talle')),
-            [('Jardinería', 15, False), ('Palestra', 12, True), ('Safari', 20, False), ('Tirolesa', 10, True)],
+            [('Jardinería', 12, False), ('Palestra', 12, True), ('Safari', 8, False), ('Tirolesa', 10, True)],
         )
 
     def test_crea_el_usuario_de_prueba_con_el_email_indicado(self):
