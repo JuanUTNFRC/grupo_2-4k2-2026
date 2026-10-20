@@ -90,7 +90,7 @@ class InscripcionService:
     def _validar_dnis(self, horario, participantes):
         dnis = [p['dni'] for p in participantes]
         repetidos_en_solicitud = len(dnis) != len(set(dnis))
-        ya_inscriptos = self.inscripciones.dnis_inscriptos(horario.id) & set(dnis)
+        ya_inscriptos = self.inscripciones.dnis_inscriptos_a_la_misma_hora(horario) & set(dnis)
         if repetidos_en_solicitud or ya_inscriptos:
             raise DniDuplicadoError()
 

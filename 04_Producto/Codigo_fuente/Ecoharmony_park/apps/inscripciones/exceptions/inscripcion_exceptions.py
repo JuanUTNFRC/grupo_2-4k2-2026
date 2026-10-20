@@ -71,8 +71,8 @@ class InscripcionCerradaError(InscripcionError):
 
 
 class DniDuplicadoError(InscripcionError):
-    """RN5: un mismo DNI no puede inscribirse dos veces en el mismo horario."""
+    """RN5: un mismo DNI no puede estar en dos actividades que empiezan a la misma hora."""
 
     status_code = status.HTTP_409_CONFLICT
-    default_detail = 'Un mismo DNI no puede inscribirse dos veces en el mismo horario.'
+    default_detail = 'Un mismo DNI no puede inscribirse dos veces a la misma hora, ni en otra actividad.'
     default_code = 'dni_duplicado'
