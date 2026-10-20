@@ -22,13 +22,14 @@ class DisponibilidadService:
         horario_service=None,
         inscripcion_repository=None,
         calendario=None,
-        reloj=timezone.now,
+        reloj=None,
     ):
         # Sin argumentos usa las dependencias reales; los tests inyectan dobles.
         self.horarios = horario_service or HorarioService()
         self.inscripciones = inscripcion_repository or InscripcionRepository()
         self.calendario = calendario or CalendarioParqueService()
-        self.reloj = reloj
+        # Se resuelve acá y no en la firma para que los tests puedan fijar timezone.now.
+        self.reloj = reloj or timezone.now
 
     def horarios_disponibles(self, actividad_id):
         ahora = self.reloj()

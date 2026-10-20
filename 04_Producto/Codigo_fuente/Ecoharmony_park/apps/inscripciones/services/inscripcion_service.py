@@ -27,14 +27,15 @@ class InscripcionService:
         horario_service=None,
         notificador=None,
         calendario=None,
-        reloj=timezone.now,
+        reloj=None,
     ):
         # Sin argumentos usa las dependencias reales; los tests inyectan dobles.
         self.inscripciones = inscripcion_repository or InscripcionRepository()
         self.horarios = horario_service or HorarioService()
         self.notificador = notificador or ColaNotificador()
         self.calendario = calendario or CalendarioParqueService()
-        self.reloj = reloj
+        # Se resuelve acá y no en la firma para que los tests puedan fijar timezone.now.
+        self.reloj = reloj or timezone.now
 
     def inscribir(self, usuario, datos):
         participantes = datos['participantes']
