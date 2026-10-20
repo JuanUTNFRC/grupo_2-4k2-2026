@@ -5,6 +5,7 @@ from apps.actividades.services.horario_service import HorarioService
 from apps.inscripciones.exceptions.inscripcion_exceptions import (
     CupoInsuficienteError,
     DniDuplicadoError,
+    EdadMinimaError,
     HorarioNoDisponibleError,
     ParqueCerradoError,
     TalleRequeridoError,
@@ -43,6 +44,7 @@ class InscripcionService:
         if not datos['acepta_terminos']:
             raise TerminosNoAceptadosError()
         self._validar_talles(horario.actividad, participantes)
+        self._validar_edades(horario.actividad, participantes)
 
         # DNI y cupo se validan y se ocupan con el horario bloqueado, para que
         # dos inscripciones simultáneas no tomen el mismo lugar.
@@ -76,6 +78,10 @@ class InscripcionService:
     def _validar_talles(self, actividad, participantes):
         if actividad.requiere_talle and any(not p['talle'] for p in participantes):
             raise TalleRequeridoError()
+
+    def _validar_edades(self, actividad, participantes):
+        if any(p['edad'] < actividad.edad_minima for p in participantes):
+            raise EdadMinimaError(actividad.edad_minima)
 
     def _validar_dnis(self, horario, participantes):
         dnis = [p['dni'] for p in participantes]

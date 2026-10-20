@@ -25,6 +25,16 @@ class TalleRequeridoError(InscripcionError):
     default_code = 'talle_requerido'
 
 
+class EdadMinimaError(InscripcionError):
+    """RN5: algún participante no tiene la edad mínima de la actividad."""
+
+    default_detail = 'Algún participante no tiene la edad mínima de la actividad.'
+    default_code = 'edad_minima'
+
+    def __init__(self, edad_minima):
+        super().__init__(f'La actividad requiere tener {edad_minima} años o más.')
+
+
 class TerminosNoAceptadosError(InscripcionError):
     """RN6: no se aceptaron los términos y condiciones de la actividad."""
 

@@ -13,6 +13,8 @@ class Actividad(models.Model):
         validators=[MinValueValidator(1)],
     )
     requiere_talle = models.BooleanField(default=False)
+    # 0 cuando la actividad admite todas las edades.
+    edad_minima = models.PositiveSmallIntegerField(default=0)
     terminos_condiciones = models.TextField()
     activa = models.BooleanField(default=True)
 
