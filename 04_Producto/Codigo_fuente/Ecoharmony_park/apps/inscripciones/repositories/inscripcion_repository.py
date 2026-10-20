@@ -41,9 +41,6 @@ class InscripcionRepository:
         ocupados.update({c['inscripcion__horario_id']: c['total'] for c in conteos})
         return ocupados
 
-    def dnis_inscriptos(self, horario_id):
-        return set(self._participantes_del_horario(horario_id).values_list('dni', flat=True))
-
     def dnis_inscriptos_a_la_misma_hora(self, horario):
         """DNIs inscriptos en cualquier actividad que empieza el mismo día y a la misma hora."""
         return set(
