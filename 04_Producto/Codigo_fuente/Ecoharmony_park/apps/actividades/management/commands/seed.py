@@ -8,12 +8,13 @@ from django.utils import timezone
 from apps.actividades.models import Actividad, Horario
 from apps.actividades.services.calendario_service import CalendarioParqueService
 
-# RN1: actividades, cupos y talle.
+# RN1: actividades, cupos, talle y edad mínima.
 ACTIVIDADES = [
     {
         'nombre': 'Tirolesa',
         'cupo_por_horario': 10,
         'requiere_talle': True,
+        'edad_minima': 8,
         'terminos_condiciones': (
             'Es obligatorio usar el arnés provisto por el parque y seguir las '
             'indicaciones del guía en todo momento.'
@@ -31,6 +32,7 @@ ACTIVIDADES = [
         'nombre': 'Palestra',
         'cupo_por_horario': 12,
         'requiere_talle': True,
+        'edad_minima': 12,
         'terminos_condiciones': (
             'Es obligatorio usar el arnés provisto por el parque y escalar solo '
             'con la supervisión del guía.'
