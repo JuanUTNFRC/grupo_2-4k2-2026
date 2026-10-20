@@ -60,6 +60,13 @@ class DisponibilidadServiceTests(SimpleTestCase):
 
         self.assertEqual(self.horarios_listados(), [siguiente])
 
+    def test_excluye_los_horarios_que_empiezan_en_mas_de_24_horas(self):
+        self.ahora = datetime(2026, 10, 13, 9, 0, tzinfo=CORDOBA)
+        justo_24_horas = self.agregar_horario(11, fecha=date(2026, 10, 14), hora_inicio=time(9, 0))
+        self.agregar_horario(12, fecha=date(2026, 10, 14), hora_inicio=time(10, 0))
+
+        self.assertEqual(self.horarios_listados(), [self.horario, justo_24_horas])
+
     def test_excluye_los_horarios_con_el_parque_cerrado(self):
         lunes = date(2026, 10, 19)
         self.agregar_horario(11, fecha=lunes)
