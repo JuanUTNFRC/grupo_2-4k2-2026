@@ -56,6 +56,13 @@ class HorarioNoDisponibleError(InscripcionError):
     default_code = 'horario_no_disponible'
 
 
+class InscripcionNoHabilitadaError(InscripcionError):
+    """RN2: la inscripción a un horario abre 24 horas antes de su inicio."""
+
+    default_detail = 'La inscripción a un horario abre 24 horas antes de su inicio.'
+    default_code = 'inscripcion_no_habilitada'
+
+
 class DniDuplicadoError(InscripcionError):
     """RN5: un mismo DNI no puede inscribirse dos veces en el mismo horario."""
 

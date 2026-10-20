@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.utils import timezone
 
 from apps.actividades.services.calendario_service import CalendarioParqueService
@@ -7,6 +9,7 @@ from apps.inscripciones.exceptions.inscripcion_exceptions import (
     DniDuplicadoError,
     EdadMinimaError,
     HorarioNoDisponibleError,
+    InscripcionNoHabilitadaError,
     ParqueCerradoError,
     TalleRequeridoError,
     TerminosNoAceptadosError,
@@ -20,6 +23,8 @@ class InscripcionService:
 
     Recibe datos ya validados en formato por InscripcionCreateSerializer.
     """
+
+    APERTURA_INSCRIPCION = timedelta(hours=24)
 
     def __init__(
         self,
@@ -42,6 +47,8 @@ class InscripcionService:
         horario = self._obtener_horario_disponible(datos['actividad_id'], datos['horario_id'])
         if not self.calendario.admite_actividad(horario.fecha, horario.hora_inicio):
             raise ParqueCerradoError()
+        if self.reloj() < horario.inicio - self.APERTURA_INSCRIPCION:
+            raise InscripcionNoHabilitadaError()
         if not datos['acepta_terminos']:
             raise TerminosNoAceptadosError()
         self._validar_talles(horario.actividad, participantes)
