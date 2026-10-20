@@ -7,6 +7,7 @@ from apps.inscripciones.exceptions.inscripcion_exceptions import (
     DniDuplicadoError,
     EdadMinimaError,
     HorarioNoDisponibleError,
+    InscripcionCerradaError,
     InscripcionNoHabilitadaError,
     ParqueCerradoError,
     TalleRequeridoError,
@@ -46,6 +47,8 @@ class InscripcionService:
             raise ParqueCerradoError()
         if not ventana_inscripcion.abrio(horario, self.reloj()):
             raise InscripcionNoHabilitadaError()
+        if ventana_inscripcion.cerro(horario, self.reloj()):
+            raise InscripcionCerradaError()
         if not datos['acepta_terminos']:
             raise TerminosNoAceptadosError()
         self._validar_talles(horario.actividad, participantes)
@@ -72,7 +75,6 @@ class InscripcionService:
             horario is None
             or horario.actividad_id != actividad_id
             or not horario.actividad.activa
-            or ventana_inscripcion.cerro(horario, self.reloj())
         ):
             raise HorarioNoDisponibleError()
         return horario

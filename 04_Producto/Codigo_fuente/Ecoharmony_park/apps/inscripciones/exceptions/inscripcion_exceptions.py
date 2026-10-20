@@ -63,6 +63,13 @@ class InscripcionNoHabilitadaError(InscripcionError):
     default_code = 'inscripcion_no_habilitada'
 
 
+class InscripcionCerradaError(InscripcionError):
+    """RN2: la inscripción a un horario cierra 15 minutos antes de su inicio."""
+
+    default_detail = 'La inscripción a un horario cierra 15 minutos antes de su inicio.'
+    default_code = 'inscripcion_cerrada'
+
+
 class DniDuplicadoError(InscripcionError):
     """RN5: un mismo DNI no puede inscribirse dos veces en el mismo horario."""
 
