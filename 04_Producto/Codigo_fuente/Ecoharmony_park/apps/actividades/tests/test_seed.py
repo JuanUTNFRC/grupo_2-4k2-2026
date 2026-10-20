@@ -19,8 +19,15 @@ class SeedTests(TestCase):
         correr_seed()
 
         self.assertEqual(
-            list(Actividad.objects.order_by('nombre').values_list('nombre', 'cupo_por_horario', 'requiere_talle')),
-            [('Jardinería', 12, False), ('Palestra', 12, True), ('Safari', 8, False), ('Tirolesa', 10, True)],
+            list(Actividad.objects.order_by('nombre').values_list(
+                'nombre', 'cupo_por_horario', 'requiere_talle', 'edad_minima',
+            )),
+            [
+                ('Jardinería', 12, False, 0),
+                ('Palestra', 12, True, 12),
+                ('Safari', 8, False, 0),
+                ('Tirolesa', 10, True, 8),
+            ],
         )
 
     def test_crea_el_usuario_de_prueba_con_el_email_indicado(self):
