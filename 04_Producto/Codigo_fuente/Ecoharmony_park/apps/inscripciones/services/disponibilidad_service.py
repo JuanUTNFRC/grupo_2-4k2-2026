@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import timedelta
 
 from django.utils import timezone
 
@@ -16,6 +17,8 @@ class HorarioDisponible:
 
 class DisponibilidadService:
     """Horarios de una actividad en los que todavía es posible inscribirse."""
+
+    APERTURA_INSCRIPCION = timedelta(hours=24)
 
     def __init__(
         self,
@@ -46,9 +49,10 @@ class DisponibilidadService:
         return [d for d in disponibles if d.cupo_disponible > 0]
 
     def _admite_inscripciones(self, horario, ahora):
-        """Actividad activa, horario sin comenzar y con el parque abierto."""
+        """Actividad activa, horario sin comenzar, dentro de las 24 horas y con el parque abierto."""
         return (
             horario.actividad.activa
             and horario.inicio > ahora
+            and horario.inicio - self.APERTURA_INSCRIPCION <= ahora
             and self.calendario.admite_actividad(horario.fecha, horario.hora_inicio)
         )
