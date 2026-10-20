@@ -72,6 +72,29 @@ class InscripcionRepositoryTests(TestCase):
             {'30000001', '30000002', '30000003'},
         )
 
+    def test_dnis_inscriptos_a_la_misma_hora_incluye_las_otras_actividades(self):
+        tirolesa = Actividad.objects.create(
+            nombre='Tirolesa', cupo_por_horario=10, requiere_talle=True, terminos_condiciones='T&C',
+        )
+        misma_hora = Horario.objects.create(
+            actividad=tirolesa, fecha=date(2026, 10, 13), hora_inicio=time(10, 0),
+        )
+        otra_hora = Horario.objects.create(
+            actividad=tirolesa, fecha=date(2026, 10, 13), hora_inicio=time(11, 0),
+        )
+        otro_dia = Horario.objects.create(
+            actividad=tirolesa, fecha=date(2026, 10, 14), hora_inicio=time(10, 0),
+        )
+        self.inscribir(self.horario, '30000001')
+        self.inscribir(misma_hora, '30000002')
+        self.inscribir(otra_hora, '30000003')
+        self.inscribir(otro_dia, '30000004')
+
+        self.assertEqual(
+            self.repository.dnis_inscriptos_a_la_misma_hora(self.horario),
+            {'30000001', '30000002'},
+        )
+
     def test_bloquear_horario_revierte_lo_creado_si_falla_adentro(self):
         with self.assertRaises(RuntimeError):
             with self.repository.bloquear_horario(self.horario.id):
