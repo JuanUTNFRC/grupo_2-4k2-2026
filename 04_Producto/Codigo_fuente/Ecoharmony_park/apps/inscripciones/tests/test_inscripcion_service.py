@@ -10,6 +10,7 @@ from apps.inscripciones.exceptions.inscripcion_exceptions import (
     DniDuplicadoError,
     EdadMinimaError,
     HorarioNoDisponibleError,
+    InscripcionCerradaError,
     InscripcionNoHabilitadaError,
     ParqueCerradoError,
     TalleRequeridoError,
@@ -173,7 +174,19 @@ class InscripcionServiceTests(SimpleTestCase):
     def test_un_horario_que_ya_comenzo_rechaza_la_inscripcion(self):
         self.ahora = datetime(2026, 10, 13, 10, 0, tzinfo=CORDOBA)
 
-        self.assertRechazada(HorarioNoDisponibleError, self.solicitud())
+        self.assertRechazada(InscripcionCerradaError, self.solicitud())
+
+    def test_inscribirse_15_minutos_antes_del_horario_rechaza_la_inscripcion(self):
+        self.ahora = datetime(2026, 10, 13, 9, 45, tzinfo=CORDOBA)
+
+        self.assertRechazada(InscripcionCerradaError, self.solicitud())
+
+    def test_inscribirse_16_minutos_antes_del_horario_es_valido(self):
+        self.ahora = datetime(2026, 10, 13, 9, 44, tzinfo=CORDOBA)
+
+        self.service.inscribir(self.usuario, self.solicitud())
+
+        self.assertEqual(len(self.repository.creadas), 1)
 
     def test_un_horario_que_empieza_en_mas_de_24_horas_rechaza_la_inscripcion(self):
         self.ahora = datetime(2026, 10, 12, 9, 59, tzinfo=CORDOBA)
