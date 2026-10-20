@@ -106,6 +106,9 @@ async function cargarActividades() {
         crear('span', 'actividad__nombre', actividad.nombre),
         crear('span', 'etiqueta', actividad.requiere_talle ? 'Pide talle' : 'Sin talle'),
       );
+      if (actividad.edad_minima) {
+        tarjeta.append(crear('span', 'etiqueta', `Desde ${actividad.edad_minima} años`));
+      }
       return opcion('actividad', actividad.id, tarjeta);
     }),
   );
@@ -121,6 +124,10 @@ async function elegirActividad(id) {
   $('paso-horario').disabled = false;
   $('horario-ayuda').textContent = 'Buscando horarios con lugar…';
   actualizar();
+  // La edad mínima cambia con la actividad: revalida las edades ya cargadas.
+  for (const input of $('participantes').querySelectorAll('input[name="edad"]')) {
+    if (input.value.trim()) validarCampo(input);
+  }
 
   const { ok, datos } = await api(`/api/horarios-disponibles/?actividad_id=${id}`);
   if (!ok) {
@@ -298,6 +305,10 @@ function limpiarErrores() {
 // Los mismos mensajes que devuelve la API: el usuario los ve antes de enviar,
 // y la API los vuelve a validar igual.
 
+function edadMinima() {
+  return estado.actividad ? estado.actividad.edad_minima : 0;
+}
+
 const REGLAS = {
   nombre: (valor) => {
     if (!valor) return 'Ingresá el nombre y apellido.';
@@ -314,6 +325,7 @@ const REGLAS = {
     if (!/^\d+$/.test(valor)) return 'Ingresá la edad en números.';
     if (Number(valor) < 1) return 'La edad tiene que ser mayor a 0.';
     if (Number(valor) > 130) return 'La edad tiene que ser 130 o menos.';
+    if (Number(valor) < edadMinima()) return `La actividad requiere tener ${edadMinima()} años o más.`;
     return '';
   },
   talle: (valor) => (estado.actividad && estado.actividad.requiere_talle && !valor ? 'Elegí un talle.' : ''),
@@ -366,6 +378,12 @@ function mostrarErrores({ codigo, detalle, errores }) {
   if (codigo === 'talle_requerido') {
     for (const select of $('participantes').querySelectorAll('select[name="talle"]')) {
       if (!select.value) marcarCampo(select, 'Elegí un talle.');
+    }
+  }
+  if (codigo === 'edad_minima') {
+    for (const input of $('participantes').querySelectorAll('input[name="edad"]')) {
+      const mensaje = REGLAS.edad(input.value.trim());
+      if (mensaje) marcarCampo(input, mensaje);
     }
   }
   if (codigo === 'terminos_no_aceptados') {
