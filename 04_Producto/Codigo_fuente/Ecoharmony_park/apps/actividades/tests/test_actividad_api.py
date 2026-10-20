@@ -16,7 +16,7 @@ class ActividadApiTests(APITestCase):
 
     def test_lista_solo_las_actividades_activas_ordenadas_por_nombre(self):
         tirolesa = Actividad.objects.create(
-            nombre='Tirolesa', cupo_por_horario=10, requiere_talle=True,
+            nombre='Tirolesa', cupo_por_horario=10, requiere_talle=True, edad_minima=8,
             terminos_condiciones='Usar arnés.',
         )
         safari = Actividad.objects.create(
@@ -31,11 +31,11 @@ class ActividadApiTests(APITestCase):
         self.assertEqual(respuesta.status_code, status.HTTP_200_OK)
         self.assertEqual(respuesta.data, [
             {
-                'id': safari.id, 'nombre': 'Safari', 'requiere_talle': False,
+                'id': safari.id, 'nombre': 'Safari', 'requiere_talle': False, 'edad_minima': 0,
                 'terminos_condiciones': 'No bajar del vehículo.',
             },
             {
-                'id': tirolesa.id, 'nombre': 'Tirolesa', 'requiere_talle': True,
+                'id': tirolesa.id, 'nombre': 'Tirolesa', 'requiere_talle': True, 'edad_minima': 8,
                 'terminos_condiciones': 'Usar arnés.',
             },
         ])
