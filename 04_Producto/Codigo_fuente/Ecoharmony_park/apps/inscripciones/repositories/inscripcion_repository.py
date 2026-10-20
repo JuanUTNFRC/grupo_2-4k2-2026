@@ -44,6 +44,17 @@ class InscripcionRepository:
     def dnis_inscriptos(self, horario_id):
         return set(self._participantes_del_horario(horario_id).values_list('dni', flat=True))
 
+    def dnis_inscriptos_a_la_misma_hora(self, horario):
+        """DNIs inscriptos en cualquier actividad que empieza el mismo día y a la misma hora."""
+        return set(
+            Participante.objects
+            .filter(
+                inscripcion__horario__fecha=horario.fecha,
+                inscripcion__horario__hora_inicio=horario.hora_inicio,
+            )
+            .values_list('dni', flat=True)
+        )
+
     def crear(self, usuario, horario, acepta_terminos, participantes):
         inscripcion = Inscripcion.objects.create(
             usuario=usuario,
