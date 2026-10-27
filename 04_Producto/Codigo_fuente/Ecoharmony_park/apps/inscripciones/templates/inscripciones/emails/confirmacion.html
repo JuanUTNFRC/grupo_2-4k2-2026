@@ -7,21 +7,21 @@
   <title>Reserva confirmada</title>
 </head>
 {# Mail: estilos inline y layout con tablas, porque Gmail y Outlook ignoran buena parte del CSS moderno. #}
-<body style="margin:0; padding:0; background:#f2f5ef;">
+<body style="margin:0; padding:0; background:#f2e8cf;">
   {# Texto de vista previa en la bandeja de entrada; no se muestra en el cuerpo. #}
   <div style="display:none; max-height:0; overflow:hidden; mso-hide:all;">
     {{ horario.actividad.nombre }} el {{ horario.fecha|date:"l j \d\e F" }} a las {{ horario.hora_inicio|time:"H:i" }}. Mostrá el QR al llegar.
   </div>
 
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f2f5ef;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f2e8cf;">
     <tr>
       <td align="center" style="padding:32px 16px;">
 
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px; background:#ffffff; border-radius:16px; overflow:hidden; border:1px solid #c9d3c2; font-family:Arial, Helvetica, sans-serif; color:#1e3a2b;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px; background:#ffffff; border-radius:16px; overflow:hidden; border:1px solid #cfd6ae; font-family:Lato, Arial, Helvetica, sans-serif; color:#386641;">
 
           {# Banda con la marca #}
           <tr>
-            <td style="background:#3f6e36; padding:18px 28px;">
+            <td style="background:#386641; padding:18px 28px;">
               <span style="font-size:17px; font-weight:bold; color:#ffffff; letter-spacing:0.2px;">EcoHarmony Park</span>
             </td>
           </tr>
@@ -29,20 +29,20 @@
           {# Cuerpo del pase #}
           <tr>
             <td style="padding:28px 28px 8px;">
-              <p style="margin:0 0 6px; font-size:12px; font-weight:bold; letter-spacing:1.2px; text-transform:uppercase; color:#3f6e36;">Reserva confirmada</p>
-              <h1 style="margin:0 0 6px; font-family:Georgia, 'Times New Roman', serif; font-size:32px; line-height:1.15; color:#1e3a2b;">{{ horario.actividad.nombre }}</h1>
-              <p style="margin:0; font-size:16px; color:#56665b;">{{ horario.fecha|date:"l d/m/Y" }} · {{ horario.hora_inicio|time:"H:i" }} hs</p>
+              <p style="margin:0 0 6px; font-size:12px; font-weight:bold; letter-spacing:1.2px; text-transform:uppercase; color:#386641;">Reserva confirmada</p>
+              <h1 style="margin:0 0 6px; font-family:Lato, Arial, Helvetica, sans-serif; font-size:32px; line-height:1.15; color:#386641;">{{ horario.actividad.nombre }}</h1>
+              <p style="margin:0; font-size:16px; color:#4f5e45;">{{ horario.fecha|date:"l d/m/Y" }} · {{ horario.hora_inicio|time:"H:i" }} hs</p>
             </td>
           </tr>
 
           <tr>
             <td style="padding:20px 28px 24px;">
-              <p style="margin:0 0 8px; font-size:12px; font-weight:bold; letter-spacing:1.2px; text-transform:uppercase; color:#56665b;">Participantes</p>
+              <p style="margin:0 0 8px; font-size:12px; font-weight:bold; letter-spacing:1.2px; text-transform:uppercase; color:#4f5e45;">Participantes</p>
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                 {% for participante in participantes %}
                 <tr>
-                  <td style="padding:10px 0; border-bottom:1px solid #dce6cf; font-size:16px; font-weight:bold;">{{ participante.nombre }}</td>
-                  <td align="right" style="padding:10px 0; border-bottom:1px solid #dce6cf; font-size:14px; color:#56665b;">
+                  <td style="padding:10px 0; border-bottom:1px solid #e3e2b8; font-size:16px; font-weight:bold;">{{ participante.nombre }}</td>
+                  <td align="right" style="padding:10px 0; border-bottom:1px solid #e3e2b8; font-size:14px; color:#4f5e45;">
                     DNI {{ participante.dni }}{% if participante.talle %} · Talle {{ participante.talle }}{% endif %}
                   </td>
                 </tr>
@@ -53,24 +53,24 @@
 
           {# Línea de corte del talón #}
           <tr>
-            <td style="border-top:2px dashed #1e3a2b; font-size:0; line-height:0;">&nbsp;</td>
+            <td style="border-top:2px dashed #386641; font-size:0; line-height:0;">&nbsp;</td>
           </tr>
 
           {# Talón con el QR #}
           <tr>
-            <td align="center" style="background:#e8a922; padding:28px;">
-              <p style="margin:0 0 14px; font-size:12px; font-weight:bold; letter-spacing:1.2px; text-transform:uppercase; color:#1e3a2b;">Tu pase de entrada</p>
+            <td align="center" style="background:#bc4749; padding:28px;">
+              <p style="margin:0 0 14px; font-size:12px; font-weight:bold; letter-spacing:1.2px; text-transform:uppercase; color:#ffffff;">Tu pase de entrada</p>
               <img src="cid:qr-inscripcion" width="180" height="180" alt="Código QR de la inscripción {{ inscripcion.codigo }}"
                    style="display:block; width:180px; height:180px; border:8px solid #ffffff; border-radius:8px; background:#ffffff;">
-              <p style="margin:14px 0 0; font-family:'Courier New', Courier, monospace; font-size:13px; color:#1e3a2b; word-break:break-all;">{{ inscripcion.codigo }}</p>
+              <p style="margin:14px 0 0; font-family:'Courier New', Courier, monospace; font-size:13px; color:#ffffff; word-break:break-all;">{{ inscripcion.codigo }}</p>
             </td>
           </tr>
         </table>
 
         {# Indicaciones al pie, fuera del pase #}
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px; font-family:Arial, Helvetica, sans-serif;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px; font-family:Lato, Arial, Helvetica, sans-serif;">
           <tr>
-            <td style="padding:20px 8px 0; font-size:14px; line-height:1.5; color:#56665b; text-align:center;">
+            <td style="padding:20px 8px 0; font-size:14px; line-height:1.5; color:#4f5e45; text-align:center;">
               Mostrá este código QR al llegar a la actividad, desde el celular o impreso.<br>
               Te recomendamos llegar 15 minutos antes del horario.
             </td>
