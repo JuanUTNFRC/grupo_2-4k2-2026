@@ -8,7 +8,10 @@
 El enunciado del caso de estudio y la User Story no definen varias reglas de negocio necesarias para implementar y probar la funcionalidad (cupos, horarios, días de apertura, talles, etc.). Este documento registra las reglas que el grupo definió para cubrir esos huecos. Cada regla indica su origen:
 
 - **Enunciado:** surge del enunciado del caso de estudio o de la User Story.
+- **Guía del PO:** surge de la guía de preguntas frecuentes publicada por los PO ("FAQ PO TDD EcoHarmony Park"). Se indica el número de pregunta.
 - **Definida por el grupo:** no está especificada y fue decidida por el grupo.
+
+Cuando la guía del PO se publicó, varias reglas que el grupo había definido se corrigieron para respetarla. Esas reglas ahora citan la pregunta de la guía.
 
 ## User Story
 
@@ -40,31 +43,35 @@ El enunciado del caso de estudio y la User Story no definen varias reglas de neg
 
 ### RN1 - Actividades
 
-| Actividad | Cupo por horario | Requiere talle |
-|-----------|------------------|----------------|
-| Tirolesa | 10 | Sí (arnés) |
-| Safari | 20 | No |
-| Palestra | 12 | Sí (arnés) |
-| Jardinería | 15 | No |
+| Actividad | Cupo por horario | Requiere talle | Edad mínima |
+|-----------|------------------|----------------|-------------|
+| Tirolesa | 10 | Sí (arnés) | 8 años |
+| Safari | 8 | No | Todas las edades |
+| Palestra | 12 | Sí (arnés) | 12 años |
+| Jardinería | 12 | No | Todas las edades |
 
 - Las cuatro actividades son las del enunciado. **(Enunciado)**
-- El enunciado indica que los cupos son limitados, pero no su cantidad. Los cupos y qué actividades requieren talle fueron **definidos por el grupo**.
+- Los cupos por horario. **(Guía del PO, pregunta 13)**
+- Las actividades que requieren talle de vestimenta: Palestra y Tirolesa. **(Guía del PO, pregunta 9)**
+- La edad mínima por actividad. **(Guía del PO, pregunta 15)**
 - Cada actividad tiene sus propios términos y condiciones. **(Enunciado)**
 - Una actividad puede estar desactivada por el administrador. Una actividad desactivada no admite inscripciones ("la actividad no está disponible", PU4). **(Definida por el grupo)**
 
 ### RN2 - Horarios
 
 - Cada actividad dura una hora. **(Enunciado)**
-- Los horarios se ofrecen cada una hora, de 09:00 a 17:00 (el último turno termina a las 18:00). **(Definida por el grupo)**
-- Un horario es **disponible** cuando cumple todas estas condiciones **(definida por el grupo)**:
+- Los horarios se ofrecen cada una hora, de 09:00 a 17:00. A las 18:00 no hay turno: es la cota superior. **(Guía del PO, pregunta 12)**
+- La inscripción a un horario **abre 24 horas antes** de su inicio. Por ejemplo, un martes no se puede inscribir a una actividad del viernes. **(Guía del PO, pregunta 23)**
+- La inscripción a un horario **cierra 15 minutos antes** de su inicio. **(Guía del PO, pregunta 30)**
+- Un horario es **disponible** cuando cumple todas estas condiciones:
   - existe y pertenece a la actividad seleccionada;
   - la actividad está activa;
-  - no comenzó todavía (no se puede inscribir a un horario pasado);
+  - la inscripción está abierta: faltan 24 horas o menos para el inicio y más de 15 minutos;
   - cae en un día y hora en que el parque está abierto (RN3).
 
 ### RN3 - Calendario del parque
 
-**(Definida por el grupo, en coherencia con la User Story "Comprar entradas")**
+**(Guía del PO, preguntas 1 y 11)**
 
 - El parque abre de **martes a domingo**, de **08:30 a 19:00**.
 - El parque permanece **cerrado todos los lunes**, el **1 de enero** y el **25 de diciembre**.
@@ -77,14 +84,15 @@ El enunciado del caso de estudio y la User Story no definen varias reglas de neg
 
 ### RN5 - Participantes
 
-- Se debe indicar al menos **un** participante. No hay otro tope que el cupo disponible del horario. **(Definida por el grupo)**
+- Se debe indicar al menos **un** participante. No hay otro tope que el cupo disponible del horario. **(Guía del PO, pregunta 31)**
 - Por cada participante se ingresa nombre, DNI, edad y talle si la actividad lo requiere. **(Enunciado)**
 - Validaciones de los datos **(definidas por el grupo)**:
   - **Nombre:** obligatorio.
-  - **DNI:** obligatorio, de 7 u 8 dígitos numéricos.
+  - **DNI:** obligatorio, de 7 u 8 dígitos numéricos. Solo se acepta DNI, no pasaporte. **(Guía del PO, pregunta 32)**
   - **Edad:** obligatoria, número entero entre 1 y 130.
-  - **Talle:** obligatorio solo si la actividad lo requiere. Valores posibles: XS, S, M, L, XL, XXL.
-- Un mismo DNI **no puede inscribirse dos veces en el mismo horario**, ni dentro de la misma inscripción ni en inscripciones distintas. **(Definida por el grupo)**
+  - **Edad mínima:** cada participante debe tener la edad mínima de la actividad (RN1). **(Guía del PO, pregunta 15)**
+  - **Talle:** obligatorio solo si la actividad lo requiere. Valores posibles: XS, S, M, L, XL, XXL. **(Guía del PO, pregunta 14)**
+- Un mismo DNI **no puede inscribirse dos veces a la misma hora**: ni en el mismo horario, ni en otra actividad que empieza el mismo día a la misma hora. Vale tanto dentro de la misma inscripción como en inscripciones distintas. **(Guía del PO, pregunta 29)**
 
 ### RN6 - Términos y condiciones
 
@@ -93,7 +101,7 @@ El enunciado del caso de estudio y la User Story no definen varias reglas de neg
 
 ### RN7 - Correo de confirmación
 
-- Al finalizar la inscripción se envía un correo con la información de la inscripción y un código QR. **(Enunciado)**
+- Al finalizar la inscripción se envía un correo con el resumen de la inscripción y el código QR. **(Enunciado; Guía del PO, pregunta 28)**
 - El correo se envía al email de la cuenta del usuario, ya que los datos de cada participante no incluyen email. **(Definida por el grupo)**
 - El correo contiene **(definida por el grupo)**:
   - código de la inscripción;
@@ -102,13 +110,18 @@ El enunciado del caso de estudio y la User Story no definen varias reglas de neg
   - código QR que codifica el código de la inscripción.
 - Si la inscripción es rechazada, no se envía ningún correo. **(Definida por el grupo)**
 
+## Identidad visual
+
+- Fuente **Lato** y la paleta `#386641`, `#6a994e`, `#a7c957`, `#f2e8cf` y `#bc4749`. **(Guía del PO, pregunta 3)** Los verdes claros no alcanzan el contraste mínimo de texto sobre el fondo, así que se usan en tintes, bordes y en el tema oscuro. Los textos de error usan una variante más oscura de `#bc4749`.
+- **Logo:** el grupo diseñó una propuesta (`front/img/logo.svg` y el emblema `front/img/emblema.svg`), que se envía al PO para su validación. **(Guía del PO, pregunta 17)**
+- **Términos y condiciones:** uno diferente por cada actividad, redactado por el grupo, que se envía al PO para su validación. **(Guía del PO, pregunta 16)**
+
 ## Fuera de alcance
 
 | Ítem | Motivo |
 |------|--------|
-| Registro e inicio de sesión de usuarios | La User Story no lo requiere. Se utiliza un usuario de prueba con email cargado. |
+| Registro e inicio de sesión de usuarios | La User Story no lo requiere: se puede comenzar con la sesión y el usuario mockeados (Guía del PO, pregunta 19). Se utiliza un usuario de prueba con email cargado. |
 | Alta y edición de actividades y horarios desde la app | El enunciado indica que los administradores lo gestionan por fuera de la aplicación. Se utiliza el panel de administración de Django. |
-| Edad mínima por actividad | No está entre los criterios de aceptación. Queda como mejora futura. |
 | Autocompletar los datos del titular de la cuenta | No está entre los criterios de aceptación. Requeriría guardar DNI y edad en el usuario. |
 | Consulta de "mis actividades" | No está entre los criterios de aceptación. |
 
