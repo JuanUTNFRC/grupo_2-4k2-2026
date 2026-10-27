@@ -9,36 +9,35 @@
 :root[data-tema='oscuro'] { color-scheme: dark; }
 
 :root {
-  /* Paleta */
-  --bosque: #1e3a2b;
-  --musgo: #3f6e36;
-  --liquen: #dce6cf;
-  --niebla: #f2f5ef;
-  --bromelia: #e8a922;
-  --piedra: #56665b;
-  --linea: #c9d3c2;
+  /* Paleta de la guía del PO: coolors.co/palette/386641-6a994e-a7c957-f2e8cf-bc4749 */
+  --hunter: #386641;
+  --asparagus: #6a994e;
+  --yellow-green: #a7c957;
+  --parchment: #f2e8cf;
+  --bittersweet: #bc4749;
 
-  /* Roles (claro, oscuro) */
-  --fondo: light-dark(var(--niebla), #12201a);
-  --superficie: light-dark(#ffffff, #1a2d23);
-  --texto: light-dark(var(--bosque), #e6eee1);
-  --texto-suave: light-dark(var(--piedra), #a9b8ac);
-  --borde: light-dark(var(--linea), #2f4738);
-  --primario: light-dark(var(--musgo), #8cc47a);
-  --primario-hover: light-dark(#325a2b, #a3d492);
-  --sobre-primario: light-dark(#ffffff, #12201a);
-  --acento: var(--bromelia);
-  --sobre-acento: var(--bosque);
-  --tinte: light-dark(var(--liquen), #23392c);
-  --curvas: light-dark(rgb(63 110 54 / 0.22), rgb(140 196 122 / 0.16));
-  --error: light-dark(#b42318, #f2877d);
-  --error-fondo: light-dark(#fdecea, #3a1d1a);
-  --sombra-color: light-dark(rgb(30 58 43 / 0.08), rgb(0 0 0 / 0.28));
+  /* Roles (claro, oscuro). Los verdes claros no llegan al contraste de texto
+     sobre el pergamino: se usan en tintes, bordes y en el tema oscuro. */
+  --fondo: light-dark(var(--parchment), #17261b);
+  --superficie: light-dark(#fffcf4, #1f3324);
+  --texto: light-dark(var(--hunter), var(--parchment));
+  --texto-suave: light-dark(#4f5e45, #c9c7ad);
+  --borde: light-dark(color-mix(in srgb, var(--asparagus) 35%, var(--parchment)), #34503b);
+  --primario: light-dark(var(--hunter), var(--yellow-green));
+  --primario-hover: light-dark(#2b5033, #bcd977);
+  --sobre-primario: light-dark(#ffffff, #17261b);
+  --acento: var(--bittersweet);
+  --sobre-acento: #ffffff;
+  --tinte: light-dark(color-mix(in srgb, var(--yellow-green) 25%, var(--parchment)), #2a4130);
+  --curvas: light-dark(rgb(106 153 78 / 0.25), rgb(167 201 87 / 0.16));
+  --error: light-dark(#a33a3c, #f0a3a4);
+  --error-fondo: light-dark(#f7dcd8, #3d2021);
+  --sombra-color: light-dark(rgb(56 102 65 / 0.1), rgb(0 0 0 / 0.3));
 
-  /* Tipografía */
-  --fuente-titulos: 'Bricolage Grotesque', system-ui, sans-serif;
-  --fuente-texto: 'Atkinson Hyperlegible', system-ui, sans-serif;
-  --fuente-codigo: 'JetBrains Mono', ui-monospace, monospace;
+  /* Tipografía: Lato según la guía del PO */
+  --fuente-titulos: 'Lato', system-ui, sans-serif;
+  --fuente-texto: 'Lato', system-ui, sans-serif;
+  --fuente-codigo: ui-monospace, 'SFMono-Regular', Menlo, monospace;
 
   /* Espaciado (escala de 4px) */
   --e-1: 0.25rem;
@@ -76,7 +75,7 @@ h1, h2 {
   font-family: var(--fuente-titulos);
   font-weight: 700;
   line-height: 1.1;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   margin: 0 0 var(--e-3);
 }
 
@@ -133,13 +132,8 @@ main:focus { outline: none; }
 .marca strong { font-weight: 700; }
 
 .marca__icono {
-  width: 28px;
-  height: 28px;
-  fill: none;
-  stroke: var(--primario);
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  width: 36px;
+  height: 36px;
 }
 
 .barra__acciones {

@@ -5,9 +5,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block titulo %}EcoHarmony Park{% endblock %}</title>
+  <link rel="icon" type="image/svg+xml" href="{% static 'img/emblema.svg' %}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap">
   <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
   <script src="{% static 'js/tema.js' %}"></script>
 </head>
@@ -16,10 +17,7 @@
 
   <header class="barra">
     <a class="marca" href="{% url 'inscripcion' %}">
-      <svg class="marca__icono" viewBox="0 0 32 32" aria-hidden="true">
-        <path d="M16 3c6 5 9 10 9 15a9 9 0 0 1-18 0c0-5 3-10 9-15Z" />
-        <path d="M16 27V12M16 18l-4-3M16 22l4-3" />
-      </svg>
+      <img class="marca__icono" src="{% static 'img/emblema.svg' %}" alt="" width="36" height="36">
       <span>EcoHarmony <strong>Park</strong></span>
     </a>
     <div class="barra__acciones">
