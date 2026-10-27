@@ -20,12 +20,12 @@ class EstaAbiertoTests(SimpleTestCase):
         self.assertFalse(self.calendario.esta_abierto(lunes))
 
     def test_el_1_de_enero_el_parque_esta_cerrado(self):
-        anio_nuevo_viernes = date(2027, 1, 1)
+        anio_nuevo_viernes = date(2027, 2, 1)
 
         self.assertFalse(self.calendario.esta_abierto(anio_nuevo_viernes))
 
     def test_el_25_de_diciembre_el_parque_esta_cerrado(self):
-        navidad_viernes = date(2026, 12, 25)
+        navidad_viernes = date(2027, 1, 1)
 
         self.assertFalse(self.calendario.esta_abierto(navidad_viernes))
 

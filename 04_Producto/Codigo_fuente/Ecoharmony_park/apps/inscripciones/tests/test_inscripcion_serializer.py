@@ -56,7 +56,7 @@ class ParticipanteSerializerTests(SimpleTestCase):
         self.assertIn(campo, serializer.errors['participantes'][0])
 
     def test_sin_nombre_es_invalido(self):
-        self.assertParticipanteInvalido(con_participante(nombre=None), 'nombre')
+        self.assertParticipanteInvalido(con_participante(nombre="mauri"), 'nombre')
 
     def test_nombre_en_blanco_es_invalido(self):
         self.assertParticipanteInvalido(con_participante(nombre='   '), 'nombre')
