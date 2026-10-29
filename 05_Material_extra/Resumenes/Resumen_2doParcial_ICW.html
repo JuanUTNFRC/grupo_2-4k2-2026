@@ -1,0 +1,1404 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Segundo Parcial ICS</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: tablero de estudio. Índice fijo a la izquierda (arriba en el celular), temas como columnas de lectura.
+   Cada unidad lleva el color de una clase de servicio Kanban: U2 estándar (amarillo), U3 intangible (verde), U4 fecha fija (rosa). */
+:root{
+  --bg:#F2F4F3; --surface:#FFFFFF; --sunken:#E8ECEA; --ink:#1A2320; --muted:#56635E; --line:#D5DCD9;
+  --accent:#1E5A86; --accent-ink:#FFFFFF; --accent-soft:#DCE8F1;
+  --u2:#F7DE7A; --u2-soft:#FBF1C8; --u3:#93D4A8; --u3-soft:#DDF1E3; --u4:#F2A3B7; --u4-soft:#FBE0E7;
+  --good:#2E7D4F; --warn:#9A6B00; --bad:#B23A48;
+  --code-bg:#1D2624; --code-ink:#E3ECE8;
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#111614; --surface:#18201D; --sunken:#202A27; --ink:#E2E9E6; --muted:#9AA8A2; --line:#2D3935;
+  --accent:#86BCE3; --accent-ink:#0E1A22; --accent-soft:#1C3142;
+  --u2:#C9A92E; --u2-soft:#3A3315; --u3:#4FA36E; --u3-soft:#1B3324; --u4:#C9667F; --u4-soft:#3C1F27;
+  --good:#6CC892; --warn:#E0B44A; --bad:#EE8A96;
+  --code-bg:#0B0F0E; --code-ink:#DCE6E2; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#111614; --surface:#18201D; --sunken:#202A27; --ink:#E2E9E6; --muted:#9AA8A2; --line:#2D3935;
+  --accent:#86BCE3; --accent-ink:#0E1A22; --accent-soft:#1C3142;
+  --u2:#C9A92E; --u2-soft:#3A3315; --u3:#4FA36E; --u3-soft:#1B3324; --u4:#C9667F; --u4-soft:#3C1F27;
+  --good:#6CC892; --warn:#E0B44A; --bad:#EE8A96;
+  --code-bg:#0B0F0E; --code-ink:#DCE6E2; color-scheme:dark }
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{transition:none!important;animation:none!important} }
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:0 64px}
+h1,h2,h3,h4{font-family:var(--f-display);line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.2rem, 5vw, 3.4rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:1.75rem;font-weight:800;letter-spacing:-.01em}
+h3{font-size:1.15rem;font-weight:700}
+h4{font-size:1rem;font-weight:700}
+p{margin:0}
+a{color:var(--accent)}
+code,.mono{font-family:var(--f-mono);font-size:.86em}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+.eyebrow{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+.shell{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:240px minmax(0,1fr);gap:48px}
+/* índice */
+.toc{position:sticky;top:env(safe-area-inset-top, 0px);align-self:start;max-height:100vh;overflow:auto;padding-block:32px 24px}
+.toc h2{font-size:1rem;margin-bottom:12px}
+.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.toc .grp{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:14px 8px 4px;display:flex;align-items:center;gap:8px}
+.toc .grp i{width:14px;height:10px;border-radius:2px;display:inline-block}
+.toc a{display:flex;justify-content:space-between;align-items:center;gap:8px;text-decoration:none;color:var(--ink);padding:5px 8px;border-radius:6px;font-size:.93rem}
+.toc a:hover{background:var(--sunken)}
+.toc a.active{background:var(--accent-soft);color:var(--ink);font-weight:700}
+.toc a .tick{font-family:var(--f-mono);font-size:.75rem;color:var(--good);opacity:0}
+.toc a.done .tick{opacity:1}
+.progress{margin-top:20px;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.bar{height:6px;background:var(--sunken);border-radius:3px;overflow:hidden;margin-top:8px}
+.bar span{display:block;height:100%;width:0;background:var(--good);transition:width .3s}
+
+main{min-width:0;padding-block:32px 0;display:flex;flex-direction:column;gap:56px}
+header.hero{display:flex;flex-direction:column;gap:14px;max-width:72ch}
+.hero .lead{font-size:1.08rem;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:.86rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:16px;height:12px;border-radius:2px;display:inline-block;border:1px solid var(--line)}
+
+/* secciones */
+section.topic{scroll-margin-top:24px;display:flex;flex-direction:column;gap:18px}
+.topic-head{display:flex;flex-direction:column;gap:8px;border-top:6px solid var(--u);padding-top:14px}
+.topic-head .row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.u2{--u:var(--u2);--us:var(--u2-soft)} .u3{--u:var(--u3);--us:var(--u3-soft)} .u4{--u:var(--u4);--us:var(--u4-soft)} .ux{--u:var(--accent);--us:var(--accent-soft)}
+.tag{display:inline-block;font-family:var(--f-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;background:var(--us);color:var(--ink);padding:2px 8px;border-radius:3px;border-left:4px solid var(--u)}
+.oneline{font-size:1.08rem;max-width:70ch}
+.oneline b{background:linear-gradient(transparent 60%, var(--us) 60%)}
+.done-toggle{display:inline-flex;align-items:center;gap:8px;font-size:.86rem;color:var(--muted);cursor:pointer;user-select:none;padding:4px 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface)}
+.done-toggle input{accent-color:var(--good)}
+
+.cols{display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:16px}
+.cols > *{min-width:0}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.box ul,.box ol{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:4px}
+.box h3{font-size:1.02rem}
+.prose{max-width:72ch;display:flex;flex-direction:column;gap:10px}
+.example{background:var(--us);border-radius:10px;padding:14px 18px;display:flex;flex-direction:column;gap:8px;border-left:5px solid var(--u)}
+.example .eyebrow{color:var(--ink)}
+.trap{border:1px dashed var(--bad);border-radius:10px;padding:12px 16px;display:flex;flex-direction:column;gap:6px}
+.trap .eyebrow{color:var(--bad)}
+.trap ul{margin:0;padding-left:1.2em}
+.links{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:.88rem}
+.links .eyebrow{margin-right:4px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);text-decoration:none;font-size:.86rem}
+.chip:hover{border-color:var(--accent)}
+.note{font-size:.88rem;color:var(--muted)}
+details.more{border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+details.more summary{cursor:pointer;padding:10px 16px;font-weight:700;font-size:.95rem}
+details.more > div{padding:0 16px 14px;display:flex;flex-direction:column;gap:10px}
+
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{font-family:var(--f-display);font-weight:700;background:var(--sunken)}
+tr:last-child td{border-bottom:0}
+td.num,th.num{font-variant-numeric:tabular-nums;text-align:right}
+
+/* mapa */
+.map{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px}
+.nodes{display:flex;flex-direction:column;gap:14px}
+.nodes .lane{display:flex;flex-direction:column;gap:8px}
+.nodes .lane-btns{display:flex;flex-wrap:wrap;gap:8px}
+.node{font:inherit;font-size:.92rem;cursor:pointer;padding:8px 12px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-left:6px solid var(--u);transition:transform .15s, box-shadow .15s}
+.node:hover{transform:translateY(-1px)}
+.node.sel{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.node.rel{box-shadow:0 0 0 2px var(--accent)}
+.node.dim{opacity:.45}
+.map-panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-height:260px}
+.map-panel ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.map-panel li{padding-left:12px;border-left:3px solid var(--accent)}
+.map-panel li b{display:block}
+.map-panel > .chip{align-self:flex-start}
+.big3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.big3 > div{background:var(--us);border-radius:10px;padding:14px 16px;border-top:5px solid var(--u);display:flex;flex-direction:column;gap:4px}
+.big3 .arrow{font-family:var(--f-mono);font-size:.78rem;color:var(--muted)}
+
+/* kanban */
+.board{display:grid;grid-template-columns:repeat(6,minmax(92px,1fr));gap:6px;min-width:620px}
+.col{background:var(--sunken);border-radius:6px;padding:6px;display:flex;flex-direction:column;gap:6px;min-height:150px}
+.col h4{font-size:.78rem;font-family:var(--f-mono);font-weight:600;display:flex;justify-content:space-between;gap:4px}
+.col h4 em{font-style:normal;padding:0 5px;border-radius:3px;background:var(--surface)}
+.col.full h4 em{background:var(--bad);color:var(--surface)}
+.card{font-size:.76rem;line-height:1.3;padding:5px 6px;border-radius:3px;color:#1A2320;border:1px solid rgba(0,0,0,.12)}
+.card.std{background:#F7DE7A}.card.ff{background:#F2A3B7}.card.exp{background:#FFFFFF}.card.int{background:#93D4A8}
+.classes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.cls{border-radius:8px;padding:12px 14px;color:#1A2320;font-size:.9rem;display:flex;flex-direction:column;gap:4px;border:1px solid rgba(0,0,0,.12)}
+.cls b{font-family:var(--f-display)}
+
+.calc{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:14px}
+.calc .inputs{display:flex;flex-wrap:wrap;gap:12px}
+.calc label{display:flex;flex-direction:column;gap:4px;font-size:.84rem;color:var(--muted)}
+.calc input[type=number]{font:inherit;font-family:var(--f-mono);width:110px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+.timeline{position:relative;height:56px;background:var(--sunken);border-radius:6px;overflow:hidden}
+.timeline .seg{position:absolute;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:.74rem;font-family:var(--f-mono);overflow:hidden;white-space:nowrap}
+.seg.queue{background:repeating-linear-gradient(45deg, var(--sunken), var(--sunken) 6px, var(--line) 6px, var(--line) 12px);color:var(--muted)}
+.seg.proc{background:var(--accent-soft);color:var(--ink)}
+.seg.touch{top:auto;height:14px;bottom:0;background:var(--accent)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.stat{border:1px solid var(--line);border-radius:8px;padding:8px 12px;background:var(--bg)}
+.stat b{display:block;font-family:var(--f-display);font-size:1.4rem;font-variant-numeric:tabular-nums}
+.stat span{font-size:.8rem;color:var(--muted)}
+
+/* CMMI escalera */
+.stairs{display:flex;flex-direction:column-reverse;gap:6px}
+.step{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;align-items:start;padding:10px 14px;border-radius:8px;background:var(--surface);border:1px solid var(--line)}
+.step .lvl{font-family:var(--f-display);font-weight:800}
+.step .lvl small{display:block;font-family:var(--f-body);font-weight:400;color:var(--muted);font-size:.8rem}
+.step .pas{font-size:.88rem}
+.step.hl{border-color:var(--u4);background:var(--u4-soft)}
+
+/* proceso pasos */
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+.flow .st{flex:1 1 150px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:.88rem;display:flex;flex-direction:column;gap:4px;position:relative}
+.flow .st b{font-family:var(--f-display)}
+.flow .st .n{font-family:var(--f-mono);font-size:.72rem;color:var(--muted)}
+
+/* pirámide */
+.pyr{display:flex;flex-direction:column;align-items:center;gap:4px}
+.pyr div{text-align:center;padding:8px 6px;font-size:.86rem;color:#1A2320;border-radius:4px;max-width:100%}
+.quad{display:grid;grid-template-columns:28px minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto auto;gap:6px}
+.quad .q{border-radius:8px;padding:10px 12px;font-size:.86rem;border:1px solid var(--line);background:var(--surface);display:flex;flex-direction:column;gap:2px}
+.quad .q b{font-family:var(--f-display)}
+.quad .ax{font-family:var(--f-mono);font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;justify-content:center}
+.quad .ax.v{writing-mode:vertical-rl;transform:rotate(180deg)}
+
+/* tdd */
+.tdd-steps{display:flex;gap:6px;flex-wrap:wrap}
+.tdd-steps button{font:inherit;font-family:var(--f-mono);font-size:.82rem;padding:6px 12px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.tdd-steps button.on.red{background:var(--bad);color:var(--surface);border-color:var(--bad)}
+.tdd-steps button.on.green{background:var(--good);color:var(--surface);border-color:var(--good)}
+.tdd-steps button.on.ref{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+pre{margin:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;border-radius:8px;overflow-x:auto;font-family:var(--f-mono);font-size:.82rem;line-height:1.55}
+pre .c{color:#8FA39B}
+pre .hl{background:rgba(242,163,183,.18);display:inline-block;width:100%}
+
+/* equivalencias */
+.eq-out{display:flex;flex-direction:column;gap:8px}
+.classes-row{display:flex;flex-wrap:wrap;gap:6px}
+.eqc{font-size:.8rem;font-family:var(--f-mono);padding:4px 8px;border-radius:4px;border:1px solid var(--line);background:var(--bg)}
+.eqc.on{background:var(--u4);border-color:var(--u4);color:#1A2320;font-weight:600}
+.eqc.inv{border-style:dashed}
+
+/* flashcards */
+.fc-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.fc-bar button{font:inherit;font-size:.86rem;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.fc-bar button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.fcs{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.fc{font:inherit;text-align:left;cursor:pointer;min-height:150px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:14px 16px;display:flex;flex-direction:column;gap:8px;border-top:5px solid var(--u)}
+.fc .q{font-weight:700}
+.fc .a{display:none;font-size:.9rem;color:var(--ink)}
+.fc .hint{font-family:var(--f-mono);font-size:.7rem;color:var(--muted);margin-top:auto}
+.fc.open .a{display:block}
+.fc.open{background:var(--us)}
+
+@media (max-width: 900px){
+  .shell{grid-template-columns:minmax(0,1fr);gap:0}
+  .toc{position:sticky;top:env(safe-area-inset-top, 0px);z-index:5;max-height:none;overflow:visible;padding-block:10px;background:var(--bg);border-bottom:1px solid var(--line);margin-inline:calc(-1 * max(16px, env(safe-area-inset-left, 0px)));padding-inline:max(16px, env(safe-area-inset-left, 0px))}
+  body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top, 0px);z-index:10;background:var(--bg)}
+  .toc h2,.toc .progress,.toc .grp{display:none}
+  .toc ol{flex-direction:row;overflow-x:auto;gap:4px;padding-bottom:2px;scrollbar-width:thin}
+  .toc a{white-space:nowrap;font-size:.85rem;border:1px solid var(--line);background:var(--surface)}
+  .map{grid-template-columns:minmax(0,1fr)}
+  .big3{grid-template-columns:minmax(0,1fr)}
+  .step{grid-template-columns:minmax(0,1fr);gap:4px}
+}
+</style>
+
+<div class="shell">
+<nav class="toc" aria-label="Índice">
+  <h2>Índice</h2>
+  <ol id="toc">
+    <li><a href="#mapa">Mapa de relaciones<span class="tick">✓</span></a></li>
+    <li class="grp"><i style="background:var(--u2)"></i>U2 · Lean Agile</li>
+    <li><a href="#lean">Filosofía Lean<span class="tick">✓</span></a></li>
+    <li><a href="#kanban">Método Kanban<span class="tick">✓</span></a></li>
+    <li><a href="#metricas">Métricas en 3 enfoques<span class="tick">✓</span></a></li>
+    <li class="grp"><i style="background:var(--u3)"></i>U3 · Producto</li>
+    <li><a href="#continuas">Prácticas continuas<span class="tick">✓</span></a></li>
+    <li class="grp"><i style="background:var(--u4)"></i>U4 · Calidad</li>
+    <li><a href="#calidad">Calidad: conceptos<span class="tick">✓</span></a></li>
+    <li><a href="#sqa">Actividades de SQA<span class="tick">✓</span></a></li>
+    <li><a href="#modelos">CMMI · SPICE · ISO<span class="tick">✓</span></a></li>
+    <li><a href="#auditorias">Auditorías<span class="tick">✓</span></a></li>
+    <li><a href="#revisiones">Revisiones técnicas<span class="tick">✓</span></a></li>
+    <li><a href="#testing">Testing<span class="tick">✓</span></a></li>
+    <li><a href="#agil">Testing ágil<span class="tick">✓</span></a></li>
+    <li><a href="#tdd">TDD<span class="tick">✓</span></a></li>
+    <li class="grp"><i style="background:var(--accent)"></i>Cierre</li>
+    <li><a href="#repaso">Preguntas de repaso<span class="tick">✓</span></a></li>
+  </ol>
+  <div class="progress">
+    <div class="eyebrow">Repasado</div>
+    <div><b id="prog-n">0</b> de <span id="prog-t">14</span> temas</div>
+    <div class="bar"><span id="prog-bar"></span></div>
+  </div>
+</nav>
+
+<main>
+<header class="hero">
+  <div class="eyebrow">Ingeniería y Calidad de Software · UTN FRC</div>
+  <h1>Segundo Parcial</h1>
+  <p class="lead">Resumen de las unidades 2, 3 y 4. Cada tema arranca con una idea en una línea, sigue con lo que tenés que saber y cierra con un ejemplo, las trampas típicas y con qué otros temas se conecta.</p>
+  <div class="legend">
+    <span><i style="background:var(--u2)"></i>U2 · Gestión Lean Agile</span>
+    <span><i style="background:var(--u3)"></i>U3 · Software como producto</span>
+    <span><i style="background:var(--u4)"></i>U4 · Calidad de proceso y producto</span>
+  </div>
+  <p class="note">Los colores son los de las clases de servicio de un tablero Kanban. Marcá cada tema como repasado y el avance queda guardado en este navegador.</p>
+</header>
+
+<!-- MAPA -->
+<section class="topic ux" id="mapa" data-topic>
+  <div class="topic-head">
+    <div class="row"><span class="tag">Visión general</span><label class="done-toggle"><input type="checkbox" id="d-mapa"> Repasado</label></div>
+    <h2>Cómo se conectan los temas</h2>
+    <p class="oneline">Las tres unidades responden tres preguntas: <b>cómo gestionamos el trabajo</b>, <b>cómo lo entregamos</b> y <b>cómo aseguramos que esté bien hecho</b>.</p>
+  </div>
+  <div class="big3">
+    <div class="u2"><span class="tag">U2</span><h3>Gestionar el flujo</h3><p>Lean da la filosofía (valor, desperdicio, flujo). Kanban la lleva a la práctica con un tablero, límites de WIP y políticas. Las métricas dicen si funciona.</p><span class="arrow">→ trabajo en lotes chicos</span></div>
+    <div class="u3"><span class="tag">U3</span><h3>Entregar seguido</h3><p>Integración, entrega y despliegue continuos llevan cada cambio chico hasta producción. Sin SCM ni tests automatizados no se puede.</p><span class="arrow">→ necesita calidad embebida</span></div>
+    <div class="u4"><span class="tag">U4</span><h3>Asegurar la calidad</h3><p>Calidad de proceso (modelos, auditorías) y de producto (revisiones, testing). Lo ágil mueve el testing al principio con TDD y automatización.</p><span class="arrow">→ menos defectos = menos desperdicio</span></div>
+  </div>
+  <p class="note">Tocá un tema para ver con qué se relaciona y por qué. Las relaciones de este panel son las que suelen preguntar en el parcial.</p>
+  <div class="map">
+    <div class="nodes" id="nodes"></div>
+    <div class="map-panel" id="map-panel" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- LEAN -->
+<section class="topic u2" id="lean" data-topic>
+  <div class="topic-head">
+    <div class="row"><span class="tag">Unidad 2</span><label class="done-toggle"><input type="checkbox" id="d-lean"> Repasado</label></div>
+    <h2>Filosofía Lean</h2>
+    <p class="oneline">Maximizar el <b>valor para el cliente</b> eliminando todo lo que no lo agrega: eso es <b>desperdicio</b>.</p>
+  </div>
+  <div class="prose">
+    <p>Nace en el sistema de producción de Toyota (Just in Time). Mary y Tom Poppendieck lo adaptan al software en <i>Lean Software Development</i>. No es un método con pasos: es una forma de pensar que después aplican métodos como Kanban.</p>
+  </div>
+  <div class="cols">
+    <div class="box">
+      <h3>Los 7 principios</h3>
+      <ol>
+        <li><b>Eliminar desperdicios</b>: lo que el cliente no valora, se saca.</li>
+        <li><b>Amplificar el aprendizaje</b>: iteraciones cortas y feedback.</li>
+        <li><b>Embeber la integridad conceptual</b>: la calidad se construye adentro, no se agrega al final.</li>
+        <li><b>Diferir compromisos</b>: decidir en el último momento responsable, con más información.</li>
+        <li><b>Entregar lo antes posible</b>: ciclos cortos de entrega.</li>
+        <li><b>Dar poder al equipo</b>: los que hacen el trabajo deciden cómo.</li>
+        <li><b>Ver el todo</b>: optimizar el flujo completo, no cada parte por separado.</li>
+      </ol>
+    </div>
+    <div class="box">
+      <h3>Los 7 + 1 desperdicios</h3>
+      <div class="tbl"><table>
+        <tr><th>Manufactura</th><th>Software</th></tr>
+        <tr><td>Inventario</td><td>Trabajo parcialmente terminado</td></tr>
+        <tr><td>Sobreproducción</td><td>Características extra</td></tr>
+        <tr><td>Proceso extra</td><td>Proceso extra</td></tr>
+        <tr><td>Transporte</td><td>Transferencia de conocimiento</td></tr>
+        <tr><td>Movimiento</td><td>Cambio de tareas / de contexto</td></tr>
+        <tr><td>Esperas</td><td>Esperas / demoras</td></tr>
+        <tr><td>Defectos</td><td>Defectos</td></tr>
+        <tr><td>+1 Talento no utilizado</td><td>Talento no utilizado</td></tr>
+      </table></div>
+      <p class="note"><b>Tipo 1</b>: desperdicio necesario (se minimiza, ej. documentación que pide el cliente). <b>Tipo 2</b>: puro desperdicio (se evita).</p>
+    </div>
+  </div>
+  <div class="example">
+    <span class="eyebrow">Ejemplo</span>
+    <p>Un equipo programa un módulo de reportes con 12 filtros "por las dudas" (características extra). Queda en una rama sin integrar tres semanas (trabajo parcialmente terminado) esperando que el líder lo apruebe (espera). Cuando por fin se prueba aparecen bugs (defectos). Cuatro desperdicios en una sola feature.</p>
+  </div>
+  <div class="trap">
+    <span class="eyebrow">Ojo en el parcial</span>
+    <ul>
+      <li>"Diferir compromisos" no es postergar por postergar: es no cerrar decisiones irreversibles antes de tener información.</li>
+      <li>Lean no se "implementa" como un proceso. Kanban es un método; Lean es la filosofía que lo sustenta.</li>
+    </ul>
+  </div>
+  <div class="links"><span class="eyebrow">Conecta con</span><a class="chip" href="#kanban">Kanban</a><a class="chip" href="#continuas">Prácticas continuas</a><a class="chip" href="#calidad">Calidad embebida</a></div>
+</section>
+
+<!-- KANBAN -->
+<section class="topic u2" id="kanban" data-topic>
+  <div class="topic-head">
+    <div class="row"><span class="tag">Unidad 2</span><label class="done-toggle"><input type="checkbox" id="d-kanban"> Repasado</label></div>
+    <h2>Método Kanban</h2>
+    <p class="oneline">Método para <b>definir, gestionar y mejorar servicios</b> que entregan trabajo del conocimiento. Visualiza el flujo y <b>limita el trabajo en curso</b> para que fluya.</p>
+  </div>
+  <div class="prose">
+    <p><i>Kan-ban</i> significa tarjeta señal. Toyota, a fines de los 40, copió cómo los supermercados reponen góndolas: se repone lo que se consume. De ahí el sistema <b>pull</b>: el trabajo se tira desde la etapa siguiente cuando tiene lugar, no se empuja desde la anterior.</p>
+  </div>
+  <div class="cols">
+    <div class="box">
+      <h3>Principios</h3>
+      <p class="note">Gestión del cambio</p>
+      <ul>
+        <li>Comenzar con lo que hacés ahora (respetando roles y procesos actuales).</li>
+        <li>Acordar buscar la mejora mediante cambio evolutivo.</li>
+        <li>Fomentar actos de liderazgo en todos los niveles.</li>
+      </ul>
+      <p class="note">Entrega de servicios</p>
+      <ul>
+        <li>Entender y enfocarse en las necesidades del cliente.</li>
+        <li>Gestionar el trabajo y dejar que la gente se autoorganice alrededor de él.</li>
+        <li>Revisar periódicamente la red de servicios y sus políticas.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Prácticas generales</h3>
+      <ol>
+        <li><b>Visualizar</b> el trabajo y el flujo en un tablero.</li>
+        <li><b>Limitar el WIP</b>: límite explícito por columna. Al 100% de ocupación el rendimiento es mínimo, como una autopista en hora pico.</li>
+        <li><b>Gestionar el flujo</b>: medirlo y hacerlo fluido y predecible.</li>
+        <li><b>Hacer explícitas las políticas</b>: pocas, simples, visibles, acordadas.</li>
+        <li><b>Ciclos de feedback</b>: cadencias de reuniones, releases, revisiones.</li>
+        <li><b>Mejorar colaborativamente</b> con experimentos seguros y reversibles.</li>
+      </ol>
+      <p class="note">Valores: transparencia, equilibrio, colaboración, foco en el cliente, flujo, liderazgo, entendimiento, acuerdo, respeto.</p>
+    </div>
+  </div>
+
+  <h3>Cómo se ve un tablero</h3>
+  <div class="tbl" style="padding:10px">
+    <div class="board" aria-label="Tablero Kanban de ejemplo">
+      <div class="col"><h4>Cola <em>—</em></h4><div class="card std">US-14 Alta alumno</div><div class="card int">Actualizar framework</div><div class="card std">US-15 Baja materia</div></div>
+      <div class="col"><h4>Análisis <em>2/2</em></h4><div class="card std">US-12 Inscripción</div><div class="card ff">US-11 Cierre de actas (vence 30/11)</div></div>
+      <div class="col"><h4>Desarrollo <em>3/4</em></h4><div class="card std">US-09 Notas</div><div class="card std">US-10 Asistencia</div><div class="card exp">Bug login caído</div></div>
+      <div class="col full"><h4>Testing <em>3/3</em></h4><div class="card std">US-06 Legajo</div><div class="card std">US-07 Horarios</div><div class="card std">US-08 Correlativas</div></div>
+      <div class="col"><h4>Listo deploy <em>1/2</em></h4><div class="card std">US-05 Boletín</div></div>
+      <div class="col"><h4>Producción <em>—</em></h4><div class="card std">US-04</div><div class="card std">US-03</div></div>
+    </div>
+  </div>
+  <p class="note">Testing está al límite (3/3): Desarrollo no puede pasarle más trabajo. En vez de arrancar algo nuevo, los desarrolladores ayudan a testear. El límite de WIP hace visible el cuello de botella y obliga a esa conversación.</p>
+
+  <div class="cols">
+    <div class="box">
+      <h3>Cómo aplicarlo, paso a paso</h3>
+      <ol>
+        <li><b>Proceso</b>: modelar las columnas (con subcolumnas "en progreso / hecho" que funcionan como colas).</li>
+        <li><b>Trabajo</b>: definir la unidad (historia, defecto, solicitud) y los tipos de trabajo con su capacidad. Ej.: 60% casos de uso, 30% mantenimiento, 10% defectos.</li>
+        <li><b>Límites de WIP</b> por estado.</li>
+        <li><b>Políticas</b>: criterio de "hecho" de cada columna, reposición de la cola, cadencias.</li>
+        <li><b>Cuellos de botella</b>: mover gente hacia donde se traba.</li>
+        <li><b>Clases de servicio</b> con políticas propias.</li>
+        <li><b>Cadencia</b> de releases, planificación y revisiones.</li>
+      </ol>
+    </div>
+    <div class="box">
+      <h3>Kanban vs Scrum, en corto</h3>
+      <div class="tbl"><table>
+        <tr><th></th><th>Kanban</th><th>Scrum</th></tr>
+        <tr><td>Roles</td><td>Respeta los actuales</td><td>PO, SM, Developers</td></tr>
+        <tr><td>Iteraciones</td><td>No obligatorias, flujo continuo</td><td>Sprints de duración fija</td></tr>
+        <tr><td>Límite</td><td>WIP por estado</td><td>Lo comprometido en el sprint</td></tr>
+        <tr><td>Cambios</td><td>En cualquier momento si hay lugar</td><td>Al próximo sprint</td></tr>
+        <tr><td>Métrica</td><td>Lead y cycle time</td><td>Velocidad</td></tr>
+      </table></div>
+    </div>
+  </div>
+
+  <h3>Clases de servicio</h3>
+  <div class="classes">
+    <div class="cls" style="background:#FFFFFF"><b>Expreso · blanca</b>WIP 1. Puede exceder el límite; el resto espera. Puede tener una entrega especial a producción. Ej.: el sistema no deja loguear.</div>
+    <div class="cls" style="background:#F2A3B7"><b>Fecha fija · rosa</b>Tiene fecha de entrega. Espera en la cola hasta que convenga; si la fecha corre riesgo, pasa a expreso. Ej.: cambio legal con vigencia.</div>
+    <div class="cls" style="background:#F7DE7A"><b>Estándar · amarilla</b>Priorizado por valor de negocio, FIFO si no hay otro criterio. Respeta el WIP. La mayoría del trabajo.</div>
+    <div class="cls" style="background:#93D4A8"><b>Intangible · verde</b>Sin impacto visible inmediato pero necesario. Ej.: refactorizar, actualizar infraestructura.</div>
+  </div>
+
+  <div class="trap">
+    <span class="eyebrow">Ojo en el parcial</span>
+    <ul>
+      <li>Kanban <b>no prescribe roles ni iteraciones</b>. Arranca de tu proceso actual.</li>
+      <li>El objetivo del límite de WIP es el flujo, no tener a todos ocupados.</li>
+      <li>Las métricas de Kanban (lead, cycle, touch time) están en la sección siguiente.</li>
+    </ul>
+  </div>
+  <div class="links"><span class="eyebrow">Conecta con</span><a class="chip" href="#lean">Lean</a><a class="chip" href="#metricas">Métricas Lean</a><a class="chip" href="#continuas">Flujo continuo</a></div>
+</section>
+
+<!-- METRICAS -->
+<section class="topic u2" id="metricas" data-topic>
+  <div class="topic-head">
+    <div class="row"><span class="tag">Unidad 2</span><label class="done-toggle"><input type="checkbox" id="d-metricas"> Repasado</label></div>
+    <h2>Métricas en los 3 enfoques</h2>
+    <p class="oneline">Cada enfoque mide lo que le importa: el tradicional <b>el plan</b>, el ágil <b>el software funcionando</b>, el Lean <b>el flujo</b>.</p>
+  </div>
+  <div class="tbl"><table>
+    <tr><th>Enfoque</th><th>Qué mide</th><th>Métricas clave</th><th>Idea guía</th></tr>
+    <tr><td><b>Tradicional</b><br><span class="note">procesos definidos</span></td><td>Proceso, proyecto y producto. Las de proyecto se consolidan en métricas de proceso de la organización.</td><td>Tamaño, esfuerzo, tiempo (calendario), defectos. También costos.</td><td>"Mantenelo simple": ¿me da más información?, ¿tiene beneficio práctico?, ¿me dice lo que quiero saber?</td></tr>
+    <tr><td><b>Ágil</b><br><span class="note">procesos empíricos</span></td><td>El software funcionando: es la principal medida de progreso.</td><td>Velocidad, capacidad, Running Tested Features (RTF).</td><td>"La medición es una salida, no una actividad." Medir lo necesario y nada más.</td></tr>
+    <tr><td><b>Lean / Kanban</b><br><span class="note">empírico con foco en flujo</span></td><td>El flujo del trabajo y el nivel de servicio.</td><td>Lead time, cycle time, touch time, eficiencia del ciclo de proceso.</td><td>Métricas orientadas a servicio: expectativa, capacidad, acuerdo (SLA) y umbral del nivel de servicio.</td></tr>
+  </table></div>
+
+  <div class="cols">
+    <div class="box">
+      <h3>Ágiles</h3>
+      <ul>
+        <li><b>Velocidad</b>: puntos de historia de las historias <i>terminadas</i> en un sprint. Se mide, no se estima. No sirve para comparar equipos.</li>
+        <li><b>Capacidad</b>: cuánto puede comprometer el equipo en el sprint (horas o puntos disponibles).</li>
+        <li><b>RTF</b>: cantidad acumulada de features que están funcionando y pasan sus pruebas de aceptación. Tiene que crecer sprint a sprint.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Lean / Kanban</h3>
+      <ul>
+        <li><b>Lead time</b> (vista del cliente): desde que se pide el ítem hasta que se entrega. Ritmo de entrega.</li>
+        <li><b>Cycle time</b> (vista interna): desde que se empieza a trabajar hasta que termina. Ritmo de terminación.</li>
+        <li><b>Touch time</b>: días en que el ítem fue realmente trabajado (no esperando en una cola ni bloqueado).</li>
+        <li><b>Eficiencia del ciclo</b> = touch time / tiempo transcurrido.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>De producto (cualquier enfoque)</h3>
+      <ul>
+        <li><b>Tamaño</b>: LOC, casos de uso, features, requerimientos, puntos de historia, clases.</li>
+        <li><b>Defectos</b>: por severidad, densidad de defectos.</li>
+        <li><b>Cobertura</b> de pruebas.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="calc" id="lt-calc">
+    <div><span class="eyebrow">Probalo</span><h3>Lead, cycle y touch time de una tarjeta</h3></div>
+    <div class="inputs">
+      <label for="lt-req">Día en que se pidió<input type="number" id="lt-req" value="1" min="0"></label>
+      <label for="lt-start">Día en que se empezó<input type="number" id="lt-start" value="4" min="0"></label>
+      <label for="lt-end">Día en que se entregó<input type="number" id="lt-end" value="12" min="0"></label>
+      <label for="lt-touch">Días realmente trabajados<input type="number" id="lt-touch" value="5" min="0"></label>
+    </div>
+    <div class="timeline" id="lt-tl" aria-hidden="true"></div>
+    <div class="stats">
+      <div class="stat"><b id="lt-lead">11</b><span>Lead time (días)</span></div>
+      <div class="stat"><b id="lt-cycle">8</b><span>Cycle time (días)</span></div>
+      <div class="stat"><b id="lt-tt">5</b><span>Touch time (días)</span></div>
+      <div class="stat"><b id="lt-eff">45%</b><span>Eficiencia (touch / lead)</span></div>
+    </div>
+    <p class="note" id="lt-msg">La tarjeta pasó 3 días en la cola antes de que alguien la tomara. El cliente percibe 11 días; el equipo trabajó 5.</p>
+  </div>
+
+  <div class="example">
+    <span class="eyebrow">Ejemplo de la cátedra · velocidad</span>
+    <div class="tbl"><table>
+      <tr><th>Sprint</th><th class="num">1</th><th class="num">2</th><th class="num">3</th><th class="num">4</th><th class="num">5</th><th class="num">6</th><th class="num">7</th></tr>
+      <tr><td>Capacidad (horas)</td><td class="num">240</td><td class="num">240</td><td class="num">480</td><td class="num">480</td><td class="num">420</td><td class="num">420</td><td class="num">480</td></tr>
+      <tr><td>Puntos terminados</td><td class="num">30</td><td class="num">30</td><td class="num">45</td><td class="num">60</td><td class="num">58</td><td class="num">52</td><td class="num">60</td></tr>
+    </table></div>
+    <p>Para planificar el sprint 8 se usa la velocidad reciente: (58 + 52 + 60) / 3 ≈ 57 puntos. Si en el sprint 5 bajó la capacidad (420 h) y bajó un poco la velocidad, tiene sentido: capacidad y velocidad se leen juntas.</p>
+  </div>
+  <div class="trap">
+    <span class="eyebrow">Ojo en el parcial</span>
+    <ul>
+      <li>Lead time ≥ cycle time siempre: el lead incluye la espera antes de empezar.</li>
+      <li>Velocidad cuenta solo historias terminadas (cumplen la definición de hecho). Una historia al 90% suma 0.</li>
+      <li>"Comparar herramientas para entender, no para juzgar": no hay enfoque mejor, cada uno mide lo que su forma de trabajo necesita.</li>
+    </ul>
+  </div>
+  <div class="links"><span class="eyebrow">Conecta con</span><a class="chip" href="#kanban">Kanban</a><a class="chip" href="#modelos">CMMI (Medición y Análisis)</a><a class="chip" href="#revisiones">Métricas de inspección</a><a class="chip" href="#agil">RTF y tests de aceptación</a></div>
+</section>
+
+<!-- CONTINUAS -->
+<section class="topic u3" id="continuas" data-topic>
+  <div class="topic-head">
+    <div class="row"><span class="tag">Unidad 3</span><label class="done-toggle"><input type="checkbox" id="d-continuas"> Repasado</label></div>
+    <h2>Prácticas continuas</h2>
+    <p class="oneline">Integrar, probar y entregar <b>cambios chicos todo el tiempo</b> con un pipeline automatizado, para tener feedback rápido y software siempre listo para producción.</p>
+  </div>
+  <p class="note">Este tema no tiene diapositivas en el material que subiste. Lo que sigue es el contenido estándar; comparalo con tus apuntes de clase.</p>
+  <div class="flow">
+    <div class="st"><span class="n">commit</span><b>Repositorio</b>Cada cambio entra al tronco principal (SCM).</div>
+    <div class="st"><span class="n">build</span><b>Build automático</b>Compila y empaqueta solo.</div>
+    <div class="st"><span class="n">test</span><b>Tests automáticos</b>Unitarios, integración, aceptación.</div>
+    <div class="st"><span class="n">staging</span><b>Pre-producción</b>Ambiente parecido a producción.</div>
+    <div class="st"><span class="n">release</span><b>Producción</b>Manual (entrega) o automático (despliegue).</div>
+  </div>
+  <div class="cols">
+    <div class="box">
+      <h3>Integración continua (CI)</h3>
+      <p>Cada desarrollador integra su código al repositorio principal varias veces por día. Cada integración dispara un build y la batería de tests automáticos.</p>
+      <ul><li>Detecta errores de integración en minutos, no al final.</li><li>Si el build se rompe, arreglarlo es la prioridad del equipo.</li></ul>
+    </div>
+    <div class="box">
+      <h3>Entrega continua (Continuous Delivery)</h3>
+      <p>Todo cambio que pasa el pipeline queda <b>listo para producción</b>. El paso a producción es una decisión de negocio, con un botón.</p>
+    </div>
+    <div class="box">
+      <h3>Despliegue continuo (Continuous Deployment)</h3>
+      <p>Todo cambio que pasa el pipeline <b>va solo a producción</b>, sin intervención humana. Exige mucha confianza en los tests.</p>
+    </div>
+  </div>
+  <div class="cols">
+    <div class="box">
+      <h3>Qué hace falta</h3>
+      <ul>
+        <li>Un único repositorio con control de versiones e integración frecuente de ramas (SCM).</li>
+        <li>Build y tests automatizados, con la pirámide de testing bien armada.</li>
+        <li>Ambientes: desarrollo, prueba, pre-producción, producción.</li>
+        <li>Cultura de equipo: la calidad es de todos (DevOps une desarrollo y operaciones).</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Estrategias de despliegue</h3>
+      <ul>
+        <li><b>Blue-green</b>: dos ambientes idénticos. Se despliega en el inactivo y se cambia el tráfico. Rollback inmediato.</li>
+        <li><b>Canary</b>: la versión nueva se libera a un porcentaje chico de usuarios y se amplía si va bien.</li>
+        <li><b>Feature toggles</b>: el código llega a producción apagado y se activa cuando conviene.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="example">
+    <span class="eyebrow">Ejemplo</span>
+    <p>Un dev sube un cambio en el cálculo de promedios. En 8 minutos el pipeline corre 600 tests unitarios y 40 de aceptación; uno falla porque el redondeo cambió. El dev lo arregla antes de almorzar. Sin CI, ese error aparecía en la integración de fin de mes mezclado con el trabajo de otros cinco.</p>
+  </div>
+  <div class="trap">
+    <span class="eyebrow">Ojo en el parcial</span>
+    <ul>
+      <li>Entrega continua ≠ despliegue continuo. La diferencia es si el paso a producción es manual o automático.</li>
+      <li>CI no es "tener Jenkins": es la práctica de integrar seguido. La herramienta solo la automatiza.</li>
+    </ul>
+  </div>
+  <div class="links"><span class="eyebrow">Conecta con</span><a class="chip" href="#lean">Lean: entregar rápido, lotes chicos</a><a class="chip" href="#agil">Regresión automatizada</a><a class="chip" href="#tdd">TDD</a><a class="chip" href="#auditorias">SCM y auditorías de configuración</a></div>
+</section>
+
+<!-- CALIDAD -->
+<section class="topic u4" id="calidad" data-topic>
+  <div class="topic-head">
+    <div class="row"><span class="tag">Unidad 4</span><label class="done-toggle"><input type="checkbox" id="d-calidad"> Repasado</label></div>
+    <h2>Calidad: conceptos e importancia</h2>
+    <p class="oneline">Calidad es todo lo que hace que un producto o servicio <b>satisfaga necesidades explícitas e implícitas</b>. Es relativa: depende de quién la mira y cuándo.</p>
+  </div>
+  <div class="cols">
+    <div class="box">
+      <h3>¿Calidad para quién?</h3>
+      <p>Un software de calidad satisface al cliente, al usuario, a la gerencia, al equipo de desarrollo y mantenimiento, y a otros interesados.</p>
+      <p><b>Visiones</b>: trascendental, del usuario, de manufactura, del producto y basada en el valor.</p>
+      <p class="note">Lo que queda fuera de la coincidencia entre lo que el usuario necesita, lo que se especificó y lo que se construyó es desperdicio o insatisfacción.</p>
+    </div>
+    <div class="box">
+      <h3>Principios</h3>
+      <ul>
+        <li>La calidad no se inyecta ni se compra: debe estar embebida.</li>
+        <li>Es un esfuerzo de todos y las personas son la clave (capacitación).</li>
+        <li>Necesita sponsor gerencial, pero se puede empezar por uno y liderar con el ejemplo.</li>
+        <li>No se puede controlar lo que no se mide.</li>
+        <li>Simplicidad: empezar por lo básico, y que sea razonable para el negocio.</li>
+        <li>El aseguramiento de calidad se planifica.</li>
+        <li><b>Aumentar las pruebas no aumenta la calidad.</b></li>
+      </ul>
+    </div>
+  </div>
+  <div class="cols">
+    <div class="box">
+      <h3>Producto y proceso</h3>
+      <p>La calidad se mira en el <b>producto</b> (lo que se entrega) y en el <b>proceso</b> (cómo se hace). El proceso es el único factor controlable para mejorar la calidad; se apoya en personas, tecnología y procedimientos.</p>
+      <p><b>Modelos de calidad de producto</b>: ISO/IEC 25010 (8 características: adecuación funcional, eficiencia de desempeño, compatibilidad, usabilidad, fiabilidad, seguridad, mantenibilidad, portabilidad; más calidad en uso), ISO 25012 (datos), McCall (operación, revisión y transición del producto), Barbacci/SEI (performance, seguridad, confiabilidad).</p>
+    </div>
+    <div class="box">
+      <h3>Trabajar con calidad: ventajas y desventajas</h3>
+      <p><b>Ventajas</b></p>
+      <ul>
+        <li>Menos retrabajo: el retrabajo evitable es 40–50% del desarrollo.</li>
+        <li>Un defecto cuesta hasta 100 veces más si se arregla en producción que en requerimientos.</li>
+        <li>Más predictibilidad en plazos y costos, clientes satisfechos.</li>
+        <li>Trabajar con calidad es más barato que sin calidad; la mejora de procesos tiene retorno de inversión.</li>
+      </ul>
+      <p><b>Desventajas / costos</b></p>
+      <ul>
+        <li>Inversión inicial: capacitación, plantillas, herramientas, tiempo de revisiones y auditorías.</li>
+        <li>Los beneficios llegan a mediano plazo y al principio parece que frena.</li>
+        <li>Riesgo de burocracia si se aplican estándares que no sirven al proyecto.</li>
+        <li>Requiere cambio cultural y compromiso de la organización.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="example">
+    <span class="eyebrow">Ejemplo</span>
+    <p>Problemas típicos sin calidad: atrasos, costos excedidos, requerimientos poco claros, el software no hace lo que tiene que hacer, horas extra, el "90-90" (el primer 90% del código lleva el 90% del tiempo, y el 10% restante otro 90%) y "¿dónde está ese componente?" (falta de SCM).</p>
+  </div>
+  <div class="links"><span class="eyebrow">Conecta con</span><a class="chip" href="#lean">Lean: integridad embebida</a><a class="chip" href="#sqa">Actividades de SQA</a><a class="chip" href="#testing">Testing ≠ calidad</a></div>
+</section>
+
+<!-- SQA -->
+<section class="topic u4" id="sqa" data-topic>
+  <div class="topic-head">
+    <div class="row"><span class="tag">Unidad 4</span><label class="done-toggle"><input type="checkbox" id="d-sqa"> Repasado</label></div>
+    <h2>Actividades de aseguramiento de calidad (SQA)</h2>
+    <p class="oneline">La administración de calidad define <b>estándares y procesos</b>, los <b>adapta</b> a cada proyecto y <b>controla</b> que se respeten. "Lo que no está controlado no está hecho" (Humphrey).</p>
+  </div>
+  <div class="flow">
+    <div class="st"><span class="n">organización</span><b>Aseguramiento</b>Establecer estándares y procedimientos organizacionales.</div>
+    <div class="st"><span class="n">proyecto</span><b>Planificación</b>Elegir y adaptar los estándares para un proyecto. Resultado: el plan de calidad (PACS).</div>
+    <div class="st"><span class="n">ejecución</span><b>Control</b>Verificar que se cumplan: revisiones de calidad y evaluaciones automáticas y mediciones.</div>
+  </div>
+  <div class="cols">
+    <div class="box">
+      <h3>Funciones del grupo de SQA</h3>
+      <ul>
+        <li>Desarrollar herramientas, técnicas, métodos y estándares para las revisiones.</li>
+        <li>Evaluar la planificación del proyecto, los requerimientos, el diseño, las prácticas de programación, la integración y prueba, y el control de proyectos.</li>
+        <li>Adaptar los procedimientos de SQA a cada proyecto.</li>
+      </ul>
+      <p><b>Independencia</b>: el grupo de aseguramiento de calidad (GAC) no reporta al gerente del proyecto, y no debería haber más de una posición entre la gerencia de primer nivel y el GAC.</p>
+    </div>
+    <div class="box">
+      <h3>Estándares</h3>
+      <ul>
+        <li><b>De producto</b>: características que deben tener los componentes (ej.: estándar de codificación).</li>
+        <li><b>De proceso</b>: cómo se ejecutan los procesos (ej.: cómo se hace una revisión o la gestión de configuración).</li>
+      </ul>
+      <p><b>Revisiones de calidad</b>, el principal método de validación: inspecciones (remover defectos, producto), revisiones de progreso (producto y proceso) y revisiones de calidad (producto y estándares).</p>
+    </div>
+  </div>
+  <h3>El cuadro de la cátedra: calidad en el software</h3>
+  <div class="tbl"><table>
+    <tr><th>Sobre</th><th>Qué se usa</th><th>Tipo</th></tr>
+    <tr><td><b>Proceso</b></td><td>Modelos para crearlo, mejorarlo y evaluarlo (CMMI, SPICE, IDEAL, ISO)</td><td rowspan="2">Aseguramiento de calidad</td></tr>
+    <tr><td><b>Proyecto</b></td><td>Auditorías de proyecto, revisiones técnicas</td></tr>
+    <tr><td><b>Producto</b></td><td>Modelos para medirlo (ISO 25010), testing, revisiones técnicas, auditorías de configuración</td><td>Control de calidad</td></tr>
+  </table></div>
+  <div class="trap">
+    <span class="eyebrow">Ojo en el parcial</span>
+    <ul>
+      <li><b>Aseguramiento</b> (preventivo, sobre el proceso) ≠ <b>control</b> (detectivo, sobre el producto). El testing es control de calidad de producto.</li>
+      <li>No usar prácticas inapropiadas solo porque son el estándar.</li>
+    </ul>
+  </div>
+  <div class="links"><span class="eyebrow">Conecta con</span><a class="chip" href="#modelos">Modelos</a><a class="chip" href="#auditorias">Auditorías</a><a class="chip" href="#revisiones">Revisiones</a><a class="chip" href="#testing">Testing</a></div>
+</section>
+
+<!-- MODELOS -->
+<section class="topic u4" id="modelos" data-topic>
+  <div class="topic-head">
+    <div class="row"><span class="tag">Unidad 4</span><label class="done-toggle"><input type="checkbox" id="d-modelos"> Repasado</label></div>
+    <h2>Modelos de calidad: CMMI, SPICE, ISO</h2>
+    <p class="oneline">Dicen <b>qué</b> prácticas tiene que tener un proceso maduro, no <b>cómo</b> hacerlas. Unos se <b>evalúan</b> (CMMI), otros se <b>certifican</b> (ISO 9001).</p>
+  </div>
+  <div class="tbl"><table>
+    <tr><th></th><th>CMMI</th><th>SPICE (ISO/IEC 15504)</th><th>ISO 9001</th></tr>
+    <tr><td>Qué es</td><td>Modelo de madurez y capacidad de procesos</td><td>Estándar para evaluar y mejorar la capacidad de procesos</td><td>Norma de sistema de gestión de calidad, genérica para cualquier industria</td></tr>
+    <tr><td>Quién</td><td>SEI (Carnegie Mellon + DoD de EE.UU.), hoy ISACA. Versión 2.0</td><td>ISO / IEC</td><td>ISO (para software, guía ISO/IEC 90003)</td></tr>
+    <tr><td>¿Certifica?</td><td><b>No</b>. Se evalúa con un Lead Appraiser</td><td>Se evalúa por proceso</td><td><b>Sí</b>, por un organismo certificador</td></tr>
+    <tr><td>Niveles</td><td>Madurez 1–5 (por etapas) o capacidad 0–5 (continua)</td><td>Capacidad 0–5 por proceso</td><td>No tiene: cumple o no cumple</td></tr>
+  </table></div>
+  <div class="cols">
+    <div class="box">
+      <h3>CMMI: dos representaciones</h3>
+      <ul>
+        <li><b>Por etapas</b>: 5 niveles de <i>madurez organizacional</i> (1 a 5). Cada nivel es un conjunto de áreas de proceso. Da una sola calificación que permite comparar organizaciones y propone un orden probado de mejora.</li>
+        <li><b>Continua</b>: 6 niveles de <i>capacidad</i> (0 a 5) para cada área de proceso. Permite elegir qué mejorar primero.</li>
+      </ul>
+      <p><b>Constelaciones</b>: CMMI-DEV (desarrollo), CMMI-SVC (servicios), CMMI-ACQ (adquisiciones). Comparten 16 áreas de proceso fundacionales.</p>
+    </div>
+    <div class="box">
+      <h3>Modelos de mejora</h3>
+      <p><b>IDEAL</b> (del SEI), en 5 fases: <b>I</b>nitiating (estímulo, sponsor, infraestructura), <b>D</b>iagnosing (evaluar práctica actual, recomendaciones), <b>E</b>stablishing (prioridades, plan de acción), <b>A</b>cting (pilotos, implementar), <b>L</b>earning/Leveraging (lecciones aprendidas, revisar el enfoque).</p>
+      <p><b>SPICE</b> también se usa para mejora de procesos y determinación de capacidad.</p>
+    </div>
+  </div>
+  <h3>CMMI-DEV por etapas</h3>
+  <div class="stairs">
+    <div class="step"><div class="lvl">1 · Inicial<small>impredecible, reactivo</small></div><div class="pas">Procesos sin definir o improvisados. El éxito depende de héroes.</div></div>
+    <div class="step hl"><div class="lvl">2 · Administrado<small>a nivel proyecto</small></div><div class="pas">Administración de requerimientos (REQM), Planificación (PP), Monitoreo y control (PMC), Acuerdo con proveedores (SAM), Medición y análisis (MA), <b>Aseguramiento de calidad de proceso y producto (PPQA)</b>, <b>Gestión de configuración (CM)</b>.</div></div>
+    <div class="step"><div class="lvl">3 · Definido<small>a nivel organización, proactivo</small></div><div class="pas">Desarrollo de requerimientos (RD), Solución técnica (TS), Integración de producto (PI), <b>Verificación (VER)</b>, <b>Validación (VAL)</b>, Foco y definición del proceso organizacional (OPF, OPD), Capacitación (OT), Administración integrada de proyectos (IPM), Riesgos (RSKM), Análisis y resolución de decisiones (DAR).</div></div>
+    <div class="step"><div class="lvl">4 · Cuantitativamente administrado<small>medido y controlado</small></div><div class="pas">Performance del proceso organizacional (OPP), Gestión cuantitativa del proyecto (QPM).</div></div>
+    <div class="step"><div class="lvl">5 · Optimizado<small>mejora continua</small></div><div class="pas">Administración de la performance organizacional (OPM), Análisis causal y resolución (CAR).</div></div>
+  </div>
+  <p class="note">Los niveles se leen de abajo hacia arriba. PPQA y CM están en el nivel 2: auditorías y SCM son de lo primero que pide CMMI. Verificación y Validación (revisiones y testing) están en el 3.</p>
+  <details class="more">
+    <summary>CMMI vs Ágil: ¿se pueden combinar?</summary>
+    <div>
+      <div class="tbl"><table>
+        <tr><th>CMMI</th><th>Métodos ágiles</th></tr>
+        <tr><td>Mejora organizacional, uniformidad</td><td>Mejora en el proyecto, innovación</td></tr>
+        <tr><td>Éxito por predictibilidad, estabilidad</td><td>Éxito por aprovechar oportunidades, velocidad</td></tr>
+        <tr><td>Cuantitativo, descriptivo, estratégico</td><td>Cualitativo, situacional, táctico</td></tr>
+        <tr><td>Conocimiento en activos de proceso</td><td>Conocimiento en las personas</td></tr>
+        <tr><td>Cargado al frente</td><td>Conducido por pruebas</td></tr>
+        <tr><td>Riesgos: gestión proactiva</td><td>Riesgos: gestión reactiva</td></tr>
+      </table></div>
+      <p><b>Similitudes</b>: ambos buscan organizaciones de alto desempeño, ambos planifican, ambos tienen reglas, ninguno es completo ni aplicable a cualquier proyecto. Hay áreas de CMMI que Ágil soporta (ej. planificación y monitoreo en Scrum), otras neutrales y otras en conflicto. Se pueden combinar: CMMI dice qué, Ágil propone un cómo.</p>
+    </div>
+  </details>
+  <div class="trap">
+    <span class="eyebrow">Ojo en el parcial</span>
+    <ul>
+      <li>CMMI <b>no es una norma y no se certifica</b>: se evalúa (appraisal).</li>
+      <li>Madurez = organización (por etapas). Capacidad = un área de proceso (continua).</li>
+    </ul>
+  </div>
+  <div class="links"><span class="eyebrow">Conecta con</span><a class="chip" href="#auditorias">PPQA → auditorías</a><a class="chip" href="#metricas">MA → métricas</a><a class="chip" href="#revisiones">VER / VAL</a></div>
+</section>
+
+<!-- AUDITORIAS -->
+<section class="topic u4" id="auditorias" data-topic>
+  <div class="topic-head">
+    <div class="row"><span class="tag">Unidad 4</span><label class="done-toggle"><input type="checkbox" id="d-auditorias"> Repasado</label></div>
+    <h2>Auditorías de software</h2>
+    <p class="oneline"><b>Evaluación independiente</b> de productos o procesos para asegurar que cumplen estándares, lineamientos, especificaciones y procedimientos, con <b>criterio objetivo</b> (IEEE 1028).</p>
+  </div>
+  <div class="cols">
+    <div class="box">
+      <h3>¿Por qué auditar?</h3>
+      <ul>
+        <li>Da una opinión objetiva e independiente.</li>
+        <li>Identifica áreas de posible insatisfacción del cliente.</li>
+        <li>Asegura al cliente que se cumplen sus expectativas.</li>
+        <li>Identifica oportunidades de mejora y da visibilidad a la gerencia.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Tipos</h3>
+      <ul>
+        <li><b>De proyecto</b>: valida que se cumpla el proceso. Se planifica en el PACS. Verifica consistencia a lo largo del desarrollo: ERS → plan de V&amp;V → diseño (DDS) → código. Incluye inspecciones y revisiones de documentación.</li>
+        <li><b>De configuración funcional</b>: el producto construido vs los requerimientos de la ERS. Que implemente solo y completamente lo pedido; revisa la matriz de rastreabilidad.</li>
+        <li><b>De configuración física</b>: el código vs su documentación técnica. Se entrega recién cuando se corrigen las desviaciones.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Auditoría al grupo de calidad</h3>
+      <p>El grupo de SQA también se audita: alguien independiente de él verifica que cumpla su propio plan y procedimientos (auditorías planificadas hechas, no conformidades con seguimiento, registros al día). Responde a "¿quién controla al que controla?".</p>
+      <p class="note">En las diapositivas este punto no está desarrollado; repasalo con lo que dieron en clase.</p>
+    </div>
+  </div>
+  <h3>Roles</h3>
+  <div class="cols">
+    <div class="box"><h4>Gerente de SQA</h4><p>Prepara el plan de auditorías, calcula su costo, asigna recursos. Responsable de resolver las no conformidades.</p></div>
+    <div class="box"><h4>Auditor</h4><p>Acuerda fecha y alcance, recolecta y analiza evidencia objetiva, hace la auditoría, prepara el reporte y sigue los planes de acción.</p></div>
+    <div class="box"><h4>Auditado</h4><p>Acuerda la fecha, participa, aporta evidencia, responde el reporte, propone el plan de acción y comunica su cumplimiento.</p></div>
+  </div>
+  <h3>Proceso de auditoría</h3>
+  <div class="flow">
+    <div class="st"><span class="n">1</span><b>Preparación y planificación</b>Acuerdan fecha, lugar, alcance, objetivo y participantes. El auditado prepara la documentación.</div>
+    <div class="st"><span class="n">2</span><b>Ejecución</b>Reunión de apertura. Preguntas con checklist y pedido de evidencia.</div>
+    <div class="st"><span class="n">3</span><b>Análisis y reporte</b>Evaluación de resultados, reunión de cierre con reporte preliminar, entrega del reporte final.</div>
+    <div class="st"><span class="n">4</span><b>Seguimiento</b>El auditado arma el plan de acción; el auditor lo aprueba, verifica y cierra las desviaciones.</div>
+  </div>
+  <div class="cols">
+    <div class="box">
+      <h3>Resultados posibles</h3>
+      <ul>
+        <li><b>Buena práctica</b>: algo hecho mucho mejor de lo esperado.</li>
+        <li><b>Desviación</b>: incumplimiento que genera incertidumbre sobre la calidad. <b>Requiere plan de acción.</b></li>
+        <li><b>Observación</b>: algo a mejorar o que podría volverse desviación. No requiere plan de acción.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Técnicas y métricas</h3>
+      <p>Checklist, muestreo, revisión de registros, herramientas automatizadas. Preguntas: empezar abiertas (qué, quién, cómo), seguir cortas y puntuales, cerrar con cerradas para confirmar. El auditor escucha, no interrumpe y repite para confirmar que entendió.</p>
+      <p>Métricas: esfuerzo y duración por auditoría, cantidad de desviaciones, desviaciones por área de proceso de CMMI.</p>
+    </div>
+  </div>
+  <div class="example">
+    <span class="eyebrow">Ejemplo</span>
+    <p>Auditoría de proyecto, checklist de planificación: "¿Existe un plan de proyecto? ¿Está actualizado? ¿Cada actividad tiene responsable?". El plan no se actualiza desde hace dos meses aunque cambió el alcance → <b>desviación</b> (plan de acción: actualizarlo y aprobarlo con los involucrados). Dos documentos no siguen la convención de nombres → <b>observación</b>.</p>
+  </div>
+  <div class="trap">
+    <span class="eyebrow">Ojo en el parcial</span>
+    <ul>
+      <li>La auditoría <b>no evalúa personas</b> ni busca culpables: compara contra un criterio objetivo.</li>
+      <li>Las auditorías de configuración (funcional y física) también se ven en SCM: es el mismo concepto.</li>
+    </ul>
+  </div>
+  <div class="links"><span class="eyebrow">Conecta con</span><a class="chip" href="#modelos">CMMI PPQA</a><a class="chip" href="#revisiones">Revisiones técnicas</a><a class="chip" href="#continuas">SCM</a></div>
+</section>
+
+<!-- REVISIONES -->
+<section class="topic u4" id="revisiones" data-topic>
+  <div class="topic-head">
+    <div class="row"><span class="tag">Unidad 4</span><label class="done-toggle"><input type="checkbox" id="d-revisiones"> Repasado</label></div>
+    <h2>Revisiones técnicas</h2>
+    <p class="oneline">Verificación <b>estática</b>: personas examinan un producto de trabajo <b>sin ejecutarlo</b> para encontrar defectos lo antes posible.</p>
+  </div>
+  <div class="cols">
+    <div class="box">
+      <h3>Verificación y validación</h3>
+      <p><b>Validación</b>: ¿estamos construyendo el producto correcto? (contra lo que el usuario necesita).</p>
+      <p><b>Verificación</b>: ¿estamos construyendo el producto correctamente? (contra la especificación).</p>
+      <p>Abarca todo el ciclo de vida. Tiene dos caras complementarias: <b>revisiones técnicas</b> (estáticas) y <b>pruebas</b> (dinámicas).</p>
+    </div>
+    <div class="box">
+      <h3>Error vs defecto</h3>
+      <ul>
+        <li><b>Error</b>: se origina en el producto de trabajo que se está revisando (se detecta en la misma etapa).</li>
+        <li><b>Defecto</b>: se originó en un producto de trabajo anterior (se escapó a la etapa siguiente).</li>
+      </ul>
+      <p>Clasificación: <b>mayor</b> (puede causar una falla operacional), <b>menor</b> (no deseable pero no causa falla, ej. violar el estándar de codificación, requerimiento no testeable), <b>cosmético</b> (ortografía, plantilla vieja).</p>
+    </div>
+  </div>
+  <div class="tbl"><table>
+    <tr><th></th><th>Walkthrough (recorrida)</th><th>Inspección (Fagan, 1976)</th></tr>
+    <tr><td>Objetivo</td><td>Mínima sobrecarga, capacitar, retorno rápido</td><td>Detectar y remover defectos de forma eficiente</td></tr>
+    <tr><td>Proceso</td><td>Informal, poca preparación. El autor guía al equipo</td><td>Formal, con roles, checklists y preparación individual</td></tr>
+    <tr><td>Métricas</td><td>No se toman</td><td>Sí: proceso controlado</td></tr>
+  </table></div>
+  <div class="cols">
+    <div class="box">
+      <h3>Roles de una inspección</h3>
+      <ul>
+        <li><b>Autor</b>: creó el producto, inicia el proceso, corrige y reporta el retrabajo.</li>
+        <li><b>Moderador</b>: planifica y lidera, reparte el material 48 h antes, cuida el clima, sigue los defectos.</li>
+        <li><b>Lector</b>: lee el producto en la reunión.</li>
+        <li><b>Anotador</b>: registra los hallazgos.</li>
+        <li><b>Inspector</b>: busca defectos antes de la reunión y registra su tiempo.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Proceso de inspección</h3>
+      <ol>
+        <li><b>Planificación</b>: equipo, material, calendario.</li>
+        <li><b>Visión general</b>: presentar proceso y producto.</li>
+        <li><b>Preparación</b> individual de cada inspector.</li>
+        <li><b>Reunión</b> (máx. 2 h): juntar defectos, descartar falsos positivos. Decisión: aceptar, aceptar provisoriamente o rechazar.</li>
+        <li><b>Corrección</b> por el autor.</li>
+        <li><b>Seguimiento</b>: verificar correcciones y juntar datos.</li>
+      </ol>
+      <p class="note">Tamaño máximo por inspección: 250 LOC o 280 líneas de texto. Preparación ≈ 100 LOC/h.</p>
+    </div>
+  </div>
+  <div class="cols">
+    <div class="box">
+      <h3>Qué son y qué no son</h3>
+      <p><b>Son</b> la forma más barata y efectiva de encontrar fallas, dan métricas, conocimiento cruzado y trabajo en equipo.</p>
+      <p><b>No son</b> para buscar soluciones, aprobar un producto ni evaluar el desempeño de las personas.</p>
+      <p><b>Revisar el producto, no al productor.</b> Agenda fija, debate limitado, notas escritas, preparación previa obligatoria.</p>
+    </div>
+    <div class="box">
+      <h3>Ventajas, desventajas y métricas</h3>
+      <p><b>+</b> Encuentran muchos errores, sirven sobre versiones incompletas y revisan otros atributos de calidad. <b>−</b> Cuesta introducirlas, cargan costos al inicio y parecen frenar el desarrollo.</p>
+      <p><b>Densidad de defectos</b> = defectos / tamaño. <b>Esfuerzo de inspección</b> = planificación + preparación + reunión + retrabajo. <b>Esfuerzo por defecto</b> = esfuerzo / defectos.</p>
+    </div>
+  </div>
+  <div class="example">
+    <span class="eyebrow">Ejemplo</span>
+    <p>Se inspecciona una ERS de 200 líneas. Tres inspectores se preparan 1,5 h cada uno; la reunión dura 1,5 h con 5 personas; el autor corrige en 2 h. Encuentran 4 mayores (una regla de correlatividad ambigua) y 6 menores. Densidad = 10 / 200 = 0,05 defectos por línea. Esfuerzo = 4,5 + 7,5 + 2 = 14 h, o 1,4 h por defecto. La ambigüedad, si llegaba a código, costaba mucho más.</p>
+  </div>
+  <div class="links"><span class="eyebrow">Conecta con</span><a class="chip" href="#testing">Testing (V&amp;V dinámica)</a><a class="chip" href="#auditorias">Auditorías de proyecto</a><a class="chip" href="#modelos">CMMI VER</a></div>
+</section>
+
+<!-- TESTING -->
+<section class="topic u4" id="testing" data-topic>
+  <div class="topic-head">
+    <div class="row"><span class="tag">Unidad 4</span><label class="done-toggle"><input type="checkbox" id="d-testing"> Repasado</label></div>
+    <h2>Testing: planificación, niveles, tipos y técnicas</h2>
+    <p class="oneline">Proceso <b>destructivo</b>: buscar defectos que se asume que existen. Un test exitoso es <b>el que encuentra un defecto</b>. Es control de calidad de producto y cuesta 30–50% del proyecto.</p>
+  </div>
+  <div class="cols">
+    <div class="box">
+      <h3>Principios</h3>
+      <ol>
+        <li>El testing muestra presencia de defectos, no su ausencia.</li>
+        <li>El testing exhaustivo es imposible (20 pantallas × 3 menús × 4 opciones × 10 campos × 100 valores = 240.000 casos).</li>
+        <li>Testing temprano.</li>
+        <li>Agrupamiento de defectos: se concentran en pocos módulos.</li>
+        <li>Paradoja del pesticida: los mismos tests dejan de encontrar defectos.</li>
+        <li>Depende del contexto.</li>
+        <li>Falacia de la ausencia de errores: sin bugs no significa útil.</li>
+      </ol>
+      <p class="note">Además: el programador no debería probar su propio código.</p>
+    </div>
+    <div class="box">
+      <h3>Niveles de prueba</h3>
+      <ul>
+        <li><b>Unitaria</b>: cada componente aislado, con acceso al código (xUnit). Se arregla al toque.</li>
+        <li><b>Integración</b>: que las partes funcionen juntas. Incremental: top-down, bottom-up o combinado. Lo crítico, primero.</li>
+        <li><b>Sistema</b>: la aplicación completa, requisitos funcionales y no funcionales, en un ambiente lo más parecido a producción.</li>
+        <li><b>Aceptación</b>: la hace el usuario para ganar confianza; encontrar defectos no es el foco. Alfa (en laboratorio) y beta (ambiente real).</li>
+      </ul>
+      <p class="note">Modelo en V: cada etapa de desarrollo tiene su nivel de prueba enfrente (requerimientos ↔ aceptación, diseño ↔ integración, código ↔ unitaria).</p>
+    </div>
+  </div>
+  <div class="cols">
+    <div class="box">
+      <h3>Proceso de pruebas</h3>
+      <ol>
+        <li><b>Planificación y control</b>: el test plan (riesgos y objetivos, estrategia, recursos, criterio de aceptación).</li>
+        <li><b>Identificación y especificación</b>: revisar la base de pruebas, evaluar testeabilidad, diseñar y priorizar casos, preparar datos y ambiente.</li>
+        <li><b>Ejecución</b>: correr casos, registrar resultados y versiones, comparar real vs esperado.</li>
+        <li><b>Evaluación y reporte</b>: contra el criterio de aceptación, lecciones aprendidas.</li>
+      </ol>
+      <p><b>¿Cuándo dejar de probar?</b> Según riesgo y costo, con un criterio de aceptación: % de tests sin fallas, sin defectos de cierta severidad, costo.</p>
+    </div>
+    <div class="box">
+      <h3>Conceptos que toman</h3>
+      <ul>
+        <li><b>Caso de prueba</b>: objetivo + datos de entrada y ambiente + resultado esperado. Sirve para reproducir defectos.</li>
+        <li><b>Ciclo de prueba</b>: ejecutar todos los casos sobre una misma versión.</li>
+        <li><b>Regresión</b>: volver a probar todo en la versión nueva para que un arreglo no rompa otra cosa.</li>
+        <li><b>Smoke test</b>: primera corrida para ver que no haya una falla catastrófica.</li>
+        <li><b>Severidad</b> (impacto: bloqueante, crítico, mayor, menor, cosmético) ≠ <b>prioridad</b> (urgencia de arreglo: urgente, alta, media, baja).</li>
+      </ul>
+    </div>
+  </div>
+  <div class="cols">
+    <div class="box">
+      <h3>Técnicas (métodos)</h3>
+      <p><b>Caja negra</b>, desde la especificación, sin mirar el código:</p>
+      <ul>
+        <li>Basadas en especificaciones: <b>partición de equivalencias</b>, <b>valores límite</b>.</li>
+        <li>Basadas en experiencia: <b>adivinanza de defectos</b>, <b>testing exploratorio</b>.</li>
+      </ul>
+      <p><b>Caja blanca</b>, desde la estructura interna; permite medir cobertura: de sentencias, de decisión, de condición, de decisión/condición, múltiple, caminos básicos.</p>
+      <p class="note">Ninguna técnica es completa: se combinan. "Los bugs se esconden en las esquinas y se congregan en los límites" (Beizer).</p>
+    </div>
+    <div class="box">
+      <h3>Tipos de prueba</h3>
+      <p><b>Funcionales</b>: qué hace el sistema, basadas en requerimientos o procesos de negocio.</p>
+      <p><b>No funcionales</b>: cómo lo hace. Performance (tiempo de respuesta, concurrencia), carga, estrés, volumen, usabilidad, seguridad, fiabilidad, mantenibilidad, portabilidad, configuración, instalación.</p>
+      <p><b>Herramientas</b>: frameworks xUnit (JUnit, NUnit), automatización de UI (Selenium), performance (JMeter), gestores de defectos y de casos de prueba.</p>
+      <p><b>Ambientes</b>: desarrollo → prueba → pre-producción → producción.</p>
+    </div>
+  </div>
+
+  <div class="calc" id="eq-calc">
+    <div><span class="eyebrow">Probalo · ejercicio de la cátedra</span><h3>Partición de equivalencias y valores límite</h3></div>
+    <p class="note">Hasta $4000 no paga impuesto; los siguientes $1500, 10%; los próximos $2000, 22%; más que eso, 40%.</p>
+    <div class="inputs"><label for="eq-in">Sueldo a probar ($)<input type="number" id="eq-in" value="5500" step="0.01"></label></div>
+    <div class="eq-out">
+      <div class="classes-row" id="eq-classes"></div>
+      <p id="eq-msg"></p>
+    </div>
+    <div class="tbl"><table>
+      <tr><th>Técnica</th><th>Casos de prueba</th></tr>
+      <tr><td>Partición de equivalencias<br><span class="note">un valor por clase</span></td><td><span class="mono">-100 · 2000 · 4800 · 6500 · 9000 · "abc"</span></td></tr>
+      <tr><td>Valores límite<br><span class="note">los bordes de cada clase</span></td><td><span class="mono">-0,01 · 0 · 4000 · 4000,01 · 5500 · 5500,01 · 7500 · 7500,01</span></td></tr>
+    </table></div>
+  </div>
+
+  <div class="example">
+    <span class="eyebrow">Ejemplo · severidad vs prioridad</span>
+    <p>El nombre de la facultad mal escrito en la pantalla de inicio: severidad <b>cosmética</b>, prioridad <b>alta</b> (lo ven todos). El cierre anual de actas se cuelga con más de 10.000 alumnos: severidad <b>crítica</b>, prioridad <b>media</b> si faltan meses para el cierre.</p>
+  </div>
+  <div class="trap">
+    <span class="eyebrow">Ojo en el parcial: mitos</span>
+    <ul>
+      <li>"El testing empieza cuando se termina de codificar." Falso: se planifica desde el inicio.</li>
+      <li>"Testing es probar que el software funciona." Falso: es buscar defectos.</li>
+      <li>"Testing = calidad de producto / de proceso." Falso: el testing no puede asegurar la calidad.</li>
+      <li>"El tester es el enemigo del programador." Falso: tienen mentalidades distintas, mismo objetivo.</li>
+    </ul>
+  </div>
+  <div class="links"><span class="eyebrow">Conecta con</span><a class="chip" href="#revisiones">V&amp;V estática</a><a class="chip" href="#agil">Testing ágil</a><a class="chip" href="#tdd">TDD</a><a class="chip" href="#sqa">Control de calidad</a></div>
+</section>
+
+<!-- AGIL -->
+<section class="topic u4" id="agil" data-topic>
+  <div class="topic-head">
+    <div class="row"><span class="tag">Unidad 4</span><label class="done-toggle"><input type="checkbox" id="d-agil"> Repasado</label></div>
+    <h2>Testing en ambientes ágiles</h2>
+    <p class="oneline">El testing <b>deja de ser una fase</b> al final: es una actividad de todo el equipo, en cada iteración, apoyada en la <b>automatización</b>.</p>
+  </div>
+  <div class="cols">
+    <div class="box">
+      <h3>Testing Manifesto</h3>
+      <p>Valoramos:</p>
+      <ul>
+        <li>Probar <b>durante</b> sobre probar al final.</li>
+        <li><b>Prevenir</b> defectos sobre encontrarlos.</li>
+        <li><b>Entender</b> lo que se prueba sobre verificar funcionalidad.</li>
+        <li>Construir el <b>mejor sistema</b> sobre romper el sistema.</li>
+        <li>Responsabilidad de <b>todo el equipo</b> por la calidad sobre el tester responsable.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>9 principios</h3>
+      <ol>
+        <li>El testing se mueve hacia adelante en el proyecto.</li>
+        <li>Testing no es una fase.</li>
+        <li>Todos hacen testing.</li>
+        <li>Reducir la latencia del feedback.</li>
+        <li>Las pruebas representan expectativas.</li>
+        <li>Mantener el código limpio, corregir defectos rápido.</li>
+        <li>Reducir la documentación de pruebas.</li>
+        <li>Las pruebas son parte del "done".</li>
+        <li>De probar al final a conducido por pruebas.</li>
+      </ol>
+    </div>
+    <div class="box">
+      <h3>6 prácticas concretas</h3>
+      <ul>
+        <li>Pruebas de unidad e integración automatizadas.</li>
+        <li>Pruebas de regresión a nivel sistema automatizadas.</li>
+        <li>Pruebas exploratorias.</li>
+        <li><b>TDD</b>.</li>
+        <li><b>ATDD</b>: desarrollo conducido por pruebas de aceptación. Se escriben los criterios y ejemplos de la historia como pruebas antes de programar.</li>
+        <li>Control de versión de las pruebas junto con el código.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="cols">
+    <div class="box">
+      <h3>Cuadrantes del testing ágil</h3>
+      <div class="quad">
+        <div></div><div class="ax">Orientadas al negocio</div><div></div>
+        <div class="ax v">Guían al equipo</div>
+        <div class="q"><b>Q2 · auto y manual</b>Pruebas funcionales, ejemplos, pruebas de historia, prototipos, simulaciones.</div>
+        <div class="q"><b>Q3 · manual</b>Exploratorias, escenarios, usabilidad, aceptación de usuario (UAT), alfa/beta.</div>
+        <div class="ax v">↑ Q1 · Q4 ↓</div>
+        <div class="q"><b>Q1 · automatizadas</b>Unitarias y de componentes (las hace el programador, TDD).</div>
+        <div class="q"><b>Q4 · herramientas</b>Performance, carga, seguridad, demás "-ilidades".</div>
+      </div>
+      <p class="note">Izquierda: apoyan al equipo mientras desarrolla. Derecha: critican el producto terminado. Arriba: negocio. Abajo: tecnología.</p>
+    </div>
+    <div class="box">
+      <h3>Pirámide del testing</h3>
+      <div class="pyr" aria-label="Pirámide de testing ágil">
+        <div style="width:46%;background:var(--sunken);color:var(--ink);border:1px dashed var(--line)">Manuales / exploratorias</div>
+        <div style="width:56%;background:#F2A3B7">UI / end-to-end · pocas</div>
+        <div style="width:76%;background:#F7DE7A">Servicio / API · reglas de negocio · aceptación</div>
+        <div style="width:100%;background:#93D4A8">Unitarias y de componentes · muchas, rápidas · 80–90%</div>
+      </div>
+      <p>En el enfoque tradicional la pirámide está invertida ("cono de helado"): 80–90% de pruebas de UI, caras y lentas, para <b>buscar</b> bugs. La ágil pone la base en unitarias para <b>prevenirlos</b>.</p>
+      <p class="note">Beneficios de automatizar: ejecución rápida, reusabilidad, más cobertura, precisión y alcance, menor costo.</p>
+    </div>
+  </div>
+  <div class="cols">
+    <div class="box">
+      <h3>Rol del tester en el equipo ágil</h3>
+      <ul>
+        <li>Con el <b>Product Owner</b>: preparar historias, definir criterios de aceptación, entender el dominio.</li>
+        <li>Con los <b>developers</b>: automatizar pruebas funcionales (ATDD), detectar y notificar bugs temprano, feedback de las historias.</li>
+        <li>Con el <b>equipo</b>: preparar el ambiente y los datos de prueba, validar el "done", métricas de calidad.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Desafíos culturales</h3>
+      <p>Cambio organizacional, pérdida de identidad del tester, falta de capacitación, gerentes que esperan una fase de QA, roles que se superponen. Hay que ser paciente, ganar credibilidad, cuidar el ritmo sostenible y dar poder al equipo.</p>
+    </div>
+  </div>
+  <div class="trap">
+    <span class="eyebrow">Ojo en el parcial</span>
+    <ul>
+      <li>En ágil el tester no desaparece: cambia su rol a prevenir y ayudar a construir.</li>
+      <li>TDD es Q1 y base de la pirámide. ATDD es Q2.</li>
+    </ul>
+  </div>
+  <div class="links"><span class="eyebrow">Conecta con</span><a class="chip" href="#tdd">TDD</a><a class="chip" href="#continuas">CI y regresión</a><a class="chip" href="#metricas">RTF</a><a class="chip" href="#testing">Testing tradicional</a></div>
+</section>
+
+<!-- TDD -->
+<section class="topic u4" id="tdd" data-topic>
+  <div class="topic-head">
+    <div class="row"><span class="tag">Unidad 4</span><label class="done-toggle"><input type="checkbox" id="d-tdd"> Repasado</label></div>
+    <h2>TDD: desarrollo conducido por pruebas</h2>
+    <p class="oneline">Escribir <b>primero la prueba</b> que falla, después el código mínimo que la pasa, y después <b>refactorizar</b>. "No es testing, es desarrollo" (Kent Beck, XP).</p>
+  </div>
+  <div class="cols">
+    <div class="box">
+      <h3>Qué es</h3>
+      <p>TDD = <b>Test First Development</b> + <b>Refactoring</b>, con pruebas unitarias. Es una técnica de especificación y diseño: primero se define <i>qué</i> debe hacer el código y después el <i>cómo</i>. Pasa la calidad de reactiva a <b>proactiva</b>.</p>
+      <p><b>Las 3 leyes</b> (Robert C. Martin):</p>
+      <ol>
+        <li>No escribir código de producción sin antes tener un test que falle.</li>
+        <li>No escribir más test del necesario para que falle (no compilar ya cuenta como fallo).</li>
+        <li>No escribir más código de producción que el mínimo para que el test pase.</li>
+      </ol>
+    </div>
+    <div class="box">
+      <h3>Beneficios</h3>
+      <ul>
+        <li>Código robusto, predecible y limpio: sabés cuándo está terminado.</li>
+        <li>Más tolerante al cambio y más barato de mantener.</li>
+        <li>Asegura cobertura de pruebas y reduce duplicación.</li>
+        <li>Obliga a pensar cómo se usa el componente: mejor diseño de API.</li>
+        <li>Alta cohesión, bajo acoplamiento.</li>
+        <li>Con práctica acelera el desarrollo y habilita el despliegue continuo.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="calc">
+    <div><span class="eyebrow">Recorrelo</span><h3>El ciclo rojo · verde · refactor</h3></div>
+    <div class="tdd-steps" role="tablist" aria-label="Pasos del ciclo TDD">
+      <button type="button" role="tab" class="red on" data-step="0" id="tdd-b0" aria-selected="true">1 · Rojo</button>
+      <button type="button" role="tab" class="green" data-step="1" id="tdd-b1" aria-selected="false">2 · Verde</button>
+      <button type="button" role="tab" class="ref" data-step="2" id="tdd-b2" aria-selected="false">3 · Refactor</button>
+      <button type="button" role="tab" class="red" data-step="3" id="tdd-b3" aria-selected="false">4 · Rojo otra vez</button>
+      <button type="button" role="tab" class="green" data-step="4" id="tdd-b4" aria-selected="false">5 · Triangulación</button>
+    </div>
+    <p id="tdd-txt"></p>
+    <pre id="tdd-code"></pre>
+  </div>
+  <div class="cols">
+    <div class="box">
+      <h3>Patrones</h3>
+      <p><b>Para el rojo</b>: Starter test (el primero, para explorar la API), One step test (una pieza mínima), Another test, Explanation test, Learning test (conocer una API externa), Regression test (reproduce un bug encontrado).</p>
+      <p><b>Para el verde</b>: Fake it (devolver un valor fijo), Triangulación (un segundo test con otros datos fuerza la solución general), Obvious implementation (si es trivial, escribirla directo), One to many (colecciones).</p>
+      <p><b>Diseño de tests</b>: Test list, Test first, Assert first, Isolated test, Test data, Evident data.</p>
+    </div>
+    <div class="box">
+      <h3>Refactoring</h3>
+      <p>Cambiar la <b>estructura interna</b> sin cambiar el <b>comportamiento observable</b>: todos los tests siguen pasando. Elimina duplicación y complejidad, mejora la legibilidad y evita el deterioro del diseño.</p>
+      <p><b>Cómo</b>: con los tests en verde, encontrar código que "huele mal", decidir cómo simplificarlo, hacerlo y volver a correr los tests.</p>
+    </div>
+  </div>
+  <div class="trap">
+    <span class="eyebrow">Ojo en el parcial</span>
+    <ul>
+      <li>TDD no es "escribir tests": es una técnica de diseño. Las pruebas son un efecto secundario.</li>
+      <li>Tradicional: diseñar → desarrollar → probar. TDD: diseñar → probar → desarrollar.</li>
+    </ul>
+  </div>
+  <div class="links"><span class="eyebrow">Conecta con</span><a class="chip" href="#agil">6 prácticas de testing ágil</a><a class="chip" href="#continuas">Tests que corren en cada build</a><a class="chip" href="#testing">Nivel unitario</a></div>
+</section>
+
+<!-- REPASO -->
+<section class="topic ux" id="repaso" data-topic>
+  <div class="topic-head">
+    <div class="row"><span class="tag">Cierre</span><label class="done-toggle"><input type="checkbox" id="d-repaso"> Repasado</label></div>
+    <h2>Preguntas de repaso</h2>
+    <p class="oneline">Leé la pregunta, respondela en voz alta y <b>tocá la tarjeta</b> para ver la respuesta.</p>
+  </div>
+  <div class="fc-bar" id="fc-bar">
+    <button type="button" class="on" data-f="all" id="fc-all">Todas</button>
+    <button type="button" data-f="u2" id="fc-u2">U2</button>
+    <button type="button" data-f="u3" id="fc-u3">U3</button>
+    <button type="button" data-f="u4" id="fc-u4">U4</button>
+    <button type="button" data-f="close" id="fc-close">Dar vuelta todas</button>
+  </div>
+  <div class="fcs" id="fcs"></div>
+</section>
+</main>
+</div>
+
+<script>
+(function(){
+  var store = {
+    get: function(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+    set: function(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+  };
+
+  /* ---------- progreso ---------- */
+  var topics = Array.prototype.slice.call(document.querySelectorAll('[data-topic]'));
+  var tocLinks = {};
+  document.querySelectorAll('#toc a').forEach(function(a){ tocLinks[a.getAttribute('href').slice(1)] = a; });
+  document.getElementById('prog-t').textContent = topics.length;
+  function refresh(){
+    var n = 0;
+    topics.forEach(function(s){
+      var cb = document.getElementById('d-' + s.id);
+      if (cb && cb.checked) n++;
+      if (tocLinks[s.id]) tocLinks[s.id].classList.toggle('done', !!(cb && cb.checked));
+    });
+    document.getElementById('prog-n').textContent = n;
+    document.getElementById('prog-bar').style.width = (100 * n / topics.length) + '%';
+  }
+  topics.forEach(function(s){
+    var cb = document.getElementById('d-' + s.id);
+    if (!cb) return;
+    cb.checked = store.get('ics2-' + s.id) === '1';
+    cb.addEventListener('change', function(){ store.set('ics2-' + s.id, cb.checked ? '1' : '0'); refresh(); });
+  });
+  refresh();
+
+  /* índice activo */
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting){
+          Object.keys(tocLinks).forEach(function(k){ tocLinks[k].classList.remove('active'); });
+          var l = tocLinks[e.target.id];
+          if (l){ l.classList.add('active'); if (window.innerWidth <= 900 && l.scrollIntoView) { try { l.parentNode.parentNode.scrollLeft = l.offsetLeft - 16; } catch(_){} } }
+        }
+      });
+    }, {rootMargin:'-20% 0px -70% 0px'});
+    topics.forEach(function(s){ io.observe(s); });
+  }
+
+  /* ---------- mapa ---------- */
+  var N = {
+    lean:{t:'Lean', u:'u2', s:'#lean'}, kanban:{t:'Kanban', u:'u2', s:'#kanban'}, metr:{t:'Métricas', u:'u2', s:'#metricas'},
+    cont:{t:'Prácticas continuas', u:'u3', s:'#continuas'}, scm:{t:'SCM (1er parcial)', u:'u3', s:'#continuas'},
+    cal:{t:'Calidad / SQA', u:'u4', s:'#sqa'}, mod:{t:'CMMI · SPICE · ISO', u:'u4', s:'#modelos'}, aud:{t:'Auditorías', u:'u4', s:'#auditorias'},
+    rev:{t:'Revisiones técnicas', u:'u4', s:'#revisiones'}, test:{t:'Testing', u:'u4', s:'#testing'}, agil:{t:'Testing ágil', u:'u4', s:'#agil'}, tdd:{t:'TDD', u:'u4', s:'#tdd'}
+  };
+  var E = [
+    ['lean','kanban','Kanban es el método que aplica Lean al trabajo del conocimiento: sistema pull, Just in Time y límite de WIP para no acumular inventario (trabajo a medio hacer).'],
+    ['kanban','metr','Lead time, cycle time y touch time salen del tablero: son las métricas del enfoque Lean.'],
+    ['lean','cal','"Embeber la integridad conceptual" es el mismo principio que "la calidad no se inyecta". Y los defectos son uno de los 7 desperdicios.'],
+    ['lean','cont','Entregar lo antes posible, lotes chicos y ver el todo (flujo de punta a punta) son la base de integrar y entregar continuamente.'],
+    ['kanban','cont','Limitar el WIP y gestionar el flujo hacen que los cambios avancen de a uno y lleguen a producción seguido.'],
+    ['cont','scm','La integración continua parte de un repositorio único con control de versiones e integración frecuente de ramas.'],
+    ['cont','agil','El pipeline corre la regresión automatizada en cada cambio; sin la pirámide de tests no hay integración continua confiable.'],
+    ['tdd','cont','Los tests unitarios que produce TDD son los que corren en cada build del pipeline.'],
+    ['tdd','agil','TDD es una de las 6 prácticas de testing ágil: cuadrante Q1 y base de la pirámide.'],
+    ['test','agil','Mismos niveles y técnicas, otro momento: en ágil el testing deja de ser una fase al final y pasa a ser de todo el equipo.'],
+    ['test','rev','Son las dos caras de V&V: las revisiones son estáticas (no ejecutan), el testing es dinámico.'],
+    ['rev','aud','Las auditorías de proyecto incluyen inspecciones y revisiones de la documentación de diseño y prueba.'],
+    ['aud','scm','Las auditorías de configuración funcional (producto vs requerimientos) y física (código vs documentación) son parte de SCM.'],
+    ['mod','aud','PPQA (CMMI nivel 2) pide evaluar objetivamente la adherencia a los procesos: eso se hace con auditorías.'],
+    ['mod','scm','Gestión de Configuración (CM) es un área de proceso de CMMI nivel 2.'],
+    ['mod','rev','Verificación (VER) y Validación (VAL) son áreas de proceso de CMMI nivel 3.'],
+    ['mod','metr','Medición y Análisis (MA) está en el nivel 2; los niveles 4 y 5 gestionan el proceso cuantitativamente. Es el enfoque tradicional de métricas.'],
+    ['cal','mod','Los modelos sirven para crear, mejorar y evaluar el proceso: la parte de aseguramiento de la calidad.'],
+    ['cal','test','El testing es control de calidad de producto, pero no puede asegurar la calidad por sí solo.'],
+    ['cal','aud','Las auditorías son el instrumento del grupo de SQA para controlar que se cumplan los estándares.'],
+    ['agil','metr','RTF cuenta las features que pasan sus pruebas de aceptación: une testing y métricas ágiles.'],
+    ['rev','metr','Las inspecciones generan métricas de producto: densidad de defectos, esfuerzo por defecto.'],
+    ['mod','agil','CMMI vs Ágil: CMMI dice qué prácticas tener, Ágil propone un cómo. Tienen diferencias de foco pero pueden convivir.']
+  ];
+  var lanes = [['u2','U2 · Gestión Lean Agile',['lean','kanban','metr']],['u3','U3 · Producto',['cont','scm']],['u4','U4 · Calidad',['cal','mod','aud','rev','test','agil','tdd']]];
+  var nodesEl = document.getElementById('nodes'), panel = document.getElementById('map-panel');
+  lanes.forEach(function(L){
+    var lane = document.createElement('div'); lane.className = 'lane ' + L[0];
+    lane.innerHTML = '<span class="eyebrow">' + L[1] + '</span>';
+    var btns = document.createElement('div'); btns.className = 'lane-btns';
+    L[2].forEach(function(id){
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'node ' + N[id].u; b.id = 'node-' + id; b.textContent = N[id].t; b.dataset.id = id;
+      b.addEventListener('click', function(){ select(id); });
+      btns.appendChild(b);
+    });
+    lane.appendChild(btns); nodesEl.appendChild(lane);
+  });
+  function select(id){
+    var rel = {}; var items = [];
+    E.forEach(function(e){
+      if (e[0] === id || e[1] === id){ var o = e[0] === id ? e[1] : e[0]; rel[o] = 1; items.push([o, e[2]]); }
+    });
+    Object.keys(N).forEach(function(k){
+      var b = document.getElementById('node-' + k);
+      b.classList.toggle('sel', k === id); b.classList.toggle('rel', !!rel[k]); b.classList.toggle('dim', k !== id && !rel[k]);
+      b.setAttribute('aria-pressed', k === id ? 'true' : 'false');
+    });
+    var h = '<span class="eyebrow">' + items.length + ' relaciones</span><h3>' + N[id].t + '</h3><ul>';
+    items.forEach(function(it){ h += '<li><b>' + N[it[0]].t + '</b>' + it[1] + '</li>'; });
+    h += '</ul><a class="chip" href="' + N[id].s + '">Ir al tema →</a>';
+    panel.innerHTML = h;
+  }
+  select('kanban');
+
+  /* ---------- lead / cycle time ---------- */
+  var ids = ['lt-req','lt-start','lt-end','lt-touch'];
+  function num(id){ var v = parseFloat(document.getElementById(id).value); return isNaN(v) ? 0 : v; }
+  function lt(){
+    var r = num('lt-req'), s = num('lt-start'), e = num('lt-end'), t = num('lt-touch');
+    var tl = document.getElementById('lt-tl'), msg = document.getElementById('lt-msg');
+    if (s < r || e < s){ msg.textContent = 'Revisá los días: el inicio no puede ser antes del pedido ni la entrega antes del inicio.'; tl.innerHTML=''; return; }
+    var lead = e - r, cyc = e - s; if (t > cyc) t = cyc;
+    var eff = lead > 0 ? Math.round(100 * t / lead) : 0;
+    document.getElementById('lt-lead').textContent = lead;
+    document.getElementById('lt-cycle').textContent = cyc;
+    document.getElementById('lt-tt').textContent = t;
+    document.getElementById('lt-eff').textContent = eff + '%';
+    var q = lead > 0 ? 100 * (s - r) / lead : 0;
+    tl.innerHTML = '<div class="seg queue" style="left:0;width:' + q + '%">' + (s - r >= 1 ? 'cola ' + (s - r) + ' d' : '') + '</div>' +
+      '<div class="seg proc" style="left:' + q + '%;width:' + (100 - q) + '%">en proceso ' + cyc + ' d</div>' +
+      '<div class="seg touch" style="left:' + q + '%;width:' + (lead > 0 ? 100 * t / lead : 0) + '%"></div>';
+    msg.textContent = 'La tarjeta esperó ' + (s - r) + ' días en la cola. El cliente percibe ' + lead + ' días (lead); el equipo la tuvo en proceso ' + cyc + ' (cycle) y la trabajó realmente ' + t + ' (touch). ' + (eff < 40 ? 'Mucha espera: buscá dónde se traba.' : '');
+  }
+  ids.forEach(function(id){ document.getElementById(id).addEventListener('input', lt); });
+  lt();
+
+  /* ---------- equivalencias ---------- */
+  var C = [
+    {k:'inv', t:'< 0 · inválida', test:function(x){ return x < 0; }},
+    {k:'c1', t:'0 – 4000 · 0%', test:function(x){ return x >= 0 && x <= 4000; }},
+    {k:'c2', t:'4000,01 – 5500 · 10%', test:function(x){ return x > 4000 && x <= 5500; }},
+    {k:'c3', t:'5500,01 – 7500 · 22%', test:function(x){ return x > 5500 && x <= 7500; }},
+    {k:'c4', t:'> 7500 · 40%', test:function(x){ return x > 7500; }},
+    {k:'nan', t:'no numérico · inválida', test:function(x){ return isNaN(x); }}
+  ];
+  function fmt(n){ return n.toLocaleString('es-AR', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+  function eq(){
+    var raw = document.getElementById('eq-in').value, x = raw === '' ? NaN : parseFloat(raw);
+    var row = document.getElementById('eq-classes'); row.innerHTML = '';
+    var hit = null;
+    C.forEach(function(c){
+      var on = c.test(x); if (on) hit = c;
+      var s = document.createElement('span'); s.className = 'eqc' + (on ? ' on' : '') + (c.k === 'inv' || c.k === 'nan' ? ' inv' : ''); s.textContent = c.t; row.appendChild(s);
+    });
+    var m = document.getElementById('eq-msg');
+    if (!hit || hit.k === 'inv' || hit.k === 'nan'){ m.innerHTML = 'Clase <b>inválida</b>: el sistema debería rechazar el valor con un mensaje de error.'; return; }
+    var rate = {c1:0, c2:.10, c3:.22, c4:.40}[hit.k];
+    var near = [4000, 5500, 7500].some(function(b){ return Math.abs(x - b) <= 0.01; });
+    m.innerHTML = 'Cae en la clase <b>' + hit.t + '</b>. Impuesto esperado: $' + fmt(x * rate) + ' (' + Math.round(rate * 100) + '% sobre el total, como dice el enunciado).' + (near ? ' Está en un <b>límite</b>: justo ahí suelen esconderse los bugs (¿el programador usó &lt; o &lt;=?).' : '');
+  }
+  document.getElementById('eq-in').addEventListener('input', eq);
+  eq();
+
+  /* ---------- TDD ---------- */
+  var T = [
+    ['<b>Rojo.</b> Escribimos el test antes que el código, de forma declarativa: "con estos datos, quiero este resultado". Falla porque sumar no está implementado.',
+     '<span class="c"># test</span>\ndef test_sumar_dos_numeros():\n    calc = Calculadora()\n    resultado = calc.sumar(1, 2)\n    assert resultado == 3\n\n<span class="c"># código</span>\nclass Calculadora:\n    def sumar(self, a, b):\n<span class="hl">        pass                      <span class="c"># ✗ el test falla</span></span>'],
+    ['<b>Verde.</b> Pasamos a lo imperativo con el código mínimo para que pase. Patrón <i>Fake it</i>: devolver un valor fijo es válido.',
+     'class Calculadora:\n    def sumar(self, a, b):\n<span class="hl">        return 3                  <span class="c"># ✓ el test pasa</span></span>'],
+    ['<b>Refactor.</b> Mejoramos la estructura sin cambiar el comportamiento: nombres, tipos, duplicación. Los tests siguen en verde.',
+     'class Calculadora:\n<span class="hl">    def sumar(self, a: float, b: float) -> float:</span>\n        return 3                  <span class="c"># ✓ sigue pasando</span>'],
+    ['<b>Rojo otra vez.</b> Un segundo test con otros datos. El valor fijo ya no alcanza y el test falla.',
+     'def test_sumar_otros_numeros():\n    calc = Calculadora()\n<span class="hl">    assert calc.sumar(3, 2) == 5  <span class="c"># ✗ devuelve 3</span></span>'],
+    ['<b>Triangulación.</b> El segundo test obliga a escribir la solución general. Los dos tests pasan y el ciclo vuelve a empezar con el próximo comportamiento.',
+     'class Calculadora:\n    def sumar(self, a: float, b: float) -> float:\n<span class="hl">        return a + b              <span class="c"># ✓ ✓ ambos pasan</span></span>']
+  ];
+  function tdd(i){
+    document.getElementById('tdd-txt').innerHTML = T[i][0];
+    document.getElementById('tdd-code').innerHTML = T[i][1];
+    document.querySelectorAll('.tdd-steps button').forEach(function(b){ var on = +b.dataset.step === i; b.classList.toggle('on', on); b.setAttribute('aria-selected', on ? 'true' : 'false'); });
+  }
+  document.querySelectorAll('.tdd-steps button').forEach(function(b){ b.addEventListener('click', function(){ tdd(+b.dataset.step); }); });
+  tdd(0);
+
+  /* ---------- flashcards ---------- */
+  var F = [
+    ['u2','¿Cuáles son los 7 principios Lean?','Eliminar desperdicios, amplificar el aprendizaje, embeber la integridad conceptual, diferir compromisos, entregar lo antes posible, dar poder al equipo, ver el todo.'],
+    ['u2','¿Qué desperdicio de manufactura equivale a "características extra"?','La sobreproducción. El inventario equivale al trabajo parcialmente terminado.'],
+    ['u2','¿Para qué se limita el WIP en Kanban?','Para que el trabajo fluya. Con todos ocupados al 100% el flujo es mínimo. El límite expone cuellos de botella y fuerza la conversación.'],
+    ['u2','¿Qué hace la clase de servicio "expreso"?','WIP 1, puede exceder el límite de la columna, el resto del trabajo espera y puede tener una entrega especial a producción.'],
+    ['u2','Diferencia entre lead time y cycle time.','Lead: desde que se pide hasta que se entrega (vista del cliente). Cycle: desde que se empieza a trabajar hasta que termina (vista interna). Lead ≥ cycle.'],
+    ['u2','¿Qué es RTF?','Running Tested Features: cantidad acumulada de features que funcionan y pasan sus pruebas de aceptación. Debe crecer en cada iteración.'],
+    ['u2','Métricas básicas del enfoque tradicional.','Tamaño, esfuerzo, tiempo (calendario) y defectos. Dominios: proceso, proyecto y producto.'],
+    ['u3','Diferencia entre entrega continua y despliegue continuo.','En la entrega continua el software queda listo y el paso a producción es manual (decisión de negocio). En el despliegue continuo va automáticamente.'],
+    ['u3','¿Qué necesita la integración continua para funcionar?','Repositorio único con control de versiones, build automático, tests automatizados y la disciplina de integrar seguido y arreglar el build roto primero.'],
+    ['u4','Aseguramiento vs control de calidad.','Aseguramiento: establecer estándares y procesos (preventivo). Control: verificar que se cumplan en el producto (detectivo). Testing es control.'],
+    ['u4','¿CMMI se certifica?','No. No es una norma: se evalúa (appraisal) con un Lead Appraiser. ISO 9001 sí se certifica.'],
+    ['u4','¿En qué nivel de CMMI están PPQA y Gestión de Configuración?','Nivel 2, Administrado.'],
+    ['u4','Por etapas vs continua en CMMI.','Por etapas: 5 niveles de madurez de la organización (1–5). Continua: 6 niveles de capacidad por área de proceso (0–5).'],
+    ['u4','Tres tipos de auditoría de software.','De proyecto (cumplimiento del proceso), de configuración funcional (producto vs requerimientos) y de configuración física (código vs documentación).'],
+    ['u4','Desviación vs observación en una auditoría.','La desviación requiere plan de acción del auditado. La observación es algo a mejorar que no lo requiere.'],
+    ['u4','Fases del proceso de auditoría.','Preparación y planificación, ejecución, análisis y reporte de resultados, seguimiento.'],
+    ['u4','Roles de una inspección.','Autor, moderador, lector, anotador e inspector.'],
+    ['u4','Walkthrough vs inspección.','Walkthrough: informal, poca preparación, sin métricas. Inspección: formal, con roles, checklists, preparación y métricas.'],
+    ['u4','Verificación vs validación.','Verificación: ¿construimos el producto correctamente? Validación: ¿construimos el producto correcto?'],
+    ['u4','¿Cuándo es exitoso un test?','Cuando encuentra un defecto.'],
+    ['u4','Nombrá los 7 principios del testing.','Muestra presencia de defectos, exhaustivo imposible, testing temprano, agrupamiento de defectos, paradoja del pesticida, depende del contexto, falacia de ausencia de errores.'],
+    ['u4','Severidad vs prioridad.','Severidad: impacto del defecto en el sistema. Prioridad: urgencia para arreglarlo. Son independientes.'],
+    ['u4','¿Qué es una prueba de regresión?','Volver a ejecutar las pruebas sobre la versión nueva para verificar que los arreglos no introdujeron defectos nuevos.'],
+    ['u4','¿Qué hay en el cuadrante Q3?','Pruebas orientadas al negocio que critican el producto, manuales: exploratorias, usabilidad, aceptación de usuario, alfa/beta.'],
+    ['u4','¿Por qué la pirámide ágil tiene la base en unitarias?','Son rápidas, baratas y estables, y previenen bugs. La tradicional ("cono de helado") depende de pruebas de UI lentas que buscan bugs al final.'],
+    ['u4','Las 3 leyes de TDD.','No escribir código sin un test que falle; no escribir más test del necesario para fallar; no escribir más código que el necesario para pasar.'],
+    ['u4','¿Qué es refactorizar?','Cambiar la estructura interna del código sin cambiar su comportamiento observable: los tests siguen pasando.']
+  ];
+  var fcs = document.getElementById('fcs');
+  F.forEach(function(f, i){
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'fc ' + f[0]; b.id = 'fc-' + i; b.dataset.u = f[0];
+    b.innerHTML = '<span class="tag">' + f[0].toUpperCase() + '</span><span class="q">' + f[1] + '</span><span class="a">' + f[2] + '</span><span class="hint">tocá para ver la respuesta</span>';
+    b.addEventListener('click', function(){ b.classList.toggle('open'); b.querySelector('.hint').textContent = b.classList.contains('open') ? 'tocá para ocultar' : 'tocá para ver la respuesta'; });
+    fcs.appendChild(b);
+  });
+  document.querySelectorAll('#fc-bar button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var f = btn.dataset.f;
+      if (f === 'close'){
+        var anyClosed = Array.prototype.some.call(fcs.children, function(c){ return !c.hidden && !c.classList.contains('open'); });
+        Array.prototype.forEach.call(fcs.children, function(c){ if (!c.hidden){ c.classList.toggle('open', anyClosed); c.querySelector('.hint').textContent = anyClosed ? 'tocá para ocultar' : 'tocá para ver la respuesta'; } });
+        btn.textContent = anyClosed ? 'Ocultar todas' : 'Dar vuelta todas';
+        return;
+      }
+      document.querySelectorAll('#fc-bar button[data-f]:not([data-f=close])').forEach(function(x){ x.classList.toggle('on', x === btn); });
+      Array.prototype.forEach.call(fcs.children, function(c){ c.hidden = !(f === 'all' || c.dataset.u === f); });
+    });
+  });
+})();
+</script>
+
+</body></html>
