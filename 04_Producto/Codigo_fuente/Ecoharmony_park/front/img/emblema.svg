@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="EcoHarmony Park">
+  <defs>
+    <clipPath id="circulo"><circle cx="32" cy="32" r="30"/></clipPath>
+  </defs>
+  <circle cx="32" cy="32" r="30" fill="#f2e8cf"/>
+  <g clip-path="url(#circulo)">
+    <circle cx="46" cy="20" r="7" fill="#bc4749"/>
+    <path d="M0 44 C12 32 22 32 32 40 C42 30 52 30 64 38 V64 H0Z" fill="#6a994e"/>
+    <path d="M0 52 C14 44 26 44 38 50 C48 44 56 44 64 48 V64 H0Z" fill="#386641"/>
+  </g>
+  <path d="M18 37 C17 25 24 16 36 13 C37 25 30 34 18 37Z" fill="#a7c957"/>
+  <path d="M19 36 L32 19" fill="none" stroke="#386641" stroke-width="1.6" stroke-linecap="round"/>
+  <circle cx="32" cy="32" r="30" fill="none" stroke="#386641" stroke-width="3"/>
+</svg>

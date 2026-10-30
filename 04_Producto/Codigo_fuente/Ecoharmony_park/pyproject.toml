@@ -1,0 +1,32 @@
+[project]
+name = "ecoharmony-park"
+version = "0.1.0"
+description = "Inscripción a actividades de EcoHarmony Park (TP 6, TDD)"
+requires-python = ">=3.13"
+dependencies = [
+    "celery[redis]>=5.6.3",
+    "django>=6.1.2",
+    "django-environ>=0.14.0",
+    "djangorestframework>=3.18.3",
+    "psycopg[binary]>=3.3.6",
+    "segno>=1.6.6",
+]
+
+[dependency-groups]
+dev = [
+    "coverage>=7.16.2",
+]
+
+[tool.coverage.run]
+source = ["apps", "core"]
+branch = true
+omit = [
+    "*/migrations/*",
+    "*/tests/*",
+    "core/asgi.py",
+    "core/wsgi.py",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
