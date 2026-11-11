@@ -69,6 +69,7 @@ grupo_2-4k2_2026
 ├── 04_Producto/                         # Artefactos que forman parte del producto 
 │   ├── Documentacion/                   # ERS, Arquitectura, Manuales.
 │   └── Codigo_fuente/                   # Repositorio del código desarrollado en el TP 6.
+│       └── Ecoharmony_park/             # Inscripción a actividades (TP 6). Ver su readme.md
 └── 05_Material_extra/
     ├── Clases/
     │   └── Clase_[yyyy_mm_dd]_[descripcion]/ 
@@ -80,6 +81,12 @@ grupo_2-4k2_2026
 # Nomenclatura
 Los nombres de las carpetas deberán comenzar con mayúscula y utilizar guion bajo (`_`) como separador entre palabras. Los nombres de los archivos deberán escribirse estrictamente en minúsculas, sin tildes ni caracteres especiales, utilizando guion bajo (`_`) como separador entre palabras.
 Se establece como única excepción a la regla de uso estricto de minúsculas en archivos al documento README.md ubicado en la raíz del repositorio (/). Esta excepción técnica es obligatoria para garantizar la compatibilidad con la plataforma de control de versiones GitHub, permitiendo la renderización de este archivo "md".
+
+Dentro de cada proyecto de `/04_Producto/Codigo_fuente/` (por ejemplo, `Ecoharmony_park/`) rigen las convenciones del lenguaje y de las herramientas en lugar de las reglas anteriores, porque son obligatorias para que el código funcione:
+- Las carpetas del código van en minúscula, porque son paquetes de Python (PEP 8) o carpetas que Django busca por nombre (`apps/`, `core/`, `front/`, `templates/`, `migrations/`, `static/`).
+- El archivo de construcción de la imagen se llama `Dockerfile`, que es el nombre que Docker busca por defecto.
+- Los archivos ocultos de configuración conservan su nombre estándar (`.env.example`, `.dockerignore`, `.gitignore`, `.python-version`).
+- La documentación del proyecto se llama `readme.md`, en minúscula, para respetar la regla general de archivos.
 
 | Ítem de Configuración (SCI) | Ubicación                                                 | Regla de nombrado                      
 | --------------------------- | --------------------------------------------------------- | ----------------------------------------- |
