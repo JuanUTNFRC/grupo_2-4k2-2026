@@ -146,12 +146,13 @@ Dentro de cada proyecto de `/04_Producto/Codigo_fuente/` (por ejemplo, `Ecoharmo
 | `lb_tp4_scm` | `25/08/2026` | Línea base correspondiente a la entrega del TP4 de SCM |
 | `lb_tp7_scrum` | `09/10/2026` | Línea base correspondiente a la entrega del TP7 de Scrum |
 | `lb_tp6_tdd` | `10/11/2026` | Línea base correspondiente a la entrega del TP6 de Test Driven Development |
+| `lb_ti1_despliegue` | `10/11/2026` | Línea base correspondiente a la entrega del TI1 sobre el despliegue de actualizaciones para un videojuego |
 
 ## Criterios de Línea Base
 
 ### 1.  Establecimiento de Línea Base
 
-Se marcará una nueva línea base inmediatamente después de la entrega formal de cada tarea evaluable, como Trabajos Prácticos o Trabajos de Investigación.
+Se marcará una nueva línea base después de la entrega formal de cada tarea evaluable, como Trabajos Prácticos o Trabajos de Investigación.
 
 ### 2. Convención de Etiquetas (Tags)
 Para mantener consistencia, las etiquetas en Git se escribirán en minúscula, sin espacios ni caracteres especiales.
