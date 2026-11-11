@@ -145,6 +145,7 @@ Dentro de cada proyecto de `/04_Producto/Codigo_fuente/` (por ejemplo, `Ecoharmo
 | --------- | --------- |--------|
 | `lb_tp4_scm` | `25/08/2026` | Línea base correspondiente a la entrega del TP4 de SCM |
 | `lb_tp7_scrum` | `09/10/2026` | Línea base correspondiente a la entrega del TP7 de Scrum |
+| `lb_tp6_tdd` | `10/11/2026` | Línea base correspondiente a la entrega del TP6 de Test Driven Development |
 
 ## Criterios de Línea Base
 
