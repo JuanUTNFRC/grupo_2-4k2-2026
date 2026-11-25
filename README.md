@@ -148,6 +148,7 @@ Dentro de cada proyecto de `/04_Producto/Codigo_fuente/` (por ejemplo, `Ecoharmo
 | `lb_tp6_tdd` | `10/11/2026` | Línea base correspondiente a la entrega del TP6 de Test Driven Development |
 | `lb_ti1_despliegue` | `10/11/2026` | Línea base correspondiente a la entrega del TI1 sobre el despliegue de actualizaciones para un videojuego |
 | `lb_ti2_xanpan` | `13/11/2026`	| Línea base correspondiente a la entrega del TI2 sobre Xanpan |
+| `lb_tp12_desing_thinking` | `25/11/2026` | Línea base correspondiente a la entrega del TP12 de Desing thinking |
 
 ## Criterios de Línea Base
 
